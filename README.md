@@ -12,7 +12,7 @@ Through practice to enhance real capabilities, let knowledge create actual value
 - **Project Driven**: Gain practical experience through real projects, not just knowledge accumulation
 - **AI Native**: Deeply integrate AI technology into the learning process
 - **Instant Application**: Emphasize practical skills that can be immediately applied
-- **Build in Public**: Share our product building process and startup journey, making learning and creation transparent
+- **Build in Public**: Share our product building process and startup journey openly
 
 ### Core Technology Stack
 
@@ -166,7 +166,7 @@ npx create-next-app -e https://github.com/heroui-inc/next-app-template
 
 ### Install dependencies
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+You can use one of them `npm`, `yarn`, `pnpm`, `bun`. Example using `npm`:
 
 ```bash
 npm install

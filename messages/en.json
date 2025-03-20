@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "NoStudy.AI",
+    "description": "Don't Study, Focus on Practice - Next Generation Project-Based AI Native Education Platform",
+    "startEditing": "Start Editing",
+    "brandName": "NoStudy.AI"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "blog": "Blog",
+    "docs": "Docs",
+    "pricing": "Pricing",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "team": "Team",
+    "calendar": "Calendar",
+    "settings": "Settings",
+    "helpAndFeedback": "Help & Feedback",
+    "logout": "Logout"
+  },
+  "pages": {
+    "docs": {
+      "content": "Documentation content coming soon..."
+    },
+    "pricing": {
+      "content": "Pricing details coming soon..."
+    },
+    "blog": {
+      "content": "Blog content coming soon..."
+    },
+    "about": {
+      "content": "Information about us coming soon..."
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "searchPlaceholder": "Search...",
+    "shortcut": {
+      "search": "Search shortcut",
+      "command": "⌘"
+    },
+    "more": "More",
+    "github": "GitHub",
+    "sponsor": "Sponsor",
+    "poweredBy": "Powered by"
+  }
+}

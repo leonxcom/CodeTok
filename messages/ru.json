@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "NoStudy.AI",
+    "description": "AI-Нативная Образовательная Платформа: Практикуйся, Не Учись",
+    "startEditing": "Начать редактирование",
+    "brandName": "NoStudy.AI"
+  },
+  "nav": {
+    "home": "Главная",
+    "about": "О нас",
+    "blog": "Блог",
+    "docs": "Документация",
+    "pricing": "Цены",
+    "profile": "Профиль",
+    "dashboard": "Панель управления",
+    "projects": "Проекты",
+    "team": "Команда",
+    "calendar": "Календарь",
+    "settings": "Настройки",
+    "helpAndFeedback": "Помощь и отзывы",
+    "logout": "Выйти"
+  },
+  "pages": {
+    "docs": {
+      "content": "Документация скоро появится..."
+    },
+    "pricing": {
+      "content": "Информация о ценах скоро появится..."
+    },
+    "blog": {
+      "content": "Контент блога скоро появится..."
+    },
+    "about": {
+      "content": "Информация о нас скоро появится..."
+    }
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "retry": "Повторить",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "save": "Сохранить",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "search": "Поиск",
+    "searchPlaceholder": "Искать...",
+    "shortcut": {
+      "search": "Сочетание клавиш поиска",
+      "command": "⌘"
+    },
+    "more": "Ещё",
+    "github": "GitHub",
+    "sponsor": "Спонсор",
+    "poweredBy": "Работает на"
+  }
+} 

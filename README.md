@@ -1,6 +1,6 @@
-# NoStudy.AI - Next Generation Project-Based AI Native Education Platform
+# NoStudy.AI - Practice, Not Study! - Build Your Projects in Public and Get Rewarded
 
-Practice, Not Study - Next Generation Project-Based AI Native Education Platform
+# Practice, Not Study! - Build Your Projects in Public and Get Rewarded
 
 Through practice to enhance real capabilities, let knowledge create actual value
 

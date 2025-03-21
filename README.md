@@ -1,38 +1,42 @@
-# Nostudy.ai - Project-based Public Practice Platform for AI Era
+# Nostudy.ai - Real Project-Driven AI Creator Growth Practice Platform
 
 English | [简体中文](./README-zh-CN.md)
 
-> No study! But build real projects in public and gain reward worldwide!
+Say goodbye to passive learning, build real projects publicly, and gain your first 1000 die-hard fans!
 
-## 🛠 Development Tools
+## 📑 Table of Contents
 
-### AI-Powered Development
-This project is built using [Trae](https://www.trae.ai/), an adaptive AI IDE that transforms how you work, collaborating with you to run faster. Trae provides intelligent code completion, real-time collaboration, and AI-powered development assistance.
+- [Core Concept](#core-concept)
+- [Technology Architecture](#technology-architecture)
+- [System Architecture](#system-architecture)
+- [Core Features](#core-features)
+- [Development Standards](#development-standards)
+- [Deployment Architecture](#deployment-architecture)
+- [Quick Start](#quick-start)
+- [License](#license)
+
+## 💡 Core Concept
+
+- **First Principles Learning**: Our learning is not just to understand the world, but to transform it!
+- **Project-Driven**: Acquire practical experience through real projects with a "learn-by-doing" approach
+- **AI-Native**: Deeply integrate AI technology into the learning process, providing personalized learning experiences
+- **One-Click Deploy**: Simplify AI project deployment, allowing creators to focus on content and value creation
+- **Public Building**: Develop projects in the public eye, gain feedback, and establish your personal brand
+- **Fan Connection**: Build a community of 1000 die-hard fans, monetize knowledge, and share team resources
 
 ## 🏗 Technology Architecture
 
-### Core Concept
-
-- **First Principles Learning**: Our learning is not just to understand the world, but to transform it!
-- **Practice First**: Embrace the "learn-by-doing" approach by abandoning traditional passive learning modes
-- **Project-Driven**: Acquire practical experience through real projects, rather than just accumulating knowledge
-- **AI-Native**: Deeply integrate AI technology into the learning process
-- **Immediate Application**: Highlight practical skills that can be immediately applied
-- **Public Construction**: Share our product construction process publicly, showcasing learning and creation in the public arena
-
-### Core Technology Stack
+### Technology Stack
 
 #### Frontend
-- **Framework**: Next.js 15+ (App Router)
+- **Framework**: Next.js 15 (App Router)
 - **UI Library**: React 18+
 - **Language**: TypeScript 5.0+
 - **Style**: TailwindCSS
-- **State Management**: Zustand
-- **Internationalization**: next-intl
 - **Component Library**: HeroUI
 
 #### AI Integration
-- **LLM Engine**: DeepSeek
+- **LLM Engine**: GPT/DeepSeek
 - **Features**:
   - Real-Time Code Review
   - Intelligent Learning Path Generation
@@ -41,13 +45,14 @@ This project is built using [Trae](https://www.trae.ai/), an adaptive AI IDE tha
   - Code Optimization Suggestions
 
 #### Development Tools
+- **AI IDE**: [Trae](https://www.trae.ai/)
 - **Package Manager**: pnpm
 - **Code Quality**:
   - ESLint
   - Prettier
   - TypeScript Strict Mode
 - **Git Workflow**:
-  - Standard Commit
+  - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
   - Branch-Based Development
   - GitHub Actions CI/CD
 
@@ -72,85 +77,81 @@ Nostudy.ai/
 └── styles/                 # Global Styles
 ```
 
-### Core Function Implementation
+## 🔥 Core Features
 
-#### 1. AI-Native Learning System
+### 1. AI-Native Learning System
 - Real-Time Code Analysis and Feedback
 - Intelligent Progress Tracking
 - Personalized Learning Path Generation
 - Intelligent Content Recommendation
 
-#### 2. Project-Based Learning
-- Real Project Template
+### 2. Project-Based Learning
+- Real Project Templates
 - Step-by-Step Guidance
 - Automated Code Review
 - Progress Tracking and Analysis
 
-#### 3. Multi-Language Support
-- Dynamic Routing i18n
+### 3. Multi-Language Support
+- Dynamic Routing i18n (Supporting 12 Languages Including English, Chinese, Japanese, etc.)
 - Language Detection and Switching
 - RTL Support
 - Localization Content
 
-#### 4. Performance Optimization
+### 4. Performance Optimization
 - Server-Side Rendering
 - Static Page Generation
 - Image Optimization
 - Code Splitting
 - Edge Caching
 
-#### 5. Security Measures
+### 5. Security Measures
 - Identity Verification and Authorization
-- Rate Limiting
+- Access Restrictions
 - CORS Configuration
 - Input Validation
 - XSS Protection
 
-### Development Standards
+## 📋 Development Standards
 
-1. **Code Quality**
-   - Strict TypeScript Configuration
-   - Comprehensive ESLint Rules
-   - Consistent Code Formatting
-   - Unit Test Coverage
+### 1. Code Quality
+- Strict TypeScript Configuration
+- Comprehensive ESLint Rules
+- Consistent Code Formatting
+- Unit Test Coverage
 
-2. **Git Workflow**
-   - Feature Branch Workflow
-   - Standard Commit Information
-   - Pull Request Review
-   - Automated Testing
+### 2. Git Workflow
+- Feature Branch Workflow
+- Conventional Commit Messages
+- Pull Request Review
+- Automated Testing
 
-3. **Documentation**
-   - Inline Code Documentation
-   - API Documentation
-   - Component Storybook
-   - Development Guide
+### 3. Documentation
+- Inline Code Documentation
+- API Documentation
+- Component Storybook
+- Development Guide
 
-4. **Performance Metrics**
-   - Core Web Vitals Monitoring
-   - Lighthouse Score
-   - Error Tracking
-   - User Analysis
+### 4. Performance Metrics
+- Core Web Vitals Monitoring
+- Lighthouse Score
+- Error Tracking
+- User Analytics
 
-### Deployment Architecture
+## 🚀 Deployment Architecture
 
-- **Production Environment**
-  - Vercel (Primary Hosting)
-  - Edge Functions
-  - CDN Distribution
-  - Automated Deployment
+### Production Environment
+- Vercel (Primary Hosting)
+- Edge Functions
+- CDN Distribution
+- Automated Deployment
 
-- **Development Environment**
-  - Local Development Setup
-  - Development Server
-  - Hot Module Replacement
-  - Debugging Tools
+### Development Environment
+- Local Development Setup
+- Development Server
+- Hot Module Replacement
+- Debugging Tools
 
----
-
-More technical details, please refer to our documentation.
-
-## Used Technologies
+## 🧰 Technologies Used
 
 - [Next.js 15](https://nextjs.org/docs/getting-started)
 - [HeroUI](https://heroui.com/)
@@ -160,11 +161,11 @@ More technical details, please refer to our documentation.
 - [Framer Motion](https://www.framer.com/motion/)
 - [next-themes](https://github.com/pacocoursey/next-themes)
 
-## How to Use
+## 🚦 Quick Start
 
 ### Use create-next-app to Create a Project
 
-Use `create-next-app` based on this template to create a new project, run the following command:
+Use `create-next-app` based on this template to create a new project:
 
 ```bash
 npx create-next-app -e https://github.com/leohuang/nostudy.ai
@@ -172,29 +173,9 @@ npx create-next-app -e https://github.com/leohuang/nostudy.ai
 
 ### Install Dependencies
 
-We recommend using `pnpm` as the default package manager. First-time use requires installing pnpm:
-
-```bash
-npm install -g pnpm
-```
-
-Then install project dependencies:
-
 ```bash
 pnpm install
 ```
-
-> Note: Although the project defaults to using `pnpm`, you can also use `npm`, `yarn`, or `bun`.
-
-### Set pnpm
-
-Since the project uses HeroUI, you need to add the following configuration to the `.npmrc` file:
-
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
-
-After adding the configuration, please rerun `pnpm install` to ensure dependencies are correctly installed.
 
 ### Run Development Server
 
@@ -202,20 +183,18 @@ After adding the configuration, please rerun `pnpm install` to ensure dependenci
 pnpm dev
 ```
 
-## License
+## 📜 License
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0). This means you can:
+This project is licensed under the [Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/).
 
-- Use the software for personal and non-commercial purposes
-- Share the software with others (only for non-commercial purposes)
-- Modify the software for personal use
-- Access the source code and documentation
+## 🤝 How to Contribute
 
-You cannot:
-- Use the software for commercial purposes without separate commercial permission
-- Distribute the software for commercial purposes
-- Imply Nostudy.ai's endorsement
+We welcome all forms of contributions! If you'd like to participate in project development, please follow these steps:
 
-If you need a commercial license, please contact us: support@nostudy.ai.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
 
-See [LICENSE](LICENSE) file for the complete license text.
+For detailed contribution guidelines, please see [CONTRIBUTING.md](./CONTRIBUTING.md).

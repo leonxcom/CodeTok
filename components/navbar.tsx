@@ -16,7 +16,8 @@ import { Input } from "@heroui/input";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { useTranslations, useLocale } from 'next-intl';
+import { useLocale } from 'next-intl';
+import { useTranslations } from '@/i18n/client';
 import { usePathname } from 'next/navigation';
 
 import { siteConfig } from "@/config/site";
@@ -97,34 +98,31 @@ export default function Navbar() {
     return nav(menuLabelMap[label] || label.toLowerCase());
   };
 
-  // 检查链接是否激活
-  const isActive = (href: string) => {
-    // 去掉语言前缀进行比较
-    const currentPath = pathname.split('/').slice(2).join('/');
-    const targetPath = href === '/' ? '' : href.replace(/^\//, '');
-    return currentPath === targetPath;
-  };
-
   return (
-    <HeroUINavbar maxWidth="full" position="sticky" className="px-2 w-full">
+    <HeroUINavbar
+      shouldHideOnScroll
+      classNames={{
+        wrapper: "max-w-full",
+      }}
+    >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand as="li" className="gap-1 max-w-fit">
+        <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href={getLocalizedHref('/')}>
             <Logo />
             <p className="font-bold text-inherit">{t('brandName')}</p>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-4">
+        <ul className="hidden lg:flex gap-4 justify-start ml-2">
           {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href} className="px-0">
+            <NavbarItem key={item.href}>
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
                 )}
                 color="foreground"
                 href={getLocalizedHref(item.href)}
-                data-active={isActive(item.href)}
+                data-active={pathname.endsWith(item.href)}
               >
                 {getNavLabel(item.href)}
               </NextLink>
@@ -137,30 +135,22 @@ export default function Navbar() {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <NavbarItem className="hidden lg:flex mr-4">{searchInput}</NavbarItem>
-        <NavbarItem className="hidden sm:flex">
-          <div className="flex items-center gap-3">
-            <Link isExternal aria-label="Twitter" href={siteConfig.links.twitter}>
-              <TwitterIcon className="text-default-500" />
-            </Link>
-            <Link isExternal aria-label="Discord" href={siteConfig.links.discord}>
-              <DiscordIcon className="text-default-500" />
-            </Link>
-            <Link isExternal aria-label={common('github')} href={siteConfig.links.github}>
-              <GithubIcon className="text-default-500" />
-            </Link>
-            <LanguageSwitch />
-            <ThemeSwitch />
-          </div>
+        <NavbarItem className="hidden sm:flex gap-2">
+          <Link isExternal href={siteConfig.links.github} aria-label="Github">
+            <GithubIcon className="text-default-500" />
+          </Link>
+          <ThemeSwitch />
+          <LanguageSwitch />
         </NavbarItem>
+        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1" justify="end">
-        <Link isExternal aria-label={common('github')} href={siteConfig.links.github} className="hidden">
+        <Link isExternal href={siteConfig.links.github} aria-label="Github">
           <GithubIcon className="text-default-500" />
         </Link>
-        <LanguageSwitch />
         <ThemeSwitch />
+        <LanguageSwitch />
         <NavbarMenuToggle />
       </NavbarContent>
 
@@ -170,14 +160,8 @@ export default function Navbar() {
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href={getLocalizedHref(item.href)}
+                color="foreground"
+                href="#"
                 size="lg"
               >
                 {getMenuLabel(item.label)}

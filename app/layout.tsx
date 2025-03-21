@@ -10,12 +10,16 @@ import { fontSans } from "@/config/fonts";
 import Navbar from "@/components/navbar";
 import { defaultLocale } from '@/config/i18n';
 
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: 'Nostudy.ai - Project-Based Social AI Learning Platform',
-    description: 'Rather Than Study Alone, Practice in Public and Gain Global Recognition',
-  };
-}
+export const metadata: Metadata = {
+  title: {
+    default: siteConfig.name,
+    template: `%s - ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
 
 export const viewport: Viewport = {
   themeColor: [
@@ -23,15 +27,6 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 };
-
-async function getMessages(locale: string) {
-  try {
-    return (await import(`../messages/${locale}.json`)).default;
-  } catch (error) {
-    console.error(`Error loading messages for locale ${locale}:`, error);
-    return {};
-  }
-}
 
 export default function RootLayout({
   children

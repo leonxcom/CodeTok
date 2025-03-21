@@ -1,5 +1,5 @@
 import createMiddleware from 'next-intl/middleware';
-import { locales, defaultLocale } from '@/config/i18n';
+import { locales, defaultLocale, Locale } from '@/config/i18n';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Create internationalization middleware
@@ -24,7 +24,7 @@ export default function middleware(request: NextRequest) {
   
   // Extract locale from path
   const firstSegment = pathname.split('/')[1];
-  const isLocaleInPath = locales.some(locale => locale === firstSegment);
+  const isLocaleInPath = locales.includes(firstSegment as Locale);
   
   // If the path doesn't start with a locale, redirect to the default locale
   if (!isLocaleInPath && pathname !== '/favicon.ico') {
@@ -39,7 +39,7 @@ export default function middleware(request: NextRequest) {
   response.headers.set('Cache-Control', 'no-store, max-age=0');
   
   // Add a debug header to see which locale is being used
-  const requestedLocale = isLocaleInPath ? firstSegment : defaultLocale;
+  const requestedLocale = isLocaleInPath ? firstSegment as Locale : defaultLocale;
   response.headers.set('X-Next-Locale', requestedLocale);
   
   return response;

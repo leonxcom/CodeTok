@@ -1,10 +1,11 @@
 {
   "app": {
     "title": "Nostudy.ai",
-    "homeTitle": "Nostudy.ai - Project-based Public Build Platform for AI Era",
-    "description": "No study! But build real projects in public and gain reward worldwide!",
+    "homeTitle": "Nostudy.ai - Real Project-Driven AI Creator Growth Practice Platform",
+    "description": "No study! Build real projects in public, and gain your first 1000 fans!",
     "startEditing": "Start editing",
-    "brandName": "Nostudy.ai"
+    "brandName": "Nostudy.ai",
+    "beta": "Beta"
   },
   "nav": {
     "home": "Home",

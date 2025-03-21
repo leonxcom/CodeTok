@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { useTranslations as useNextIntlTranslations } from 'next-intl';
-import type { Messages } from './types';
+import type { Messages } from "./types";
+
+import { useTranslations as useNextIntlTranslations } from "next-intl";
 
 /**
  * Type-safe wrapper for useTranslations hook
@@ -13,4 +14,4 @@ export function useTranslations<T extends keyof Messages>(namespace: T) {
 }
 
 // Re-export other hooks for convenience
-export { useLocale, useTimeZone } from 'next-intl'; 
+export { useLocale, useTimeZone } from "next-intl";

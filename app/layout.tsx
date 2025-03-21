@@ -1,14 +1,11 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
-import { Link } from "@heroui/link";
 import clsx from "clsx";
-
-import { Providers } from "./providers";
+import { Suspense } from "react";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import Navbar from "@/components/navbar";
-import { defaultLocale } from '@/config/i18n';
+import { defaultLocale } from "@/config/i18n";
 
 export const metadata: Metadata = {
   title: {
@@ -28,18 +25,30 @@ export const viewport: Viewport = {
   ],
 };
 
+// 使用Suspense将加载状态包裹起来
+const BodyContent = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<div className="min-h-screen bg-background" />}>
+    {children}
+  </Suspense>
+);
+
 export default function RootLayout({
-  children
+  children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html suppressHydrationWarning lang={defaultLocale}>
-      <body className={clsx("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
-        {children}
+      <body
+        className={clsx(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
+        )}
+      >
+        <BodyContent>{children}</BodyContent>
       </body>
     </html>
   );
 }
 
-export const dynamic = 'force-static';
+export const dynamic = "force-static";

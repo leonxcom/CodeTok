@@ -42,7 +42,7 @@ const ThemeSwitchComponent: FC<ThemeSwitchProps> = ({
     <Component
       {...getBaseProps({
         className: clsx(
-          "w-9 h-9 flex items-center justify-center transition-colors",
+          "flex items-center justify-center transition-colors",
           className,
           classNames?.base,
         ),
@@ -56,7 +56,6 @@ const ThemeSwitchComponent: FC<ThemeSwitchProps> = ({
         className={slots.wrapper({
           class: clsx(
             [
-              "w-5 h-5",
               "bg-transparent",
               "flex items-center justify-center",
               "group-data-[selected=true]:bg-transparent",
@@ -67,9 +66,9 @@ const ThemeSwitchComponent: FC<ThemeSwitchProps> = ({
         })}
       >
         {!isSelected || isSSR ? (
-          <SunFilledIcon size={20} />
+          <SunFilledIcon size={24} />
         ) : (
-          <MoonFilledIcon size={20} />
+          <MoonFilledIcon size={24} />
         )}
       </div>
     </Component>

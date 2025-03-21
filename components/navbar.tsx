@@ -226,7 +226,12 @@ const NavbarBrandComponent = memo(() => {
         href={getLocalizedHref("/")}
       >
         <Logo />
-        <p className="text-lg font-bold text-inherit">{t("brandName")}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-lg font-bold text-inherit">{t("brandName")}</p>
+          <span className="text-xs px-1.5 py-0.5 bg-primary/20 text-primary dark:bg-primary/30 dark:text-primary-300 rounded-md font-medium">
+            {t("beta")}
+          </span>
+        </div>
       </NextLink>
     </NavbarBrand>
   );

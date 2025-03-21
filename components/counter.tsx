@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Button } from "@heroui/button";
 
-export const Counter = () => {
+const CounterComponent = () => {
   const [count, setCount] = useState(0);
 
   return (
@@ -12,3 +12,5 @@ export const Counter = () => {
     </Button>
   );
 };
+
+export const Counter = memo(CounterComponent);

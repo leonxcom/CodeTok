@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useTranslations } from '@/i18n/client';
+import { useTranslations } from "@/i18n/client";
 
 export default function DocsPage() {
-  const navT = useTranslations('nav');
-  const pagesT = useTranslations('pages');
-  
+  const navT = useTranslations("nav");
+  const pagesT = useTranslations("pages");
+
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-4xl font-bold mb-6">{navT('docs')}</h1>
-      <p className="text-lg">{pagesT('docs.content')}</p>
+      <h1 className="text-4xl font-bold mb-6">{navT("docs")}</h1>
+      <p className="text-lg">{pagesT("docs.content")}</p>
     </div>
   );
-} 
+}

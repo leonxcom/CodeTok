@@ -3,14 +3,21 @@ import { Metadata } from "next";
 import { Link } from "@heroui/link";
 import clsx from "clsx";
 import { notFound } from "next/navigation";
+import React, { Suspense, lazy } from "react";
 
 import { getMessages } from "@/i18n/server";
 import { Providers } from "@/app/providers";
 import { fontSans } from "@/config/fonts";
-import Navbar from "@/components/navbar";
-import GoogleAnalytics from "@/components/analytics/google-analytics";
-import VercelAnalytics from "@/components/analytics/vercel-analytics";
 import { locales, Locale } from "@/config/i18n";
+import Navbar from "@/components/navbar";
+
+// 懒加载分析组件
+const GoogleAnalytics = lazy(
+  () => import("@/components/analytics/google-analytics"),
+);
+const VercelAnalytics = lazy(
+  () => import("@/components/analytics/vercel-analytics"),
+);
 
 interface Props {
   children: React.ReactNode;
@@ -64,8 +71,12 @@ export default async function LocaleLayout(props: Props) {
       <div
         className={clsx("relative flex flex-col h-screen", fontSans.variable)}
       >
-        <GoogleAnalytics />
-        <VercelAnalytics />
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
+        <Suspense fallback={null}>
+          <VercelAnalytics />
+        </Suspense>
         <Navbar />
         <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
           {props.children}

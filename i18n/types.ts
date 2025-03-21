@@ -70,13 +70,11 @@ export interface Messages {
 
 // Type guard to check if a value is a valid Messages object
 export function isMessages(value: unknown): value is Messages {
-  if (!value || typeof value !== 'object') return false;
-  
+  if (!value || typeof value !== "object") return false;
+
   const messages = value as Messages;
+
   return (
-    !!messages.app &&
-    !!messages.nav &&
-    !!messages.pages &&
-    !!messages.common
+    !!messages.app && !!messages.nav && !!messages.pages && !!messages.common
   );
-} 
+}

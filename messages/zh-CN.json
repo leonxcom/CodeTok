@@ -1,10 +1,11 @@
 {
   "app": {
     "title": "Nostudy.ai",
-    "homeTitle": "Nostudy.ai - AI时代的项目制公开实战平台",
-    "description": "与其闷头学习，不如公开构建真实项目并获得全世界认可！",
+    "homeTitle": "Nostudy.ai - 真实项目驱动的AI创作者成长实战平台",
+    "description": "告别闷头学习，公开构建真实项目，获得你的前1000位铁杆粉丝！",
     "startEditing": "开始编辑",
-    "brandName": "Nostudy.ai"
+    "brandName": "Nostudy.ai",
+    "beta": "Beta"
   },
   "nav": {
     "home": "首页",

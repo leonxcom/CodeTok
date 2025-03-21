@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "NoStudy.AI",
-    "description": "No Estudies, Enfócate en la Práctica - Plataforma Educativa AI-Nativa de Nueva Generación Basada en Proyectos",
+    "description": "¡Practica, No Estudies! Construye tus Proyectos en Público y Obtén Recompensas",
     "startEditing": "Empezar a Editar",
     "brandName": "NoStudy.AI"
   },
@@ -55,4 +55,4 @@
     "sponsor": "Patrocinador",
     "poweredBy": "Desarrollado por"
   }
-} 
+}

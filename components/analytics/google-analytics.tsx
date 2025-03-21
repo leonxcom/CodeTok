@@ -1,36 +1,34 @@
-'use client';
+"use client";
 
-import Script from 'next/script';
-import { useEffect } from 'react';
+import Script from "next/script";
+import { useEffect } from "react";
 
 // Google Analytics measurement ID
-const GA_MEASUREMENT_ID = 'G-F3VCL87GCP';
+const GA_MEASUREMENT_ID = "G-F3VCL87GCP";
 
 export default function GoogleAnalytics() {
   useEffect(() => {
-    // 确保window.dataLayer存在
+    // Ensure window.dataLayer exists
     window.dataLayer = window.dataLayer || [];
-    
-    // 定义gtag函数
-    function gtag(...args: any[]) {
+
+    // Define gtag function
+    function gtag(..._args: any[]) {
       window.dataLayer.push(arguments);
     }
-    
-    // 初始化并发送pageview事件
-    gtag('js', new Date());
-    gtag('config', GA_MEASUREMENT_ID);
+
+    // Initialize and send pageview event
+    gtag("js", new Date());
+    gtag("config", GA_MEASUREMENT_ID);
   }, []);
 
   return (
     <>
-      {/* Google Analytics 脚本 */}
+      {/* Google Analytics script */}
       <Script
-        strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        strategy="afterInteractive"
       />
       <Script
-        id="google-analytics"
-        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
             window.dataLayer = window.dataLayer || [];
@@ -39,14 +37,16 @@ export default function GoogleAnalytics() {
             gtag('config', '${GA_MEASUREMENT_ID}');
           `,
         }}
+        id="google-analytics"
+        strategy="afterInteractive"
       />
     </>
   );
 }
 
-// 添加全局类型声明，使TypeScript认识window.dataLayer
+// Add global type declaration for TypeScript
 declare global {
   interface Window {
     dataLayer: any[];
   }
-} 
+}

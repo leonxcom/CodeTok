@@ -16,7 +16,7 @@ export default function LanguageSwitch() {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <button className="flex items-center gap-2 px-2 py-1 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+        <button className="flex items-center gap-2 px-1 py-1 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 whitespace-nowrap">
           {localeNames[locale as keyof typeof localeNames]}
         </button>
       </DropdownTrigger>

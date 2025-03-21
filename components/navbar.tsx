@@ -156,7 +156,7 @@ export default function Navbar() {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden basis-1" justify="end">
-        <Link isExternal aria-label={common('github')} href={siteConfig.links.github}>
+        <Link isExternal aria-label={common('github')} href={siteConfig.links.github} className="hidden">
           <GithubIcon className="text-default-500" />
         </Link>
         <LanguageSwitch />

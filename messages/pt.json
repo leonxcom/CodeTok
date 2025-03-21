@@ -1,7 +1,7 @@
 {
   "app": {
     "title": "NoStudy.AI",
-    "description": "Plataforma Educacional AI-Nativa: Pratique, Não Estude",
+    "description": "Pratique, Não Estude! Construa seus Projetos em Público e Seja Recompensado",
     "startEditing": "Começar a editar",
     "brandName": "NoStudy.AI"
   },
@@ -55,4 +55,4 @@
     "sponsor": "Patrocinador",
     "poweredBy": "Desenvolvido por"
   }
-} 
+}

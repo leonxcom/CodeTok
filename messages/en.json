@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "Nostudy.ai",
+    "description": "Rather Than Study Alone, Practice in Public and Gain Global Recognition",
+    "startEditing": "Start Editing",
+    "brandName": "Nostudy.ai"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "blog": "Blog",
+    "docs": "Docs",
+    "pricing": "Pricing",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "team": "Team",
+    "calendar": "Calendar",
+    "settings": "Settings",
+    "helpAndFeedback": "Help & Feedback",
+    "logout": "Logout"
+  },
+  "pages": {
+    "docs": {
+      "content": "Documentation content coming soon..."
+    },
+    "pricing": {
+      "content": "Pricing details coming soon..."
+    },
+    "blog": {
+      "content": "Blog content coming soon..."
+    },
+    "about": {
+      "content": "Information about us coming soon..."
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "searchPlaceholder": "Search...",
+    "shortcut": {
+      "search": "Search shortcut",
+      "command": "⌘"
+    },
+    "more": "More",
+    "github": "GitHub",
+    "sponsor": "Sponsor",
+    "poweredBy": "Powered by"
+  }
+}

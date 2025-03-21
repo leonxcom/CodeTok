@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "Nostudy.ai",
+    "description": "与其闷头学习，不如公开练习并获得全世界认可",
+    "startEditing": "开始编辑",
+    "brandName": "Nostudy.ai"
+  },
+  "nav": {
+    "home": "首页",
+    "about": "关于",
+    "blog": "博客",
+    "docs": "文档",
+    "pricing": "定价",
+    "profile": "个人资料",
+    "dashboard": "仪表盘",
+    "projects": "项目",
+    "team": "团队",
+    "calendar": "日历",
+    "settings": "设置",
+    "helpAndFeedback": "帮助与反馈",
+    "logout": "退出登录"
+  },
+  "pages": {
+    "docs": {
+      "content": "文档内容即将推出..."
+    },
+    "pricing": {
+      "content": "价格详情即将推出..."
+    },
+    "blog": {
+      "content": "博客内容即将推出..."
+    },
+    "about": {
+      "content": "关于我们的内容即将推出..."
+    }
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "retry": "重试",
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索",
+    "searchPlaceholder": "搜索...",
+    "shortcut": {
+      "search": "搜索快捷键",
+      "command": "⌘"
+    },
+    "more": "更多",
+    "github": "GitHub",
+    "sponsor": "赞助",
+    "poweredBy": "技术支持"
+  }
+}

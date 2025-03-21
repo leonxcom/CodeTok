@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "Nostudy.ai",
+    "description": "Plutôt que d'Étudier Seul, Pratiquez en Public et Gagnez une Reconnaissance Mondiale",
+    "startEditing": "Commencer l'édition",
+    "brandName": "Nostudy.ai"
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "blog": "Blog",
+    "docs": "Documentation",
+    "pricing": "Tarifs",
+    "profile": "Profil",
+    "dashboard": "Tableau de bord",
+    "projects": "Projets",
+    "team": "Équipe",
+    "calendar": "Calendrier",
+    "settings": "Paramètres",
+    "helpAndFeedback": "Aide et commentaires",
+    "logout": "Déconnexion"
+  },
+  "pages": {
+    "docs": {
+      "content": "Contenu de documentation à venir..."
+    },
+    "pricing": {
+      "content": "Détails des tarifs à venir..."
+    },
+    "blog": {
+      "content": "Contenu du blog à venir..."
+    },
+    "about": {
+      "content": "Informations à propos de nous à venir..."
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher...",
+    "shortcut": {
+      "search": "Raccourci de recherche",
+      "command": "⌘"
+    },
+    "more": "Plus",
+    "github": "GitHub",
+    "sponsor": "Sponsor",
+    "poweredBy": "Propulsé par"
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useRef } from "react";
 import {
   Navbar as HeroUINavbar,
   NavbarMenu,
@@ -24,15 +24,42 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import LanguageSwitch from "@/components/language-switch";
 import { GithubIcon, SearchIcon, Logo } from "@/components/icons";
 
+// 将搜索图标组件提取为独立组件
+const SearchButton = memo(() => {
+  const common = useTranslations("common");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearchClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  return (
+    <button
+      aria-label={common("search")}
+      className="w-9 h-9 flex items-center justify-center text-default-600 hover:text-primary focus:outline-none transition-colors"
+      onClick={handleSearchClick}
+    >
+      <div className="w-5 h-5 flex items-center justify-center">
+        <SearchIcon className="w-5 h-5" />
+      </div>
+    </button>
+  );
+});
+
+SearchButton.displayName = "SearchButton";
+
 // 将搜索组件提取为独立组件
 const SearchInput = memo(() => {
   const common = useTranslations("common");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <Input
       aria-label={common("search")}
       classNames={{
-        base: "w-[180px]",
+        base: "w-full",
         inputWrapper: "bg-default-100 h-10",
         input: "text-sm",
       }}
@@ -47,6 +74,7 @@ const SearchInput = memo(() => {
       }
       labelPlacement="outside"
       placeholder={common("searchPlaceholder")}
+      ref={inputRef}
       startContent={
         <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
       }
@@ -228,7 +256,7 @@ const NavbarBrandComponent = memo(() => {
         <Logo />
         <div className="flex items-center gap-2">
           <p className="text-lg font-bold text-inherit">{t("brandName")}</p>
-          <span className="text-xs px-1.5 py-0.5 bg-primary/20 text-primary dark:bg-primary/30 dark:text-primary-300 rounded-md font-medium">
+          <span className="text-xs px-1.5 py-0.5 bg-primary text-white rounded-md font-medium">
             {t("beta")}
           </span>
         </div>
@@ -255,27 +283,45 @@ const NavbarComponent = () => {
 
         {/* 右侧: 导航链接、搜索栏和图标组 */}
         <div className="flex items-center ml-auto gap-3">
+          {/* 导航链接只在大屏幕显示 */}
           <div className="hidden lg:flex items-center">
             <NavbarLinks />
           </div>
-          {/* 搜索栏和Github链接只在大屏幕显示 */}
-          <div className="hidden lg:flex items-center gap-3">
+          
+          {/* 搜索栏只在大屏幕显示 */}
+          <div className="hidden lg:block w-[180px]">
             <SearchInput />
+          </div>
+          
+          {/* 搜索图标在小屏幕显示 */}
+          <div className="lg:hidden flex items-center">
+            <SearchButton />
+          </div>
+          
+          {/* GitHub图标只在大屏幕显示 */}
+          <div className="hidden lg:block">
             <Link
               isExternal
               aria-label="Github"
-              className="text-default-600 hover:text-primary"
+              className="flex items-center justify-center text-default-600 hover:text-primary transition-colors"
               href={siteConfig.links.github}
             >
               <GithubIcon className="w-5 h-5" />
             </Link>
           </div>
-          {/* 主题切换和语言切换在所有屏幕尺寸显示 */}
-          <ThemeSwitch />
-          <LanguageSwitch />
+          
+          {/* 语言切换只在大屏幕显示 */}
+          <div className="hidden lg:flex items-center">
+            <LanguageSwitch />
+          </div>
+          
+          {/* 主题切换在所有屏幕尺寸显示 */}
+          <div className="flex items-center">
+            <ThemeSwitch />
+          </div>
 
           {/* 移动端菜单按钮 */}
-          <div className="lg:hidden">
+          <div className="lg:hidden ml-1">
             <NavbarMenuToggle />
           </div>
         </div>
@@ -283,10 +329,14 @@ const NavbarComponent = () => {
 
       {/* 移动端菜单 */}
       <NavbarMenu className="pt-6 pb-6">
-        <div className="px-4">
+        <div className="px-4 mb-4">
           <SearchInput />
         </div>
         <MobileNavbarLinks />
+        <div className="border-t border-divider my-4"></div>
+        <div className="px-4 flex items-center gap-3 mb-4">
+          <LanguageSwitch />
+        </div>
         <div className="border-t border-divider my-4"></div>
         <NavbarMenuItems />
       </NavbarMenu>

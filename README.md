@@ -1,10 +1,8 @@
-# Nostudy.ai
+# Nostudy.ai - Project-based Public Practice Platform for AI Era
 
-English | [简体中文](./README.zh-CN.md)
+English | [简体中文](./README-zh-CN.md)
 
-> Practice, Not Study! - Build Your Projects in Public and Get Rewarded
-
-Through practice to enhance real capabilities, let knowledge create actual value
+> No study! But build real projects in public and gain reward worldwide!
 
 ## 🛠 Development Tools
 
@@ -15,32 +13,26 @@ This project is built using [Trae](https://www.trae.ai/), an adaptive AI IDE tha
 
 ### Core Concept
 
+- **First Principles Learning**: Our learning is not just to understand the world, but to transform it!
 - **Practice First**: Embrace the "learn-by-doing" approach by abandoning traditional passive learning modes
 - **Project-Driven**: Acquire practical experience through real projects, rather than just accumulating knowledge
 - **AI-Native**: Deeply integrate AI technology into the learning process
 - **Immediate Application**: Highlight practical skills that can be immediately applied
-- **Public Construction**: Share our product construction process and entrepreneurial journey publicly
+- **Public Construction**: Share our product construction process publicly, showcasing learning and creation in the public arena
 
 ### Core Technology Stack
 
 #### Frontend
-- **Framework**: Next.js 13+ (App Router)
+- **Framework**: Next.js 15+ (App Router)
 - **UI Library**: React 18+
 - **Language**: TypeScript 5.0+
 - **Style**: TailwindCSS
 - **State Management**: Zustand
 - **Internationalization**: next-intl
-- **Component Library**: HeroUI v2.7.0
-  - Supports Dark Mode
-  - Based on TailwindCSS
-  - Fully Type-Safe
-  - Supports React Server Components
-  - Customizable Theme
-  - No Runtime Styles
-  - Supports Accessibility
+- **Component Library**: HeroUI
 
 #### AI Integration
-- **LLM Engine**: GPT-4
+- **LLM Engine**: DeepSeek
 - **Features**:
   - Real-Time Code Review
   - Intelligent Learning Path Generation
@@ -63,7 +55,7 @@ This project is built using [Trae](https://www.trae.ai/), an adaptive AI IDE tha
 
 ```
 Nostudy.ai/
-├── app/                      # Next.js 13 App Router
+├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # i18n 路由
 │   ├── api/                 # API 路由
 │   └── providers.tsx        # 全局提供者
@@ -160,8 +152,8 @@ More technical details, please refer to our documentation.
 
 ## Used Technologies
 
-- [Next.js 14](https://nextjs.org/docs/getting-started)
-- [HeroUI v2](https://heroui.com/)
+- [Next.js 15](https://nextjs.org/docs/getting-started)
+- [HeroUI](https://heroui.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Tailwind Variants](https://tailwind-variants.org)
 - [TypeScript](https://www.typescriptlang.org/)

@@ -4,6 +4,7 @@ import { Link } from "@heroui/link";
 import clsx from "clsx";
 import { notFound } from 'next/navigation';
 import { getMessages } from "@/i18n/server";
+import { Analytics } from "@vercel/analytics/react";
 
 import { Providers } from "@/app/providers";
 
@@ -60,6 +61,7 @@ export default async function LocaleLayout(props: Props) {
     <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} messages={messages} locale={validLocale}>
       <div className={clsx("relative flex flex-col h-screen", fontSans.variable)}>
         <GoogleAnalytics />
+        <Analytics />
         <Navbar />
         <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
           {props.children}

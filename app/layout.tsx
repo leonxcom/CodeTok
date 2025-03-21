@@ -10,10 +10,12 @@ import { fontSans } from "@/config/fonts";
 import Navbar from "@/components/navbar";
 import { defaultLocale } from '@/config/i18n';
 
-export const metadata: Metadata = {
-  title: 'Next.js App',
-  description: 'Next.js App with i18n',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Nostudy.ai - Project-Based Social AI Learning Platform',
+    description: 'Rather Than Study Alone, Practice in Public and Gain Global Recognition',
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: [

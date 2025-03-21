@@ -11,16 +11,25 @@ import { fontSans } from "@/config/fonts";
 import Navbar from "@/components/navbar";
 import { defaultLocale } from "@/config/i18n";
 
-export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
+export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+  const titles = {
+    'zh-CN': 'Nostudy.ai - 项目制社会化AI实践平台',
+    'en': 'Nostudy.ai - Project-Based Social AI Learning Platform'
+  };
+
+  const descriptions = {
+    'zh-CN': '与其闷头学习，不如公开练习并获得全世界认可',
+    'en': 'Rather Than Study Alone, Practice in Public and Gain Global Recognition'
+  };
+
+  return {
+    title: titles[params.locale as keyof typeof titles] || titles['en'],
+    description: descriptions[params.locale as keyof typeof descriptions] || descriptions['en'],
+    icons: {
+      icon: "/favicon.ico",
+    },
+  };
+}
 
 async function getMessages(locale: string) {
   try {

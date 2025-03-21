@@ -15,26 +15,23 @@ import { locales, Locale } from "@/config/i18n";
 interface Props {
   children: React.ReactNode;
   params: Promise<{
-    locale: Locale;
+    locale: string;
   }>;
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { locale } = await props.params;
+  const validLocale = locale as Locale;
   
   // Validate locale
-  if (!locales.includes(locale)) {
+  if (!locales.includes(validLocale)) {
     notFound();
   }
 
   // Get messages for metadata
-  const messages = await getMessages(locale);
+  const messages = await getMessages(validLocale);
 
   return {
-    title: {
-      default: messages.app.title,
-      template: `%s - ${messages.app.title}`,
-    },
     description: messages.app.description,
     icons: {
       icon: "/favicon.ico",
@@ -44,21 +41,22 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function LocaleLayout(props: Props) {
   const { locale } = await props.params;
+  const validLocale = locale as Locale;
   
   // Validate locale
-  if (!locales.includes(locale)) {
+  if (!locales.includes(validLocale)) {
     notFound();
   }
 
   // Get messages for the layout
-  const messages = await getMessages(locale);
+  const messages = await getMessages(validLocale);
   
   if (!messages) {
     notFound();
   }
 
   return (
-    <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} messages={messages} locale={locale}>
+    <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} messages={messages} locale={validLocale}>
       <div className={clsx("relative flex flex-col h-screen", fontSans.variable)}>
         <Navbar />
         <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">

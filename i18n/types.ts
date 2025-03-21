@@ -4,6 +4,7 @@
 
 export interface AppMessages {
   title: string;
+  homeTitle: string;
   description: string;
   startEditing: string;
   brandName: string;

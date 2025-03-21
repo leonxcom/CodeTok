@@ -3,14 +3,15 @@
 import { useLocale } from 'next-intl';
 import { useLocaleSwitcher } from '@/i18n/client';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/dropdown';
-import { locales, localeNames } from '@/config/i18n';
+import { locales, localeNames, Locale } from '@/config/i18n';
 
 export default function LanguageSwitch() {
   const locale = useLocale();
   const { handleLocaleChange } = useLocaleSwitcher();
 
   const handleMenuAction = (key: React.Key) => {
-    handleLocaleChange(key.toString());
+    const newLocale = key.toString() as Locale;
+    handleLocaleChange(newLocale);
   };
 
   return (

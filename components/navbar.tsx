@@ -57,6 +57,7 @@ const SearchInput = memo(() => {
 
   return (
     <Input
+      ref={inputRef}
       aria-label={common("search")}
       classNames={{
         base: "w-full",
@@ -74,7 +75,6 @@ const SearchInput = memo(() => {
       }
       labelPlacement="outside"
       placeholder={common("searchPlaceholder")}
-      ref={inputRef}
       startContent={
         <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
       }
@@ -176,7 +176,7 @@ const MobileNavbarLinks = memo(() => {
           <NextLink
             className={clsx(
               "text-base font-medium",
-              pathname.endsWith(item.href) ? "text-primary" : "text-foreground"
+              pathname.endsWith(item.href) ? "text-primary" : "text-foreground",
             )}
             href={getLocalizedHref(item.href)}
           >
@@ -287,34 +287,35 @@ const NavbarComponent = () => {
           <div className="hidden lg:flex items-center">
             <NavbarLinks />
           </div>
-          
+
           {/* 搜索栏只在大屏幕显示 */}
           <div className="hidden lg:block w-[180px]">
             <SearchInput />
           </div>
-          
+
           {/* 搜索图标在小屏幕显示 */}
           <div className="lg:hidden flex items-center">
             <SearchButton />
           </div>
-          
+
           {/* GitHub图标只在大屏幕显示 */}
           <div className="hidden lg:block">
-            <Link
-              isExternal
+            <a
               aria-label="Github"
               className="flex items-center justify-center text-default-600 hover:text-primary transition-colors"
               href={siteConfig.links.github}
+              rel="noopener noreferrer"
+              target="_blank"
             >
               <GithubIcon className="w-5 h-5" />
-            </Link>
+            </a>
           </div>
-          
+
           {/* 语言切换只在大屏幕显示 */}
           <div className="hidden lg:flex items-center">
             <LanguageSwitch />
           </div>
-          
+
           {/* 主题切换在所有屏幕尺寸显示 */}
           <div className="flex items-center">
             <ThemeSwitch />
@@ -333,11 +334,11 @@ const NavbarComponent = () => {
           <SearchInput />
         </div>
         <MobileNavbarLinks />
-        <div className="border-t border-divider my-4"></div>
+        <div className="border-t border-divider my-4" />
         <div className="px-4 flex items-center gap-3 mb-4">
           <LanguageSwitch />
         </div>
-        <div className="border-t border-divider my-4"></div>
+        <div className="border-t border-divider my-4" />
         <NavbarMenuItems />
       </NavbarMenu>
     </HeroUINavbar>

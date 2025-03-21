@@ -56,20 +56,20 @@ This project is built using [Trae](https://www.trae.ai/), an adaptive AI IDE tha
 ```
 Nostudy.ai/
 ├── app/                      # Next.js 15 App Router
-│   ├── [locale]/            # i18n 路由
-│   ├── api/                 # API 路由
-│   └── providers.tsx        # 全局提供者
-├── components/              # React 组件
-│   ├── ui/                 # 基础 UI 组件
-│   └── features/           # 功能组件
-├── config/                  # 配置文件
-├── i18n/                    # 国际化
-│   ├── client.ts           # 客户端 i18n
-│   └── server.ts           # 服务端 i18n
-├── lib/                     # 工具函数
-├── messages/               # 翻译文件
-├── public/                 # 静态资源
-└── styles/                 # 全局样式
+│   ├── [locale]/            # i18n Routes
+│   ├── api/                 # API Routes
+│   └── providers.tsx        # Global Providers
+├── components/              # React Components
+│   ├── ui/                 # Basic UI Components
+│   └── features/           # Feature Components
+├── config/                  # Configuration Files
+├── i18n/                    # Internationalization
+│   ├── client.ts           # Client-side i18n
+│   └── server.ts           # Server-side i18n
+├── lib/                     # Utility Functions
+├── messages/               # Translation Files
+├── public/                 # Static Assets
+└── styles/                 # Global Styles
 ```
 
 ### Core Function Implementation
@@ -167,7 +167,7 @@ More technical details, please refer to our documentation.
 Use `create-next-app` based on this template to create a new project, run the following command:
 
 ```bash
-npx create-next-app -e https://github.com/heroui-inc/next-app-template
+npx create-next-app -e https://github.com/leohuang/nostudy.ai
 ```
 
 ### Install Dependencies

@@ -1,4 +1,6 @@
-# Nostudy.ai - 项目驱动的AI时代公开构建平台
+# Nostudy.ai - 项目驱动的AI时代公开实战平台
+
+简体中文 | [English](./README.md)
 
 与其闷头学习，不如公开构建真实项目并获得全世界认可！
 
@@ -11,7 +13,7 @@
 - **项目驱动**: 通过真实项目实践获取实战经验，而不是简单的知识积累
 - **AI原生**: 将AI技术深度融入学习过程，提供个性化的学习体验和智能辅导
 - **即学即用**: 强调实用性技能的培养，确保学习内容可以立即应用到实际工作中
-- **公开构建**: 公开产品建构过程，让学习和创造都在阳光下进行
+- **公开构建**: 公开项目建构过程，让学习和创造都在公众面前展现成果
 
 ### 技术栈
 
@@ -20,10 +22,10 @@
 - **UI库**: React 18+
 - **开发语言**: TypeScript 5.0+
 - **样式**: TailwindCSS
-- **组件库**: shadcn/ui
+- **组件库**: HeroUI
 
 #### AI集成
-- **LLM引擎**: GPT-4
+- **LLM引擎**: DeepSeek
 - **功能特性**:
   - 实时代码审查
   - 智能学习路径生成
@@ -46,7 +48,7 @@
 
 ```
 Nostudy.ai/
-├── app/                      # Next.js 14 App Router
+├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # 国际化路由
 │   ├── api/                 # API路由
 │   └── providers.tsx        # 全局提供者
@@ -141,7 +143,8 @@ Nostudy.ai/
 
 ## 使用的技术
 
-- [Next.js 14](https://nextjs.org/docs/getting-started)
+- [Next.js 15](https://nextjs.org/docs/getting-started)
+- [HeroUI](https://heroui.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Tailwind Variants](https://tailwind-variants.org)
 - [TypeScript](https://www.typescriptlang.org/)

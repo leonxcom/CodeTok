@@ -3,6 +3,7 @@
 
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
+import { Locale } from '@/config/i18n';
 
 // Create a navigation function for switching locales
 export function useLocaleSwitcher() {
@@ -10,7 +11,7 @@ export function useLocaleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLocaleChange = (newLocale: string) => {
+  const handleLocaleChange = (newLocale: Locale) => {
     if (newLocale === locale) {
       console.log(`Already using locale: ${locale}`);
       return; // Skip if the selected language is the current one
@@ -22,15 +23,11 @@ export function useLocaleSwitcher() {
       segments[1] = newLocale;
       const newPath = segments.join('/');
       
-      // Add a cache-busting parameter to force a complete reload
-      const cacheBuster = `?t=${Date.now()}`;
-      const finalUrl = newPath + cacheBuster;
+      console.log(`Switching locale from ${locale} to ${newLocale}`);
+      console.log(`Navigating to: ${newPath}`);
       
-      console.log(`Switching locale from ${locale} to ${newLocale} via hard refresh`);
-      console.log(`Navigating to: ${finalUrl}`);
-      
-      // Use hard refresh with cache-busting to avoid any caching issues
-      window.location.href = finalUrl;
+      // Use location change for reliable locale switching
+      window.location.href = newPath;
     } catch (error) {
       console.error('Error changing locale:', error);
     }
@@ -39,5 +36,5 @@ export function useLocaleSwitcher() {
   return { locale, handleLocaleChange };
 }
 
-// Convenience hooks re-export
-export { useTranslations, useLocale, useTimeZone } from 'next-intl';
+// Re-export hooks from our typed hooks file
+export { useTranslations, useLocale, useTimeZone } from './hooks';

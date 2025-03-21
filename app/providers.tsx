@@ -7,12 +7,14 @@ import { HeroUIProvider } from "@heroui/system";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { NextIntlClientProvider } from 'next-intl';
+import { Locale } from '@/config/i18n';
+import { Messages } from '@/i18n/types';
 
 export interface ProvidersProps {
   children: React.ReactNode;
   themeProps?: ThemeProviderProps;
-  messages: Record<string, any>;
-  locale: string;
+  messages: Messages;
+  locale: Locale;
 }
 
 declare module "@react-types/shared" {

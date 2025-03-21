@@ -4,7 +4,7 @@ import { Link } from "@heroui/link";
 import { Snippet } from "@heroui/snippet";
 import { Code } from "@heroui/code";
 import { button as buttonStyles } from "@heroui/theme";
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/i18n/client';
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";

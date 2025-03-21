@@ -3,69 +3,54 @@ import { Metadata } from "next";
 import { Link } from "@heroui/link";
 import clsx from "clsx";
 import { notFound } from 'next/navigation';
+import { getMessages } from "@/i18n/server";
 
-import { Providers } from "../providers";
+import { Providers } from "@/app/providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import Navbar from "@/components/navbar";
-import { defaultLocale } from "@/config/i18n";
+import { locales, Locale } from "@/config/i18n";
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const titles = {
-    'zh-CN': 'Nostudy.ai - 项目制社会化AI实践平台',
-    'en': 'Nostudy.ai - Project-Based Social AI Learning Platform'
-  };
+interface Props {
+  children: React.ReactNode;
+  params: Promise<{
+    locale: Locale;
+  }>;
+}
 
-  const descriptions = {
-    'zh-CN': '与其闷头学习，不如公开练习并获得全世界认可',
-    'en': 'Rather Than Study Alone, Practice in Public and Gain Global Recognition'
-  };
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const { locale } = await props.params;
+  
+  // Validate locale
+  if (!locales.includes(locale)) {
+    notFound();
+  }
+
+  // Get messages for metadata
+  const messages = await getMessages(locale);
 
   return {
-    title: titles[params.locale as keyof typeof titles] || titles['en'],
-    description: descriptions[params.locale as keyof typeof descriptions] || descriptions['en'],
+    title: {
+      default: messages.app.title,
+      template: `%s - ${messages.app.title}`,
+    },
+    description: messages.app.description,
     icons: {
       icon: "/favicon.ico",
     },
   };
 }
 
-async function getMessages(locale: string) {
-  try {
-    // 首先尝试加载请求的语言
-    return (await import(`../../messages/${locale}.json`)).default;
-  } catch (error) {
-    console.error(`Error loading messages for locale ${locale}:`, error);
-    
-    // 如果不是默认语言，尝试加载默认语言
-    if (locale !== defaultLocale) {
-      try {
-        console.log(`Falling back to default locale ${defaultLocale}`);
-        return (await import(`../../messages/${defaultLocale}.json`)).default;
-      } catch (fallbackError) {
-        console.error(`Error loading fallback messages:`, fallbackError);
-        notFound(); // 如果连默认语言都加载失败，返回404
-      }
-    } else {
-      notFound(); // 如果是默认语言加载失败，返回404
-    }
-  }
-}
-
-type Props = {
-  children: React.ReactNode;
-  params: { locale: string };
-};
-
 export default async function LocaleLayout(props: Props) {
-  // Wait for all async parameters using Promise.all
-  const [params, children] = await Promise.all([
-    Promise.resolve(props.params),
-    Promise.resolve(props.children)
-  ]);
+  const { locale } = await props.params;
   
-  const locale = params.locale;
+  // Validate locale
+  if (!locales.includes(locale)) {
+    notFound();
+  }
+
+  // Get messages for the layout
   const messages = await getMessages(locale);
   
   if (!messages) {
@@ -77,7 +62,7 @@ export default async function LocaleLayout(props: Props) {
       <div className={clsx("relative flex flex-col h-screen", fontSans.variable)}>
         <Navbar />
         <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-          {children}
+          {props.children}
         </main>
         <footer className="w-full flex items-center justify-center py-3">
           <Link

@@ -13,7 +13,7 @@ import { defaultLocale } from '@/config/i18n';
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
+    template: `%s`,
   },
   description: siteConfig.description,
   icons: {

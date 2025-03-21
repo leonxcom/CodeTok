@@ -1,8 +1,9 @@
 {
   "app": {
     "title": "Nostudy.ai",
-    "description": "Rather Than Study Alone, Practice in Public and Gain Global Recognition",
-    "startEditing": "Start Editing",
+    "homeTitle": "Nostudy.ai - Project-based Public Build Platform for AI Era",
+    "description": "Rather than studying alone, build in public and gain recognition worldwide!",
+    "startEditing": "Start editing",
     "brandName": "Nostudy.ai"
   },
   "nav": {

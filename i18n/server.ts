@@ -42,5 +42,28 @@ export async function getMessages(locale: Locale): Promise<Messages> {
   }
 }
 
+/**
+ * Get a translation function for a specific locale and namespace
+ * @param locale - The locale to get translations for
+ * @param namespace - The namespace to get translations from
+ * @returns A function that returns the translation for a key
+ */
+export async function getTranslations(locale: Locale, namespace: keyof Messages) {
+  const messages = await getMessages(locale);
+  return function t(key: string): string {
+    const parts = key.split('.');
+    let value: any = messages[namespace];
+    
+    for (const part of parts) {
+      if (value === undefined) {
+        return key;
+      }
+      value = value[part];
+    }
+    
+    return value !== undefined ? value : key;
+  };
+}
+
 // Re-export getRequestConfig for convenience
 export { getRequestConfig } from 'next-intl/server'; 

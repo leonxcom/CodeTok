@@ -1,4 +1,4 @@
-export const locales = ['zh-CN', 'zh-TW', 'en', 'hi', 'es', 'ar', 'fr', 'bn', 'pt', 'ru'] as const;
+export const locales = ['zh-CN', 'zh-TW', 'en', 'hi', 'es', 'ar', 'fr', 'bn', 'pt', 'ru', 'ja', 'ko'] as const;
 
 export type Locale = typeof locales[number];
 
@@ -15,4 +15,6 @@ export const localeNames: Record<Locale, string> = {
   'bn': 'বাংলা',
   'pt': 'Português',
   'ru': 'Русский',
+  'ja': '日本語',
+  'ko': '한국어'
 };

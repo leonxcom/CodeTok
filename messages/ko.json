@@ -1,0 +1,59 @@
+{
+  "app": {
+    "title": "Nostudy.ai",
+    "homeTitle": "Nostudy.ai - AI 시대를 위한 프로젝트 기반 공개 실습 플랫폼",
+    "description": "공부는 그만! 공개적으로 실제 프로젝트를 구축하고 전 세계에서 보상을 받으세요!",
+    "startEditing": "편집 시작",
+    "brandName": "Nostudy.ai"
+  },
+  "nav": {
+    "home": "홈",
+    "about": "소개",
+    "blog": "블로그",
+    "docs": "문서",
+    "pricing": "가격",
+    "profile": "프로필",
+    "dashboard": "대시보드",
+    "projects": "프로젝트",
+    "team": "팀",
+    "calendar": "캘린더",
+    "settings": "설정",
+    "helpAndFeedback": "도움말 및 피드백",
+    "logout": "로그아웃"
+  },
+  "pages": {
+    "docs": {
+      "content": "문서 내용이 곧 제공됩니다..."
+    },
+    "pricing": {
+      "content": "가격 정보가 곧 제공됩니다..."
+    },
+    "blog": {
+      "content": "블로그 내용이 곧 제공됩니다..."
+    },
+    "about": {
+      "content": "우리에 대한 정보가 곧 제공됩니다..."
+    }
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류",
+    "retry": "재시도",
+    "cancel": "취소",
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "편집",
+    "create": "생성",
+    "search": "검색",
+    "searchPlaceholder": "검색...",
+    "shortcut": {
+      "search": "검색 단축키",
+      "command": "⌘"
+    },
+    "more": "더 보기",
+    "github": "GitHub",
+    "sponsor": "후원",
+    "poweredBy": "제공"
+  }
+} 

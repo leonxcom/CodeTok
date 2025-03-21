@@ -1,0 +1,58 @@
+{
+  "app": {
+    "title": "Nostudy.ai",
+    "description": "بدلاً من الدراسة وحدك، مارس علناً واحصل على اعتراف عالمي",
+    "startEditing": "ابدأ التحرير",
+    "brandName": "Nostudy.ai"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "about": "حول",
+    "blog": "المدونة",
+    "docs": "الوثائق",
+    "pricing": "التسعير",
+    "profile": "الملف الشخصي",
+    "dashboard": "لوحة التحكم",
+    "projects": "المشاريع",
+    "team": "الفريق",
+    "calendar": "التقويم",
+    "settings": "الإعدادات",
+    "helpAndFeedback": "المساعدة والملاحظات",
+    "logout": "تسجيل الخروج"
+  },
+  "pages": {
+    "docs": {
+      "content": "محتوى الوثائق قادم قريبًا..."
+    },
+    "pricing": {
+      "content": "تفاصيل التسعير قادمة قريبًا..."
+    },
+    "blog": {
+      "content": "محتوى المدونة قادم قريبًا..."
+    },
+    "about": {
+      "content": "معلومات عنا قادمة قريبًا..."
+    }
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "retry": "إعادة المحاولة",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "create": "إنشاء",
+    "search": "بحث",
+    "searchPlaceholder": "بحث...",
+    "shortcut": {
+      "search": "اختصار البحث",
+      "command": "⌘"
+    },
+    "more": "المزيد",
+    "github": "GitHub",
+    "sponsor": "الراعي",
+    "poweredBy": "مدعوم بواسطة"
+  }
+}

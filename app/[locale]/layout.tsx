@@ -10,6 +10,7 @@ import { Providers } from "@/app/providers";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import Navbar from "@/components/navbar";
+import GoogleAnalytics from "@/components/analytics/google-analytics";
 import { locales, Locale } from "@/config/i18n";
 
 interface Props {
@@ -58,6 +59,7 @@ export default async function LocaleLayout(props: Props) {
   return (
     <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} messages={messages} locale={validLocale}>
       <div className={clsx("relative flex flex-col h-screen", fontSans.variable)}>
+        <GoogleAnalytics />
         <Navbar />
         <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
           {props.children}

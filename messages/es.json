@@ -1,9 +1,9 @@
 {
   "app": {
-    "title": "NoStudy.AI",
-    "description": "¡Practica, No Estudies! Construye tus Proyectos en Público y Obtén Recompensas",
-    "startEditing": "Empezar a Editar",
-    "brandName": "NoStudy.AI"
+    "title": "Nostudy.ai",
+    "description": "¡Practica, no estudies! Construye tus proyectos en público y obtén recompensas",
+    "startEditing": "Empezar a editar",
+    "brandName": "Nostudy.ai"
   },
   "nav": {
     "home": "Inicio",

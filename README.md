@@ -1,4 +1,4 @@
-# NoStudy.AI - Practice, Not Study! - Build Your Projects in Public and Get Rewarded
+# Nostudy.ai - Practice, Not Study! - Build Your Projects in Public and Get Rewarded
 
 # Practice, Not Study! - Build Your Projects in Public and Get Rewarded
 
@@ -48,7 +48,7 @@ Through practice to enhance real capabilities, let knowledge create actual value
 ### System Architecture
 
 ```
-NoStudy.AI/
+Nostudy.ai/
 ├── app/                      # Next.js 13 App Router
 │   ├── [locale]/            # i18n routes
 │   ├── api/                 # API routes

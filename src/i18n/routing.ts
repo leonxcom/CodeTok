@@ -6,8 +6,8 @@ export type Locale = (typeof locales)[number];
 
 // 语言名称映射
 export const languageNames: Record<Locale, string> = {
-  zh: '简体中文',
-  'zh-TW': '繁體中文',
+  zh: '中文（简体）',
+  'zh-TW': '中文（繁體）',
   en: 'English',
 };
 

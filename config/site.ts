@@ -5,57 +5,57 @@ export const siteConfig = {
   description: "No study! Build real projects in public, and gain your first 1000 fans worldwide!",
   navItems: [
     {
-      label: "Home",
+      label: "home",
       href: "/",
     },
     {
-      label: "Docs",
+      label: "docs",
       href: "/docs",
     },
     {
-      label: "Pricing",
+      label: "pricing",
       href: "/pricing",
     },
     {
-      label: "Blog",
+      label: "blog",
       href: "/blog",
     },
     {
-      label: "About",
+      label: "about",
       href: "/about",
     },
   ],
   navMenuItems: [
     {
-      label: "Profile",
+      label: "profile",
       href: "/profile",
     },
     {
-      label: "Dashboard",
+      label: "dashboard",
       href: "/dashboard",
     },
     {
-      label: "Projects",
+      label: "projects",
       href: "/projects",
     },
     {
-      label: "Team",
+      label: "team",
       href: "/team",
     },
     {
-      label: "Calendar",
+      label: "calendar",
       href: "/calendar",
     },
     {
-      label: "Settings",
+      label: "settings",
       href: "/settings",
     },
     {
-      label: "Help & Feedback",
+      label: "helpAndFeedback",
       href: "/help-feedback",
     },
     {
-      label: "Logout",
+      label: "logout",
       href: "/logout",
     },
   ],

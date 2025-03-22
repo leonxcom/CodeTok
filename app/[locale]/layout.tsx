@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 import { Metadata } from "next";
-import { Link } from "@heroui/link";
+import Link from "next/link";
 import clsx from "clsx";
 import { notFound } from "next/navigation";
 import React, { Suspense, lazy } from "react";
@@ -9,7 +9,7 @@ import { getMessages } from "@/i18n/server";
 import { Providers } from "@/app/providers";
 import { fontSans } from "@/config/fonts";
 import { locales, Locale } from "@/config/i18n";
-import Navbar from "@/components/navbar";
+import { Navbar } from "@/components/ui/navbar";
 
 // Lazy load analytics components
 const GoogleAnalytics = lazy(

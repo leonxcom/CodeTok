@@ -29,13 +29,28 @@
 ### 技术栈
 
 #### 前端
-- **框架**: Next.js 15 (App Router)
-- **UI库**: React 19
+- **框架**: 
+  - Next.js 15 (App Router)
+  - React 18.3.1
+- **UI库**: 
+  - React 19 (Next.js)
+  - React 18.3.1
 - **开发语言**: TypeScript
-- **样式**: Tailwind CSS v4
+- **样式**: 
+  - Tailwind CSS v4 (Next.js)
+  - Tailwind CSS 3.4.4
 - **组件库**: 
   - Shadcn UI
   - MagicUI Design
+  - Radix UI (Primitives)
+- **构建工具**:
+  - Vite 5.2.13
+- **图标库**:
+  - Lucide React 0.424.0
+- **工具库**:
+  - clsx - 用于构造类名字符串的工具
+  - tailwind-merge - 合并Tailwind CSS类而不产生样式冲突
+  - class-variance-authority - 类型安全的UI组件变体
 
 #### 后端与数据库
 - **数据库**: Neon Database (Serverless PostgreSQL)

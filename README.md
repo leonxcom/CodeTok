@@ -30,29 +30,44 @@ Say goodbye to passive learning, build real projects publicly, and gain your fir
 
 #### Frontend
 - **Framework**: Next.js 15 (App Router)
-- **UI Library**: React 18+
-- **Language**: TypeScript 5.0+
-- **Style**: TailwindCSS
-- **Component Library**: HeroUI
+- **UI Library**: React 19
+- **Language**: TypeScript
+- **Style**: Tailwind CSS v4
+- **Component Libraries**: 
+  - Shadcn UI
+  - MagicUI Design
 
-#### AI Integration
-- **LLM Engine**: GPT/DeepSeek
-- **Features**:
-  - Real-Time Code Review
-  - Intelligent Learning Path Generation
-  - Personalized Progress Tracking
-  - Intelligent Question and Answer Support
-  - Code Optimization Suggestions
+#### Backend & Database
+- **Database**: Neon Database (Serverless PostgreSQL)
+- **ORM**: Drizzle ORM
+- **Authentication**: Better Auth
+- **API**: Next.js API Routes + Next Safe Action
+- **Email Service**: Resend
+- **Payment Processing**: 
+  - Stripe
+  - Creem.io
+
+#### Internationalization
+- **i18n Framework**: Next-intl
+
+#### Analytics & AI
+- **Analytics**: 
+  - Plausible Analytics
+  - Google Analytics
+- **AI Integration**: Vercel AI SDK
+- **Content Management**: Content Collections
+
+#### Data Display
+- **Tables**: Tanstack Table
 
 #### Development Tools
-- **AI IDE**: [Trae](https://www.trae.ai/)
 - **Package Manager**: pnpm
 - **Code Quality**:
   - ESLint
   - Prettier
   - TypeScript Strict Mode
 - **Git Workflow**:
-  - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+  - Conventional Commits
   - Branch-Based Development
   - GitHub Actions CI/CD
 
@@ -65,13 +80,20 @@ Nostudy.ai/
 │   ├── api/                 # API Routes
 │   └── providers.tsx        # Global Providers
 ├── components/              # React Components
-│   ├── ui/                 # Basic UI Components
+│   ├── ui/                 # Shadcn UI Components
+│   ├── magic/              # MagicUI Components
 │   └── features/           # Feature Components
+├── db/                      # Database Schema & Clients
+│   ├── schema.ts           # Drizzle Schema
+│   └── index.ts            # DB Client
 ├── config/                  # Configuration Files
 ├── i18n/                    # Internationalization
 │   ├── client.ts           # Client-side i18n
 │   └── server.ts           # Server-side i18n
 ├── lib/                     # Utility Functions
+│   ├── auth.ts             # Authentication Logic
+│   ├── actions.ts          # Server Actions
+│   └── stripe.ts           # Payment Logic
 ├── messages/               # Translation Files
 ├── public/                 # Static Assets
 └── styles/                 # Global Styles
@@ -153,13 +175,19 @@ Nostudy.ai/
 
 ## 🧰 Technologies Used
 
-- [Next.js 15](https://nextjs.org/docs/getting-started)
-- [HeroUI](https://heroui.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
+- [Next.js 15](https://nextjs.org/)
+- [React 19](https://react.dev/)
+- [Tailwind CSS v4](https://tailwindcss.com/)
+- [Shadcn UI](https://ui.shadcn.com/)
+- [Neon Database](https://neon.tech/)
+- [Drizzle ORM](https://orm.drizzle.team/)
 - [TypeScript](https://www.typescriptlang.org/)
+- [Stripe](https://stripe.com/)
+- [Resend](https://resend.com/)
+- [Next-intl](https://next-intl-docs.vercel.app/)
+- [Vercel AI SDK](https://sdk.vercel.ai/docs)
+- [Tanstack Table](https://tanstack.com/table)
 - [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
 
 ## 🚦 Quick Start
 
@@ -168,7 +196,7 @@ Nostudy.ai/
 Use `create-next-app` based on this template to create a new project:
 
 ```bash
-npx create-next-app -e https://github.com/leohuang/nostudy.ai
+npx create-next-app -e https://github.com/Nostudy-ai/Nostudy.ai
 ```
 
 ### Install Dependencies

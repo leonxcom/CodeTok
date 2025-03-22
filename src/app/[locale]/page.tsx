@@ -3,21 +3,22 @@ import Link from 'next/link'
 import { getSiteConfig } from '@/config/site-i18n'
 import { buttonVariants } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
-import { unstable_setRequestLocale } from 'next-intl/server'
+import { setRequestLocale } from 'next-intl/server'
+import { Locale } from '@/i18n/routing'
 
 export default function IndexPage({
   params: { locale },
 }: {
-  params: { locale: string }
+  params: { locale: Locale }
 }) {
-  unstable_setRequestLocale(locale)
+  setRequestLocale(locale)
 
   const t = useTranslations('Index')
   const siteConfig = getSiteConfig(locale)
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
       <h1 className="max-w-[66vw] truncate text-lg font-bold normal-case sm:max-w-full sm:text-3xl">
-        NoStudy.ai - 你的AI学习助手
+        NoStudy.ai
       </h1>
       <div className="flex max-w-[980px] flex-col items-start gap-2">
         <p className="max-w-[700px] text-lg text-muted-foreground">

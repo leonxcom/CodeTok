@@ -1,7 +1,7 @@
 {
   "name": "nostudy-ai",
   "version": "0.1.0",
-  "description": "NoStudy.ai - 你的AI学习助手",
+  "description": "NoStudy.ai",
   "private": true,
   "scripts": {
     "dev": "next dev",

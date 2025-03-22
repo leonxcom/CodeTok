@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Icons } from '@/components/icons'
-import { Locale, locales, languageNames } from '@/i18n'
+import { Locale, locales, languageNames } from '@/i18n/routing'
 
 interface LanguageToggleProps {
   locale: Locale

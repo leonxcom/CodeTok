@@ -1,74 +1,68 @@
-# Nostudy.ai
+# NoStudy.ai
 
-## <a href="https://ui.shadcn.com/" target="_blank">ShadcnUI</a> + <a href="https://react.dev/" target="_blank">React</a> + <a href="https://www.typescriptlang.org/" target="_blank">TypeScript</a> + <a href="https://tailwindcss.com/" target="_blank">Tailwind</a>.
+NoStudy.ai是一个AI学习助手平台，旨在通过人工智能技术让学习变得更轻松、更高效。
 
-![nostudy.ai](https://placehold.co/1200x630/3b82f6/ffffff?text=Nostudy.ai)
+## 功能特点
 
-真实项目驱动的AI创作者成长实战平台，帮助你获得前1000位铁杆粉丝。 <a href="https://nostudy.ai/" target="_blank">访问网站</a>
+- 基于Next.js框架开发的现代化Web应用
+- 使用Tailwind CSS和ShadcnUI构建美观的用户界面
+- 支持多语言（中文、英文、法语）
+- 响应式设计，适配各种设备
 
-## Sections
+## 技术栈
 
-- [x] Navbar
-- [x] Sidebar(mobile)
-- [x] Hero
-- [x] Sponsors
-- [x] About
-- [x] Stats
-- [x] How It Works
-- [x] Features
-- [x] Services
-- [x] Call-to-Action (CTA)
-- [x] Testimonials
-- [x] Team
-- [x] Pricing
-- [x] Newsletter
-- [x] Frequently Asked Questions(FAQ)
-- [x] Footer
+- [Next.js](https://nextjs.org/) - React框架
+- [Tailwind CSS](https://tailwindcss.com/) - CSS框架
+- [ShadcnUI](https://ui.shadcn.com/) - UI组件库
+- [NextIntl](https://next-intl-docs.vercel.app/) - 国际化方案
 
-## Features
+## 快速开始
 
-- [x] Fully Responsive Design
-- [x] User Friendly Navigation
-- [x] Dark Mode
-- [x] Meta tags
-
-## Technology Stack
-
-- **Framework**: [React](https://react.dev/) 18.3.1
-- **Language**: [TypeScript](https://www.typescriptlang.org/) 5.4.5
-- **Build Tool**: [Vite](https://vitejs.dev/) 5.2.13
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) 3.4.4
-- **UI Components**:
-  - [Shadcn UI](https://ui.shadcn.com/)
-  - [Radix UI](https://www.radix-ui.com/) (Primitives)
-- **Icons**: [Lucide React](https://lucide.dev/) 0.424.0
-- **Utility Libraries**:
-  - [clsx](https://github.com/lukeed/clsx) - Utility for constructing className strings
-  - [tailwind-merge](https://github.com/dcastil/tailwind-merge) - Merge Tailwind CSS classes without style conflicts
-  - [class-variance-authority](https://github.com/joe-bell/cva) - Type-safe UI component variants
-
-## How to install
-
-1. Clone this repository:
+克隆仓库并安装依赖：
 
 ```bash
-git clone https://github.com/Nostudy-ai/Nostudy.ai.git
-```
-
-2. Go into project
-
-```bash
+git clone https://github.com/LeonZeng919/nostudy.ai.git
 cd nostudy.ai
-```
-
-3. Install dependencies
-
-```bash
 pnpm install
 ```
 
-4. Run project
+复制环境变量文件：
 
 ```bash
-pnpm dev
+cp .env.example .env.local
 ```
+
+启动开发服务器：
+
+```bash
+pnpm run dev
+```
+
+访问 [http://localhost:3000](http://localhost:3000) 查看应用。
+
+## 项目结构
+
+```bash
+.
+├── messages    --> 多语言文本
+│   ├── en.json
+│   ├── fr.json
+│   └── zh.json
+├── public      --> 静态资源
+├── src
+│   ├── app     --> 应用页面
+│   ├── components --> 组件
+│   ├── config  --> 配置
+│   ├── lib     --> 工具库
+│   └── styles  --> 样式
+```
+
+## 国际化配置
+
+- `src/i18n.ts` - next-intl配置文件
+- `src/middleware.ts` - 自动语言检测中间件
+- `messages/` - 语言包目录
+
+## 许可证
+
+[MIT](LICENSE)

@@ -61,6 +61,7 @@
 - **表格**: Tanstack Table
 
 #### 开发工具
+- **AI IDE**: [Trae](https://www.trae.ai/)
 - **包管理器**: pnpm
 - **代码质量**:
   - ESLint

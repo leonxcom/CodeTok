@@ -61,6 +61,7 @@ Say goodbye to passive learning, build real projects publicly, and gain your fir
 - **Tables**: Tanstack Table
 
 #### Development Tools
+- **AI IDE**: [Trae](https://www.trae.ai/)
 - **Package Manager**: pnpm
 - **Code Quality**:
   - ESLint

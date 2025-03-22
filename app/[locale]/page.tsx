@@ -28,14 +28,22 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function Home(props: Props) {
   const { locale } = await props.params;
   const validLocale = locale as Locale;
-
-  // 使用i18n中的自定义函数
-  // @ts-ignore - 这里我们对TS错误进行忽略
-  const t = await getTranslations(validLocale, "app");
-  // @ts-ignore
-  const nav = await getTranslations(validLocale, "nav");
-  // @ts-ignore
-  const common = await getTranslations(validLocale, "common");
+  
+  // 使用next-intl提供的getTranslations函数 
+  const t = await getTranslations({
+    locale: validLocale,
+    namespace: 'app'
+  });
+  
+  const nav = await getTranslations({
+    locale: validLocale,
+    namespace: 'nav'  
+  });
+  
+  const common = await getTranslations({
+    locale: validLocale,
+    namespace: 'common'
+  });
 
   return (
     <div className="flex flex-col items-center w-full">

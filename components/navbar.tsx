@@ -24,7 +24,7 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import LanguageSwitch from "@/components/language-switch";
 import { GithubIcon, SearchIcon, Logo } from "@/components/icons";
 
-// 将搜索图标组件提取为独立组件
+// Extract search icon component as a standalone component
 const SearchButton = memo(() => {
   const common = useTranslations("common");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +50,7 @@ const SearchButton = memo(() => {
 
 SearchButton.displayName = "SearchButton";
 
-// 将搜索组件提取为独立组件
+// Extract search component as a standalone component
 const SearchInput = memo(() => {
   const common = useTranslations("common");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -85,21 +85,21 @@ const SearchInput = memo(() => {
 
 SearchInput.displayName = "SearchInput";
 
-// 将菜单项组件提取为独立组件
+// Extract menu items as a standalone component
 const NavbarLinks = memo(() => {
   const nav = useTranslations("nav");
   const locale = useLocale();
   const pathname = usePathname();
 
-  // 生成带语言前缀的链接
+  // Generate link with locale prefix
   const getLocalizedHref = (href: string) => {
-    // 如果已经是绝对URL，则直接返回
+    // If it's already an absolute URL, return it directly
     if (href.startsWith("http")) return href;
 
-    // 如果href是 "/" 根路径，需要特殊处理
+    // If href is root path "/", special handling is needed
     if (href === "/") return `/${locale}`;
 
-    // 否则添加语言前缀
+    // Otherwise add locale prefix
     return `/${locale}${href}`;
   };
 
@@ -139,21 +139,21 @@ const NavbarLinks = memo(() => {
 
 NavbarLinks.displayName = "NavbarLinks";
 
-// 将移动端的导航链接组件提取为独立组件
+// Extract mobile navigation links as a standalone component
 const MobileNavbarLinks = memo(() => {
   const nav = useTranslations("nav");
   const locale = useLocale();
   const pathname = usePathname();
 
-  // 生成带语言前缀的链接
+  // Generate link with locale prefix
   const getLocalizedHref = (href: string) => {
-    // 如果已经是绝对URL，则直接返回
+    // If it's already an absolute URL, return it directly
     if (href.startsWith("http")) return href;
 
-    // 如果href是 "/" 根路径，需要特殊处理
+    // If href is root path "/", special handling is needed
     if (href === "/") return `/${locale}`;
 
-    // 否则添加语言前缀
+    // Otherwise add locale prefix
     return `/${locale}${href}`;
   };
 
@@ -190,12 +190,12 @@ const MobileNavbarLinks = memo(() => {
 
 MobileNavbarLinks.displayName = "MobileNavbarLinks";
 
-// 将菜单组件提取为独立组件
+// Extract menu component as a standalone component
 const NavbarMenuItems = memo(() => {
   const nav = useTranslations("nav");
 
   const getMenuLabel = (label: string) => {
-    // 特殊标签映射
+    // Special label mapping
     const menuLabelMap: { [key: string]: string } = {
       "Help & Feedback": "helpAndFeedback",
       Profile: "profile",
@@ -230,20 +230,20 @@ const NavbarMenuItems = memo(() => {
 
 NavbarMenuItems.displayName = "NavbarMenuItems";
 
-// 导航栏品牌组件
+// Navbar brand component
 const NavbarBrandComponent = memo(() => {
   const t = useTranslations("app");
   const locale = useLocale();
 
-  // 生成带语言前缀的链接
+  // Generate link with locale prefix
   const getLocalizedHref = (href: string) => {
-    // 如果已经是绝对URL，则直接返回
+    // If it's already an absolute URL, return it directly
     if (href.startsWith("http")) return href;
 
-    // 如果href是 "/" 根路径，需要特殊处理
+    // If href is root path "/", special handling is needed
     if (href === "/") return `/${locale}`;
 
-    // 否则添加语言前缀
+    // Otherwise add locale prefix
     return `/${locale}${href}`;
   };
 
@@ -267,7 +267,7 @@ const NavbarBrandComponent = memo(() => {
 
 NavbarBrandComponent.displayName = "NavbarBrandComponent";
 
-// 主导航栏组件
+// Main navbar component
 const NavbarComponent = () => {
   return (
     <HeroUINavbar
@@ -278,27 +278,27 @@ const NavbarComponent = () => {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center w-full">
-        {/* 左侧: Logo */}
+        {/* Left: Logo */}
         <NavbarBrandComponent />
 
-        {/* 右侧: 导航链接、搜索栏和图标组 */}
+        {/* Right: Navigation links, search bar and icon group */}
         <div className="flex items-center ml-auto gap-3">
-          {/* 导航链接只在大屏幕显示 */}
+          {/* Navigation links only shown on large screens */}
           <div className="hidden lg:flex items-center">
             <NavbarLinks />
           </div>
 
-          {/* 搜索栏只在大屏幕显示 */}
+          {/* Search bar only shown on large screens */}
           <div className="hidden lg:block w-[180px]">
             <SearchInput />
           </div>
 
-          {/* 搜索图标在小屏幕显示 */}
+          {/* Search icon shown on small screens */}
           <div className="lg:hidden flex items-center">
             <SearchButton />
           </div>
 
-          {/* GitHub图标只在大屏幕显示 */}
+          {/* GitHub icon only shown on large screens */}
           <div className="hidden lg:block">
             <a
               aria-label="Github"
@@ -311,24 +311,24 @@ const NavbarComponent = () => {
             </a>
           </div>
 
-          {/* 语言切换只在大屏幕显示 */}
+          {/* Language switcher only shown on large screens */}
           <div className="hidden lg:flex items-center">
             <LanguageSwitch />
           </div>
 
-          {/* 主题切换在所有屏幕尺寸显示 */}
+          {/* Theme switcher shown on all screen sizes */}
           <div className="flex items-center">
             <ThemeSwitch />
           </div>
 
-          {/* 移动端菜单按钮 */}
+          {/* Mobile menu button */}
           <div className="lg:hidden ml-1">
             <NavbarMenuToggle />
           </div>
         </div>
       </div>
 
-      {/* 移动端菜单 */}
+      {/* Mobile menu */}
       <NavbarMenu className="pt-6 pb-6">
         <div className="px-4 mb-4">
           <SearchInput />

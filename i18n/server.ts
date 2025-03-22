@@ -19,12 +19,12 @@ export async function getMessages(locale: Locale): Promise<Messages> {
 
     return messages;
   } catch (error) {
-    // 错误处理，但不使用console
+    // Error handling, but not using console
 
     // If not default locale, try to load default locale
     if (locale !== defaultLocale) {
       try {
-        // 尝试加载默认语言，但不使用console
+        // Try to load default language, but not using console
         const fallbackMessages = (
           await import(`../messages/${defaultLocale}.json`)
         ).default;
@@ -38,7 +38,7 @@ export async function getMessages(locale: Locale): Promise<Messages> {
 
         return fallbackMessages;
       } catch {
-        // 错误处理，但不使用console
+        // Error handling, but not using console
         throw new Error(
           `Failed to load messages for locale ${locale} and fallback locale ${defaultLocale}`,
         );

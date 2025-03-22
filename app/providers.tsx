@@ -27,7 +27,7 @@ declare module "@react-types/shared" {
   }
 }
 
-// 优化NextThemes提供者
+// Optimize NextThemes provider
 const ThemedProviders = memo(
   ({
     children,
@@ -40,7 +40,7 @@ const ThemedProviders = memo(
 
 ThemedProviders.displayName = "ThemedProviders";
 
-// 主提供者组件
+// Main provider component
 const ProvidersComponent = ({
   children,
   themeProps,
@@ -49,9 +49,9 @@ const ProvidersComponent = ({
 }: ProvidersProps) => {
   const router = useRouter();
 
-  // 使用严格模式确保消息和区域设置已定义
+  // Use strict mode to ensure messages and locale are defined
   if (!messages || !locale) {
-    // 移除console语句
+    // Remove console statements
   }
 
   return (
@@ -59,7 +59,7 @@ const ProvidersComponent = ({
       locale={locale}
       messages={messages}
       now={new Date()}
-      // 添加缓存控制，确保不会使用错误的缓存翻译
+      // Add cache control to ensure incorrect cached translations are not used
       timeZone="UTC"
     >
       <HeroUIProvider navigate={router.push}>

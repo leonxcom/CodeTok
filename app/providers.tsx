@@ -4,7 +4,6 @@ import type { ThemeProviderProps } from "next-themes";
 
 import * as React from "react";
 import { memo } from "react";
-import { HeroUIProvider } from "@heroui/system";
 import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { NextIntlClientProvider } from "next-intl";
@@ -62,9 +61,7 @@ const ProvidersComponent = ({
       // Add cache control to ensure incorrect cached translations are not used
       timeZone="UTC"
     >
-      <HeroUIProvider navigate={router.push}>
-        <ThemedProviders themeProps={themeProps}>{children}</ThemedProviders>
-      </HeroUIProvider>
+      <ThemedProviders themeProps={themeProps}>{children}</ThemedProviders>
     </NextIntlClientProvider>
   );
 };

@@ -1,77 +1,59 @@
 "use client";
 
 import { FC, memo } from "react";
-import { VisuallyHidden } from "@react-aria/visually-hidden";
-import { SwitchProps, useSwitch } from "@heroui/switch";
 import { useTheme } from "next-themes";
 import { useIsSSR } from "@react-aria/ssr";
-import clsx from "clsx";
+import { VisuallyHidden } from "@react-aria/visually-hidden";
+import { cn } from "@/lib/utils";
 
 import { SunFilledIcon, MoonFilledIcon } from "@/components/icons";
+import { Switch } from "@/components/ui/switch";
 
 export interface ThemeSwitchProps {
   className?: string;
-  classNames?: SwitchProps["classNames"];
 }
 
 const ThemeSwitchComponent: FC<ThemeSwitchProps> = ({
   className,
-  classNames,
 }) => {
   const { theme, setTheme } = useTheme();
   const isSSR = useIsSSR();
 
-  const onChange = () => {
-    theme === "light" ? setTheme("dark") : setTheme("light");
+  const isLight = theme === "light" || isSSR;
+  
+  const handleChange = (checked: boolean) => {
+    setTheme(checked ? "light" : "dark");
   };
 
-  const {
-    Component,
-    slots,
-    isSelected,
-    getBaseProps,
-    getInputProps,
-    getWrapperProps,
-  } = useSwitch({
-    isSelected: theme === "light" || isSSR,
-    "aria-label": `Switch to ${theme === "light" || isSSR ? "dark" : "light"} mode`,
-    onChange,
-  });
-
   return (
-    <Component
-      {...getBaseProps({
-        className: clsx(
-          "flex items-center justify-center transition-colors",
-          className,
-          classNames?.base,
-        ),
-      })}
+    <div
+      className={cn(
+        "flex items-center justify-center transition-colors",
+        className
+      )}
     >
       <VisuallyHidden>
-        <input {...getInputProps()} />
+        <label htmlFor="theme-switch">
+          Switch to {isLight ? "dark" : "light"} mode
+        </label>
       </VisuallyHidden>
-      <div
-        {...getWrapperProps()}
-        className={slots.wrapper({
-          class: clsx(
-            [
-              "bg-transparent",
-              "flex items-center justify-center",
-              "group-data-[selected=true]:bg-transparent",
-              "!text-default-600 hover:text-primary",
-            ],
-            classNames?.wrapper,
-          ),
-        })}
-      >
-        {!isSelected || isSSR ? (
+      
+      <div className="flex items-center justify-center !text-default-600 hover:text-primary">
+        {isLight ? (
           <SunFilledIcon size={24} />
         ) : (
           <MoonFilledIcon size={24} />
         )}
       </div>
-    </Component>
+      
+      <Switch
+        id="theme-switch"
+        checked={isLight}
+        onCheckedChange={handleChange}
+        className="hidden" // Hide the actual switch but keep functionality
+        aria-label={`Switch to ${isLight ? "dark" : "light"} mode`}
+      />
+    </div>
   );
 };
 

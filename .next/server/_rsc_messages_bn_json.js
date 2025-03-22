@@ -1,0 +1,25 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+exports.id = "_rsc_messages_bn_json";
+exports.ids = ["_rsc_messages_bn_json"];
+exports.modules = {
+
+/***/ "(rsc)/./messages/bn.json":
+/*!**************************!*\
+  !*** ./messages/bn.json ***!
+  \**************************/
+/***/ ((module) => {
+
+module.exports = /*#__PURE__*/JSON.parse('{"app":{"title":"Nostudy.ai","homeTitle":"Nostudy.ai - বাস্তব প্রকল্প-চালিত এআই সৃষ্টিকর্তা বৃদ্ধি অনুশীলন প্ল্যাটফর্ম","description":"পড়াশোনা নয়! প্রকাশ্যে বাস্তব প্রকল্প তৈরি করুন, এবং বিশ্বজুড়ে আপনার প্রথম ১০০০ বিশ্বস্ত সমর্থক অর্জন করুন!","startEditing":"সম্পাদনা শুরু করুন","brandName":"Nostudy.ai"},"nav":{"home":"হোম","about":"সম্পর্কে","blog":"ব্লগ","docs":"ডকুমেন্টেশন","pricing":"মূল্য","profile":"প্রোফাইল","dashboard":"ড্যাশবোর্ড","projects":"প্রজেক্টস","team":"টিম","calendar":"ক্যালেন্ডার","settings":"সেটিংস","helpAndFeedback":"সাহায্য ও প্রতিক্রিয়া","logout":"লগআউট"},"pages":{"docs":{"content":"ডকুমেন্টেশন কন্টেন্ট শীঘ্রই আসছে..."},"pricing":{"content":"মূল্য বিবরণ শীঘ্রই আসছে..."},"blog":{"content":"ব্লগ কন্টেন্ট শীঘ্রই আসছে..."},"about":{"content":"আমাদের সম্পর্কে তথ্য শীঘ্রই আসছে..."}},"common":{"loading":"লোড হচ্ছে...","error":"ত্রুটি","retry":"পুনরায় চেষ্টা করুন","cancel":"বাতিল","confirm":"নিশ্চিত করুন","save":"সংরক্ষণ","delete":"মুছুন","edit":"সম্পাদনা","create":"তৈরি করুন","search":"অনুসন্ধান","searchPlaceholder":"অনুসন্ধান করুন...","shortcut":{"search":"অনুসন্ধান শর্টকাট","command":"⌘"},"more":"আরও","github":"GitHub","sponsor":"স্পনসর","poweredBy":"দ্বারা চালিত"}}');
+
+/***/ })
+
+};
+;

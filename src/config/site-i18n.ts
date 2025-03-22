@@ -12,25 +12,6 @@ type SiteConfig = {
 }
 
 const siteConfigBase: Record<Locale, SiteConfig> = {
-  en: {
-    name: 'NoStudy.ai',
-    description: 'NoStudy.ai - Your AI Learning Assistant',
-    mainNav: [
-      {
-        title: 'Home',
-        href: '/',
-      },
-      {
-        title: 'About',
-        href: '/about',
-      },
-    ],
-    links: {
-      twitter: 'https://twitter.com/nostudy_ai',
-      github: 'https://github.com/Nostudy-ai/nostudy.ai',
-      docs: '/docs',
-    },
-  },
   zh: {
     name: 'NoStudy.ai',
     description: 'NoStudy.ai - 你的AI学习助手',
@@ -49,9 +30,47 @@ const siteConfigBase: Record<Locale, SiteConfig> = {
       github: 'https://github.com/Nostudy-ai/nostudy.ai',
       docs: '/docs',
     },
+  },
+  'zh-TW': {
+    name: 'NoStudy.ai',
+    description: 'NoStudy.ai - 你的AI學習助手',
+    mainNav: [
+      {
+        title: '首頁',
+        href: '/',
+      },
+      {
+        title: '關於',
+        href: '/about',
+      },
+    ],
+    links: {
+      twitter: 'https://twitter.com/nostudy_ai',
+      github: 'https://github.com/Nostudy-ai/nostudy.ai',
+      docs: '/docs',
+    },
+  },
+  en: {
+    name: 'NoStudy.ai',
+    description: 'NoStudy.ai - Your AI Learning Assistant',
+    mainNav: [
+      {
+        title: 'Home',
+        href: '/',
+      },
+      {
+        title: 'About',
+        href: '/about',
+      },
+    ],
+    links: {
+      twitter: 'https://twitter.com/nostudy_ai',
+      github: 'https://github.com/Nostudy-ai/nostudy.ai',
+      docs: '/docs',
+    },
   }
 }
 
 export function getSiteConfig(locale: Locale): SiteConfig {
-  return siteConfigBase[locale] || siteConfigBase.en
+  return siteConfigBase[locale] || siteConfigBase.zh
 }

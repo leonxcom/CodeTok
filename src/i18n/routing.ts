@@ -1,17 +1,18 @@
 import { defineRouting } from 'next-intl/routing';
 
 // 定义支持的语言
-export const locales = ['en', 'zh'] as const;
+export const locales = ['zh', 'zh-TW', 'en'] as const;
 export type Locale = (typeof locales)[number];
 
 // 语言名称映射
 export const languageNames: Record<Locale, string> = {
+  zh: '简体中文',
+  'zh-TW': '繁體中文',
   en: 'English',
-  zh: '中文',
 };
 
 // 默认语言
-export const defaultLocale = 'en';
+export const defaultLocale = 'zh';
 
 // 导出路由配置
 export const routing = defineRouting({

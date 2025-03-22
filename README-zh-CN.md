@@ -226,4 +226,4 @@ pnpm dev
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 创建Pull Request
 
-详细的贡献指南请参见[CONTRIBUTING.md](./CONTRIBUTING.md)。
+详细的贡献指南请参见[CONTRIBUTING-zh-CN.md](./CONTRIBUTING-zh-CN.md)。

@@ -2,7 +2,7 @@ export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "Nostudy.ai",
-  description: "与其闷头学习，不如公开构建并获得全世界认可！",
+  description: "Instead of studying alone, why not build and get recognized by the world!",
   navItems: [
     {
       label: "Home",

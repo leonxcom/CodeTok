@@ -1,12 +1,9 @@
 import createMiddleware from 'next-intl/middleware'
-import { locales, defaultLocale, localePrefix } from './i18n'
+import { routing } from './i18n/routing'
 
 export default createMiddleware({
-  // A list of all locales that are supported
-  locales,
-  localePrefix,
-  // Used when no locale matches
-  defaultLocale,
+  // 使用routing中定义的配置
+  ...routing
 })
 
 export const config = {

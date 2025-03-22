@@ -17,7 +17,7 @@ exports.modules = {
   \**************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"Index":{"title":"NoStudy.ai - Your AI Learning Assistant. We make studying easier and more effective with the power of artificial intelligence."}}');
+module.exports = JSON.parse('{"Index":{"title":"No study! Build real projects in public, and gain your first 1000 loyal supporters worldwide!"}}');
 
 /***/ })
 

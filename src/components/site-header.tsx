@@ -5,7 +5,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import { MainNav } from '@/components/main-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { Locale } from '@/i18n'
+import { Locale } from '@/i18n/routing'
 import { LanguageToggle } from './language-toggle'
 
 interface SiteHeaderProps {

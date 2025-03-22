@@ -1,8 +1,8 @@
 import '@/styles/globals.css'
 import { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Locale, locales } from '@/i18n'
-import { unstable_setRequestLocale } from 'next-intl/server'
+import { Locale, locales } from '@/i18n/routing'
+import { setRequestLocale } from 'next-intl/server'
 
 import { getSiteConfig } from '@/config/site-i18n'
 import { fontSans } from '@/lib/fonts'
@@ -45,7 +45,7 @@ export default function RootLayout({
   children,
   params: { locale },
 }: PageProps) {
-  unstable_setRequestLocale(locale)
+  setRequestLocale(locale)
   return (
     <html lang={locale} suppressHydrationWarning>
       <head />

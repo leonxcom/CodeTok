@@ -1,4 +1,4 @@
-import { Locale } from '@/i18n'
+import { Locale } from '@/i18n/routing'
 
 type SiteConfig = {
   name: string
@@ -27,7 +27,7 @@ const siteConfigBase: Record<Locale, SiteConfig> = {
     ],
     links: {
       twitter: 'https://twitter.com/nostudy_ai',
-      github: 'https://github.com/LeonZeng919/nostudy.ai',
+      github: 'https://github.com/Nostudy-ai/nostudy.ai',
       docs: '/docs',
     },
   },
@@ -46,31 +46,10 @@ const siteConfigBase: Record<Locale, SiteConfig> = {
     ],
     links: {
       twitter: 'https://twitter.com/nostudy_ai',
-      github: 'https://github.com/LeonZeng919/nostudy.ai',
+      github: 'https://github.com/Nostudy-ai/nostudy.ai',
       docs: '/docs',
     },
-  },
-  fr: {
-    name: 'NoStudy.ai',
-    description: "NoStudy.ai - Votre assistant d'apprentissage IA",
-    mainNav: [
-      {
-        title: 'Accueil',
-        href: '/',
-      },
-      {
-        title: 'À propos',
-        href: '/about',
-      },
-    ],
-    links: {
-      twitter: 'https://twitter.com/nostudy_ai',
-      github: 'https://github.com/LeonZeng919/nostudy.ai',
-      docs: '/docs',
-    },
-  },
-
-  // 添加其他语言的配置...
+  }
 }
 
 export function getSiteConfig(locale: Locale): SiteConfig {

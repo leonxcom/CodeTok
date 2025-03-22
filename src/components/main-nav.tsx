@@ -5,7 +5,7 @@ import { NavItem } from '@/types/nav'
 import { getSiteConfig } from '@/config/site-i18n'
 import { cn } from '@/lib/utils'
 import { Icons } from '@/components/icons'
-import { Locale } from '@/i18n'
+import { Locale } from '@/i18n/routing'
 
 interface MainNavProps {
   items?: NavItem[]

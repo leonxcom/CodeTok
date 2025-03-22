@@ -4,6 +4,7 @@ import { getSiteConfig } from '@/config/site-i18n'
 import { buttonVariants } from '@/components/ui/button'
 import { Icons } from '@/components/icons'
 import { MainNav } from '@/components/main-nav'
+import { MobileNav } from '@/components/mobile-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Locale } from '@/i18n/routing'
 import { LanguageToggle } from './language-toggle'
@@ -17,10 +18,10 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
+      <div className="container flex h-16 items-center justify-between">
         <MainNav items={siteConfig.mainNav} locale={locale} />
-        <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-1">
+        <div className="flex items-center space-x-2">
+          <nav className="hidden items-center space-x-1 md:flex">
             <Link
               href={siteConfig.links.github}
               target="_blank"
@@ -36,9 +37,10 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
                 <span className="sr-only">GitHub</span>
               </div>
             </Link>
-            <LanguageToggle locale={locale} />
-            <ThemeToggle />
           </nav>
+          <LanguageToggle locale={locale} />
+          <ThemeToggle />
+          <MobileNav items={siteConfig.mainNav} locale={locale} />
         </div>
       </div>
     </header>

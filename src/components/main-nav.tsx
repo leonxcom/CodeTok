@@ -23,7 +23,7 @@ export function MainNav({ items, locale }: MainNavProps) {
         </h1>
       </Link>
       {items?.length ? (
-        <nav className="flex gap-6">
+        <nav className="hidden gap-6 md:flex">
           {items?.map(
             (item, index) =>
               item.href && (

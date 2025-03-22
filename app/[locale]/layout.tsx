@@ -11,7 +11,7 @@ import { fontSans } from "@/config/fonts";
 import { locales, Locale } from "@/config/i18n";
 import Navbar from "@/components/navbar";
 
-// 懒加载分析组件
+// Lazy load analytics components
 const GoogleAnalytics = lazy(
   () => import("@/components/analytics/google-analytics"),
 );
@@ -62,9 +62,9 @@ export default async function LocaleLayout(props: Props) {
     notFound();
   }
 
-  // 获取当前年份
+  // Get current year
   const currentYear = new Date().getFullYear();
-  // 构建版权信息文本
+  // Build copyright text
   const copyrightText = messages.app.footer.rights.replace(
     "YEAR",
     currentYear.toString(),
@@ -92,7 +92,7 @@ export default async function LocaleLayout(props: Props) {
         <footer className="w-full bg-default-900/20 border-t border-default-200/50 py-12 mt-20">
           <div className="container mx-auto max-w-7xl px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {/* 公司信息 */}
+              {/* Company information */}
               <div>
                 <h3 className="text-lg font-bold mb-4">
                   {messages.app.footer.company}
@@ -133,7 +133,7 @@ export default async function LocaleLayout(props: Props) {
                 </ul>
               </div>
 
-              {/* 资源 */}
+              {/* Resources */}
               <div>
                 <h3 className="text-lg font-bold mb-4">
                   {messages.app.footer.resources}
@@ -174,7 +174,7 @@ export default async function LocaleLayout(props: Props) {
                 </ul>
               </div>
 
-              {/* 法律 */}
+              {/* Legal */}
               <div>
                 <h3 className="text-lg font-bold mb-4">
                   {messages.app.footer.legal}
@@ -207,7 +207,7 @@ export default async function LocaleLayout(props: Props) {
                 </ul>
               </div>
 
-              {/* 联系我们 */}
+              {/* Contact us */}
               <div>
                 <h3 className="text-lg font-bold mb-4">
                   {messages.app.footer.contact}

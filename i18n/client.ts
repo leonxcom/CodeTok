@@ -26,7 +26,7 @@ export function useLocaleSwitcher() {
       // Use location change for reliable locale switching
       window.location.href = newPath;
     } catch {
-      // 错误处理，但不使用console
+      // Error handling, but not using console
     }
   };
 

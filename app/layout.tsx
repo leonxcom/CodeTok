@@ -25,7 +25,7 @@ export const viewport: Viewport = {
   ],
 };
 
-// 使用Suspense将加载状态包裹起来
+// Wrap loading state with Suspense
 const BodyContent = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<div className="min-h-screen bg-background" />}>
     {children}

@@ -47,7 +47,7 @@ export default async function Home(props: Props) {
 
   return (
     <div className="flex flex-col items-center w-full">
-      {/* 英雄区 - 云山背景 */}
+      {/* Hero section - mountain cloud background */}
       <section className="flex flex-col items-center justify-center w-full py-20 bg-gradient-to-b from-primary/20 to-background px-4">
         <div className="max-w-5xl flex flex-col gap-8 items-center text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70 tracking-tight">
@@ -85,12 +85,12 @@ export default async function Home(props: Props) {
           </div>
         </div>
 
-        {/* 占位图 - 英雄区图片 */}
+        {/* Placeholder - hero section image */}
         <div className="relative w-full max-w-5xl h-[300px] mt-12 rounded-xl overflow-hidden bg-default-100 flex items-center justify-center">
           <p className="text-default-600">英雄区图片占位</p>
         </div>
 
-        {/* 合作伙伴 */}
+        {/* Partners */}
         <div className="flex flex-col items-center mt-16">
           <p className="text-default-500 text-sm uppercase mb-4">
             {t("partners")}
@@ -104,7 +104,7 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* 核心理念区块 */}
+      {/* Core principles section */}
       <section className="w-full py-20 px-4 bg-default-50 dark:bg-default-900/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -115,7 +115,7 @@ export default async function Home(props: Props) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* 第一性原理学习 */}
+            {/* First-principles learning */}
             <div className="bg-background dark:bg-default-100/5 p-8 rounded-xl border border-default-200 flex flex-col">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-4">
                 <svg
@@ -140,7 +140,7 @@ export default async function Home(props: Props) {
               </p>
             </div>
 
-            {/* 项目驱动 */}
+            {/* Project-driven */}
             <div className="bg-background dark:bg-default-100/5 p-8 rounded-xl border border-default-200 flex flex-col">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-4">
                 <svg
@@ -163,7 +163,7 @@ export default async function Home(props: Props) {
               </p>
             </div>
 
-            {/* AI原生 */}
+            {/* AI-native */}
             <div className="bg-background dark:bg-default-100/5 p-8 rounded-xl border border-default-200 flex flex-col">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-4">
                 <svg
@@ -189,7 +189,7 @@ export default async function Home(props: Props) {
               </p>
             </div>
 
-            {/* 一键部署 */}
+            {/* One-click deployment */}
             <div className="bg-background dark:bg-default-100/5 p-8 rounded-xl border border-default-200 flex flex-col">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-4">
                 <svg
@@ -214,7 +214,7 @@ export default async function Home(props: Props) {
               </p>
             </div>
 
-            {/* 公开构建 */}
+            {/* Build in public */}
             <div className="bg-background dark:bg-default-100/5 p-8 rounded-xl border border-default-200 flex flex-col">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-4">
                 <svg
@@ -239,7 +239,7 @@ export default async function Home(props: Props) {
               </p>
             </div>
 
-            {/* 粉丝连接 */}
+            {/* Fan connection */}
             <div className="bg-background dark:bg-default-100/5 p-8 rounded-xl border border-default-200 flex flex-col">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-4">
                 <svg
@@ -270,7 +270,7 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* 学习路径区块 */}
+      {/* Learning paths section */}
       <section className="w-full max-w-7xl py-20 px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">{t("learningPath")}</h2>
@@ -280,7 +280,7 @@ export default async function Home(props: Props) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* 路径卡片1 */}
+          {/* Path card 1 */}
           <div className="bg-default-50 dark:bg-default-100/5 border border-default-200 rounded-xl overflow-hidden">
             <div className="h-48 bg-primary/20 relative flex items-center justify-center">
               <p className="text-default-600">项目图片占位1</p>
@@ -301,7 +301,7 @@ export default async function Home(props: Props) {
             </div>
           </div>
 
-          {/* 路径卡片2 */}
+          {/* Path card 2 */}
           <div className="bg-default-50 dark:bg-default-100/5 border border-default-200 rounded-xl overflow-hidden">
             <div className="h-48 bg-secondary/20 relative flex items-center justify-center">
               <p className="text-default-600">项目图片占位2</p>
@@ -322,7 +322,7 @@ export default async function Home(props: Props) {
             </div>
           </div>
 
-          {/* 路径卡片3 */}
+          {/* Path card 3 */}
           <div className="bg-default-50 dark:bg-default-100/5 border border-default-200 rounded-xl overflow-hidden">
             <div className="h-48 bg-success/20 relative flex items-center justify-center">
               <p className="text-default-600">项目图片占位3</p>
@@ -358,7 +358,7 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* AI原生学习系统 */}
+      {/* AI-native learning system */}
       <section className="w-full bg-default-50 dark:bg-default-900/50 py-20 px-4">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1">
@@ -403,7 +403,7 @@ export default async function Home(props: Props) {
             </Link>
           </div>
 
-          {/* AI可视化图示 */}
+          {/* AI visualization illustration */}
           <div className="lg:w-1/2 w-full">
             <div className="bg-default-100 rounded-xl overflow-hidden border border-default-200 h-[300px] flex items-center justify-center">
               <p className="text-default-600">AI学习系统图示占位</p>
@@ -412,7 +412,7 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* 编码学习区块 */}
+      {/* Coding learning section */}
       <section className="w-full max-w-7xl py-20 px-4 mx-auto">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row-reverse items-center gap-12">
           <div className="flex-1">
@@ -451,7 +451,7 @@ export default async function Home(props: Props) {
             </Link>
           </div>
 
-          {/* 代码编辑器示例 */}
+          {/* Code editor example */}
           <div className="lg:w-1/2 w-full">
             <div className="bg-default-900 rounded-xl overflow-hidden border border-default-200 shadow-xl">
               <div className="bg-default-800 p-3 flex items-center gap-2 border-b border-default-700">
@@ -491,10 +491,10 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* 作品集区块 */}
+      {/* Portfolio section */}
       <section className="w-full bg-default-50 dark:bg-default-900/50 py-20 px-4">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-          {/* 作品展示图片 */}
+          {/* Portfolio showcase image */}
           <div className="lg:w-1/2 w-full h-[300px] bg-default-100 rounded-xl flex items-center justify-center">
             <p className="text-default-600">项目作品集占位图</p>
           </div>
@@ -535,7 +535,7 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* 技术栈展示 */}
+      {/* Technology stack showcase */}
       <section className="w-full max-w-7xl py-20 px-4 mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">{t("poweredBy")}</h2>
@@ -584,7 +584,7 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* 社区互动区块 */}
+      {/* Community interaction section */}
       <section className="w-full bg-default-50 dark:bg-default-900/50 py-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">{t("community")}</h2>
@@ -593,7 +593,7 @@ export default async function Home(props: Props) {
           </p>
 
           <div className="flex flex-wrap justify-center gap-8">
-            {/* 社区特性1 */}
+            {/* Community feature 1 */}
             <div className="w-full sm:w-[300px] bg-default-100 dark:bg-default-100/5 p-6 rounded-xl border border-default-200">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mx-auto mb-4">
                 <svg
@@ -619,7 +619,7 @@ export default async function Home(props: Props) {
               <p className="text-foreground/70">{t("communityFeature1Desc")}</p>
             </div>
 
-            {/* 社区特性2 */}
+            {/* Community feature 2 */}
             <div className="w-full sm:w-[300px] bg-default-100 dark:bg-default-100/5 p-6 rounded-xl border border-default-200">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mx-auto mb-4">
                 <svg
@@ -642,7 +642,7 @@ export default async function Home(props: Props) {
               <p className="text-foreground/70">{t("communityFeature2Desc")}</p>
             </div>
 
-            {/* 社区特性3 */}
+            {/* Community feature 3 */}
             <div className="w-full sm:w-[300px] bg-default-100 dark:bg-default-100/5 p-6 rounded-xl border border-default-200">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary mx-auto mb-4">
                 <svg
@@ -681,14 +681,14 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* 用户见证 */}
+      {/* User testimonials */}
       <section className="w-full max-w-7xl py-20 px-4 mx-auto">
         <h2 className="text-3xl font-bold mb-12 text-center">
           {t("testimonials")}
         </h2>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* 用户见证1 */}
+          {/* User testimonial 1 */}
           <div className="bg-default-50 dark:bg-default-100/5 p-6 rounded-xl border border-default-200 relative">
             <div className="absolute -left-4 top-8 w-16 h-16 bg-default-100 rounded-lg flex items-center justify-center overflow-hidden">
               <div className="w-full h-full bg-default-300 flex items-center justify-center">
@@ -709,7 +709,7 @@ export default async function Home(props: Props) {
             </div>
           </div>
 
-          {/* 用户见证2 */}
+          {/* User testimonial 2 */}
           <div className="bg-default-50 dark:bg-default-100/5 p-6 rounded-xl border border-default-200 relative">
             <div className="absolute -left-4 top-8 w-16 h-16 bg-default-100 rounded-lg flex items-center justify-center overflow-hidden">
               <div className="w-full h-full bg-default-300 flex items-center justify-center">
@@ -731,7 +731,7 @@ export default async function Home(props: Props) {
           </div>
         </div>
 
-        {/* 数据统计 */}
+        {/* Stats */}
         <div className="mt-16 flex flex-wrap justify-center gap-12">
           <div className="text-center">
             <p className="text-4xl font-bold text-primary">1000+</p>
@@ -752,7 +752,7 @@ export default async function Home(props: Props) {
         </div>
       </section>
 
-      {/* 号召行动 */}
+      {/* Call to action */}
       <section className="w-full bg-gradient-to-b from-background to-primary/20 py-20 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6">{t("ready")}</h2>

@@ -30,29 +30,44 @@
 
 #### 前端
 - **框架**: Next.js 15 (App Router)
-- **UI库**: React 18+
-- **开发语言**: TypeScript 5.0+
-- **样式**: TailwindCSS
-- **组件库**: HeroUI
+- **UI库**: React 19
+- **开发语言**: TypeScript
+- **样式**: Tailwind CSS v4
+- **组件库**: 
+  - Shadcn UI
+  - MagicUI Design
 
-#### AI集成
-- **LLM引擎**: GPT/DeepSeek
-- **功能特性**:
-  - 实时代码审查
-  - 智能学习路径生成
-  - 个性化进度跟踪
-  - 智能问答支持
-  - 代码优化建议
+#### 后端与数据库
+- **数据库**: Neon Database (Serverless PostgreSQL)
+- **ORM**: Drizzle ORM
+- **身份认证**: Better Auth
+- **API**: Next.js API Routes + Next Safe Action
+- **邮件服务**: Resend
+- **支付处理**: 
+  - Stripe
+  - Creem.io
+
+#### 国际化
+- **i18n框架**: Next-intl
+
+#### 分析与AI
+- **分析工具**: 
+  - Plausible Analytics
+  - Google Analytics
+- **AI集成**: Vercel AI SDK
+- **内容管理**: Content Collections
+
+#### 数据展示
+- **表格**: Tanstack Table
 
 #### 开发工具
-- **AI IDE**: [Trae](https://www.trae.ai/)
 - **包管理器**: pnpm
 - **代码质量**:
   - ESLint
   - Prettier
   - TypeScript严格模式
 - **Git工作流**:
-  - [约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)
+  - 约定式提交
   - 分支开发
   - GitHub Actions CI/CD
 
@@ -65,13 +80,20 @@ Nostudy.ai/
 │   ├── api/                 # API路由
 │   └── providers.tsx        # 全局提供者
 ├── components/              # React组件
-│   ├── ui/                 # 基础UI组件
+│   ├── ui/                 # Shadcn UI组件
+│   ├── magic/              # MagicUI组件
 │   └── features/           # 功能组件
+├── db/                      # 数据库Schema和客户端
+│   ├── schema.ts           # Drizzle Schema
+│   └── index.ts            # DB客户端
 ├── config/                  # 配置文件
 ├── i18n/                    # 国际化
 │   ├── client.ts           # 客户端国际化
 │   └── server.ts           # 服务端国际化
 ├── lib/                     # 工具函数
+│   ├── auth.ts             # 认证逻辑
+│   ├── actions.ts          # 服务器操作
+│   └── stripe.ts           # 支付逻辑
 ├── messages/               # 翻译文件
 ├── public/                 # 静态资源
 └── styles/                 # 全局样式
@@ -153,13 +175,19 @@ Nostudy.ai/
 
 ## 🧰 使用的技术
 
-- [Next.js 15](https://nextjs.org/docs/getting-started)
-- [HeroUI](https://heroui.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
+- [Next.js 15](https://nextjs.org/)
+- [React 19](https://react.dev/)
+- [Tailwind CSS v4](https://tailwindcss.com/)
+- [Shadcn UI](https://ui.shadcn.com/)
+- [Neon Database](https://neon.tech/)
+- [Drizzle ORM](https://orm.drizzle.team/)
 - [TypeScript](https://www.typescriptlang.org/)
+- [Stripe](https://stripe.com/)
+- [Resend](https://resend.com/)
+- [Next-intl](https://next-intl-docs.vercel.app/)
+- [Vercel AI SDK](https://sdk.vercel.ai/docs)
+- [Tanstack Table](https://tanstack.com/table)
 - [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
 
 ## 🚦 快速开始
 
@@ -168,7 +196,7 @@ Nostudy.ai/
 使用 `create-next-app` 基于此模板创建新项目，运行以下命令：
 
 ```bash
-npx create-next-app -e https://github.com/leohuang/nostudy.ai
+npx create-next-app -e https://github.com/Nostudy-ai/Nostudy.ai
 ```
 
 ### 安装依赖

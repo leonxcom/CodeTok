@@ -87,7 +87,7 @@ export default async function Home(props: Props) {
 
         {/* Placeholder - hero section image */}
         <div className="relative w-full max-w-5xl h-[300px] mt-12 rounded-xl overflow-hidden bg-default-100 flex items-center justify-center">
-          <p className="text-default-600">英雄区图片占位</p>
+          <p className="text-default-600">Hero Area Image Placeholder</p>
         </div>
 
         {/* Partners */}
@@ -283,7 +283,7 @@ export default async function Home(props: Props) {
           {/* Path card 1 */}
           <div className="bg-default-50 dark:bg-default-100/5 border border-default-200 rounded-xl overflow-hidden">
             <div className="h-48 bg-primary/20 relative flex items-center justify-center">
-              <p className="text-default-600">项目图片占位1</p>
+              <p className="text-default-600">Project Image Placeholder 1</p>
             </div>
             <div className="p-6">
               <h3 className="text-xl font-bold mb-2">{t("path1Title")}</h3>
@@ -304,7 +304,7 @@ export default async function Home(props: Props) {
           {/* Path card 2 */}
           <div className="bg-default-50 dark:bg-default-100/5 border border-default-200 rounded-xl overflow-hidden">
             <div className="h-48 bg-secondary/20 relative flex items-center justify-center">
-              <p className="text-default-600">项目图片占位2</p>
+              <p className="text-default-600">Project Image Placeholder 2</p>
             </div>
             <div className="p-6">
               <h3 className="text-xl font-bold mb-2">{t("path2Title")}</h3>
@@ -325,7 +325,7 @@ export default async function Home(props: Props) {
           {/* Path card 3 */}
           <div className="bg-default-50 dark:bg-default-100/5 border border-default-200 rounded-xl overflow-hidden">
             <div className="h-48 bg-success/20 relative flex items-center justify-center">
-              <p className="text-default-600">项目图片占位3</p>
+              <p className="text-default-600">Project Image Placeholder 3</p>
             </div>
             <div className="p-6">
               <h3 className="text-xl font-bold mb-2">{t("path3Title")}</h3>
@@ -406,7 +406,7 @@ export default async function Home(props: Props) {
           {/* AI visualization illustration */}
           <div className="lg:w-1/2 w-full">
             <div className="bg-default-100 rounded-xl overflow-hidden border border-default-200 h-[300px] flex items-center justify-center">
-              <p className="text-default-600">AI学习系统图示占位</p>
+              <p className="text-default-600">AI Learning System Illustration Placeholder</p>
             </div>
           </div>
         </div>
@@ -496,7 +496,7 @@ export default async function Home(props: Props) {
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
           {/* Portfolio showcase image */}
           <div className="lg:w-1/2 w-full h-[300px] bg-default-100 rounded-xl flex items-center justify-center">
-            <p className="text-default-600">项目作品集占位图</p>
+            <p className="text-default-600">Project Portfolio Placeholder Image</p>
           </div>
 
           <div className="flex-1">
@@ -692,7 +692,7 @@ export default async function Home(props: Props) {
           <div className="bg-default-50 dark:bg-default-100/5 p-6 rounded-xl border border-default-200 relative">
             <div className="absolute -left-4 top-8 w-16 h-16 bg-default-100 rounded-lg flex items-center justify-center overflow-hidden">
               <div className="w-full h-full bg-default-300 flex items-center justify-center">
-                <p className="text-default-600 text-xs">用户头像1</p>
+                <p className="text-default-600 text-xs">User Avatar 1</p>
               </div>
             </div>
             <div className="ml-10">
@@ -713,7 +713,7 @@ export default async function Home(props: Props) {
           <div className="bg-default-50 dark:bg-default-100/5 p-6 rounded-xl border border-default-200 relative">
             <div className="absolute -left-4 top-8 w-16 h-16 bg-default-100 rounded-lg flex items-center justify-center overflow-hidden">
               <div className="w-full h-full bg-default-300 flex items-center justify-center">
-                <p className="text-default-600 text-xs">用户头像2</p>
+                <p className="text-default-600 text-xs">User Avatar 2</p>
               </div>
             </div>
             <div className="ml-10">

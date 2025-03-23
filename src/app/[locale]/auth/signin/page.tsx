@@ -8,16 +8,19 @@ type Params = Promise<{
   [key: string]: string | string[]
 }>
 
+type SearchParams = Promise<{
+  callbackUrl?: string
+  [key: string]: string | string[] | undefined
+}>
+
 interface SignInPageProps {
   params: Params
-  searchParams: {
-    callbackUrl?: string
-    [key: string]: string | string[] | undefined
-  }
+  searchParams: SearchParams
 }
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: SignInPageProps): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
@@ -30,9 +33,10 @@ export async function generateMetadata({
 
 export default async function SignInPage({
   params,
-  searchParams: { callbackUrl = '/' },
+  searchParams,
 }: SignInPageProps) {
   const { locale } = await params
+  const { callbackUrl = '/' } = await searchParams
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   const labels = {

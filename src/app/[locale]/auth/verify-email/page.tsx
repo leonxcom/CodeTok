@@ -8,17 +8,20 @@ type Params = Promise<{
   [key: string]: string | string[]
 }>
 
+type SearchParams = Promise<{
+  token?: string
+  email?: string
+  [key: string]: string | string[] | undefined
+}>
+
 interface VerifyEmailPageProps {
   params: Params
-  searchParams: {
-    token?: string
-    email?: string
-    [key: string]: string | string[] | undefined
-  }
+  searchParams: SearchParams
 }
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: VerifyEmailPageProps): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
@@ -31,9 +34,10 @@ export async function generateMetadata({
 
 export default async function VerifyEmailPage({
   params,
-  searchParams: { token, email },
+  searchParams,
 }: VerifyEmailPageProps) {
   const { locale } = await params
+  const { token, email } = await searchParams
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   const labels = {

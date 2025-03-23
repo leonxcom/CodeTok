@@ -8,16 +8,19 @@ type Params = Promise<{
   [key: string]: string | string[]
 }>
 
+type SearchParams = Promise<{
+  token?: string
+  [key: string]: string | string[] | undefined
+}>
+
 interface PasswordResetPageProps {
   params: Params
-  searchParams: {
-    token?: string
-    [key: string]: string | string[] | undefined
-  }
+  searchParams: SearchParams
 }
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: PasswordResetPageProps): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
@@ -30,9 +33,10 @@ export async function generateMetadata({
 
 export default async function PasswordResetPage({
   params,
-  searchParams: { token },
+  searchParams,
 }: PasswordResetPageProps) {
   const { locale } = await params
+  const { token } = await searchParams
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   const labels = {

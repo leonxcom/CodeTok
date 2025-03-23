@@ -6,9 +6,11 @@ import { Locale } from '@/i18n/routing'
 interface PasswordResetPageProps {
   params: {
     locale: Locale
+    [key: string]: string | string[]
   }
   searchParams: {
     token?: string
+    [key: string]: string | string[] | undefined
   }
 }
 

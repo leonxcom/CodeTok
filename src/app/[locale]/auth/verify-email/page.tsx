@@ -6,10 +6,12 @@ import { Locale } from '@/i18n/routing'
 interface VerifyEmailPageProps {
   params: {
     locale: Locale
+    [key: string]: string | string[]
   }
   searchParams: {
     token?: string
     email?: string
+    [key: string]: string | string[] | undefined
   }
 }
 

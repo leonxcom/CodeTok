@@ -6,9 +6,11 @@ import { Locale } from '@/i18n/routing'
 interface SignUpPageProps {
   params: {
     locale: Locale
+    [key: string]: string | string[]
   }
   searchParams: {
     callbackUrl?: string
+    [key: string]: string | string[] | undefined
   }
 }
 

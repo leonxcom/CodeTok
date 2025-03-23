@@ -2,15 +2,19 @@ import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { Locale } from '@/i18n/routing'
 import { getSiteConfig } from '@/config/site-i18n'
+import { setRequestLocale } from 'next-intl/server'
+
+type PageParamsPromise = Promise<{ locale: Locale }>
 
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: Locale }
+  params: PageParamsPromise
 }): Promise<Metadata> {
-  const { locale } = params
+  const { locale } = await params
+  await setRequestLocale(locale)
+
   const siteConfig = getSiteConfig(locale)
-  
   return {
     title: 'About',
     description: siteConfig.description,
@@ -20,9 +24,11 @@ export async function generateMetadata({
 export default async function AboutPage({
   params,
 }: {
-  params: { locale: Locale }
+  params: PageParamsPromise
 }) {
-  const { locale } = params
+  const { locale } = await params
+  await setRequestLocale(locale)
+  
   const t = await getTranslations({ locale, namespace: 'About' })
   
   return (
@@ -41,3 +47,4 @@ export default async function AboutPage({
     </main>
   )
 }
+

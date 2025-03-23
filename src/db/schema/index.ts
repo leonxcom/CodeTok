@@ -1,2 +1,2 @@
-// 导出所有模式定义
+// Export all schema definitions
 export * from './users'

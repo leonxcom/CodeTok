@@ -2,7 +2,7 @@ import type { Config } from 'drizzle-kit'
 import * as dotenv from 'dotenv'
 import { defineConfig } from 'drizzle-kit'
 
-// 加载环境变量
+// Load environment variables
 dotenv.config({ path: '.env.local' })
 
 export default defineConfig({

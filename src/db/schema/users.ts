@@ -1,7 +1,7 @@
 import { pgTable, text, uuid, timestamp } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
-// 用户表
+// Users table
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name'),
@@ -15,7 +15,7 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at', { mode: 'date' }).notNull().defaultNow(),
 })
 
-// 用户会话表
+// User sessions table
 export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
   sessionToken: text('session_token').notNull().unique(),
@@ -25,7 +25,7 @@ export const sessions = pgTable('sessions', {
   expires: timestamp('expires', { mode: 'date' }).notNull(),
 })
 
-// 第三方账户表
+// Third-party accounts table
 export const accounts = pgTable('accounts', {
   userId: uuid('user_id')
     .notNull()
@@ -42,7 +42,7 @@ export const accounts = pgTable('accounts', {
   sessionState: text('session_state'),
 })
 
-// 验证令牌表
+// Verification tokens table
 export const verificationTokens = pgTable(
   'verification_tokens',
   {
@@ -57,13 +57,13 @@ export const verificationTokens = pgTable(
   },
 )
 
-// 用户关系定义
+// User relationships definition
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
 }))
 
-// 会话关系定义
+// Session relationships definition
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {
     fields: [sessions.userId],
@@ -71,7 +71,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   }),
 }))
 
-// 账户关系定义
+// Account relationships definition
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, {
     fields: [accounts.userId],

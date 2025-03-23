@@ -29,17 +29,18 @@ Say goodbye to isolated learning! Build real projects in public and gain your fi
 ### Tech Stack
 
 #### Frontend
-- **Framework**: 
+
+- **Framework**:
   - Next.js 15 (App Router)
   - React 18.3.1
-- **UI Library**: 
+- **UI Library**:
   - React 19 (Next.js)
   - React 18.3.1
 - **Development Language**: TypeScript
-- **Styling**: 
+- **Styling**:
   - Tailwind CSS v4 (Next.js)
   - Tailwind CSS 3.4.4
-- **Component Libraries**: 
+- **Component Libraries**:
   - Shadcn UI
   - MagicUI Design
   - Radix UI (Primitives)
@@ -53,29 +54,34 @@ Say goodbye to isolated learning! Build real projects in public and gain your fi
   - class-variance-authority - Type-safe UI component variants
 
 #### Backend & Database
+
 - **Database**: Neon Database (Serverless PostgreSQL)
 - **ORM**: Drizzle ORM
 - **Authentication**: Better Auth
 - **API**: Next.js API Routes + Next Safe Action
 - **Email Service**: Resend
-- **Payment Processing**: 
+- **Payment Processing**:
   - Stripe
   - Creem.io
 
 #### Internationalization
+
 - **i18n Framework**: Next-intl
 
 #### Analytics & AI
-- **Analytics Tools**: 
+
+- **Analytics Tools**:
   - Plausible Analytics
   - Google Analytics
 - **AI Integration**: Vercel AI SDK
 - **Content Management**: Content Collections
 
 #### Data Visualization
+
 - **Tables**: Tanstack Table
 
 #### Development Tools
+
 - **AI IDE**: [Trae](https://www.trae.ai/)
 - **Package Manager**: pnpm
 - **Code Quality**:
@@ -118,24 +124,28 @@ Nostudy.ai/
 ## 🔥 Core Features Implementation
 
 ### 1. AI-Native Learning System
+
 - Real-time code analysis and feedback
 - Intelligent progress tracking
 - Personalized learning path generation
 - Smart content recommendations
 
 ### 2. Project-Driven Learning
+
 - Real project templates
 - Step-by-step guidance
 - Automated code review
 - Progress tracking and analysis
 
 ### 3. Multi-language Support
+
 - Route-based dynamic internationalization (supporting 12 languages including English, Chinese, Japanese)
 - Language detection and switching
 - RTL support
 - Region-specific content
 
 ### 4. Performance Optimization
+
 - Server-side rendering
 - Static site generation
 - Image optimization
@@ -143,6 +153,7 @@ Nostudy.ai/
 - Edge caching
 
 ### 5. Security Measures
+
 - Authentication and authorization
 - Access restrictions
 - CORS configuration
@@ -152,24 +163,28 @@ Nostudy.ai/
 ## 📋 Development Standards
 
 ### 1. Code Quality
+
 - Strict TypeScript configuration
 - Comprehensive ESLint rules
 - Consistent code formatting
 - Unit test coverage
 
 ### 2. Git Workflow
+
 - Feature branch workflow
 - Conventional commit messages
 - Pull Request reviews
 - Automated testing
 
 ### 3. Documentation Standards
+
 - Inline code documentation
 - API documentation
 - Component storybook
 - Development guides
 
 ### 4. Performance Metrics
+
 - Core Web Vitals monitoring
 - Lighthouse scores
 - Error tracking
@@ -178,12 +193,14 @@ Nostudy.ai/
 ## 🚀 Deployment Architecture
 
 ### Production Environment
+
 - Vercel (primary hosting)
 - Edge functions
 - CDN distribution
 - Automated deployment
 
 ### Development Environment
+
 - Local development setup
 - Development server
 - Hot module replacement
@@ -241,4 +258,40 @@ We welcome contributions of all kinds! If you want to participate in project dev
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Create a Pull Request
 
-For detailed contribution guidelines, please see [CONTRIBUTING.md](./CONTRIBUTING.md). 
+For detailed contribution guidelines, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## 开发规范
+
+1. 用英文进行代码注释，禁止使用中文
+2. 模块开发，每个模块开发归档两份 README，一份英文文档，一份简体中文，文档内容总结功能、接口和使用方式
+3. 小步快跑，每次只开发一个功能，代码遵循最佳实践，不搞黑科技，每完成一个节点提交一下git暂存
+4. 始终用中文回复
+5. 始终使用pnpm进行包管理
+6. 始终使用英文进行Git Commit
+7. 参考官方文档开发（重要参考标准）
+
+## 技术栈
+
+- Next.js
+- React
+- TypeScript
+- TailwindCSS
+- Shadcn UI
+
+## 安装
+
+```bash
+pnpm install
+```
+
+## 开发
+
+```bash
+pnpm dev
+```
+
+## 构建
+
+```bash
+pnpm build
+```

@@ -150,6 +150,29 @@ export default function LoginPage({ locale, translations }) {
 
 - `playwright.config.ts`：Playwright端到端测试配置
 
+### 计划测试
+
+以下测试尚需实现：
+
+#### 组件测试
+
+- `SignUpForm.test.tsx`：将测试渲染、验证和表单提交行为
+- `PasswordResetForm.test.tsx`：将测试请求重置和密码重置行为
+- `VerifyEmailForm.test.tsx`：将测试电子邮件验证渲染和令牌验证
+
+#### API测试
+
+- `password-reset.test.ts`：将测试密码重置请求和重置确认
+- `verify-email.test.ts`：将测试电子邮件验证令牌验证
+- `signout.test.ts`：将测试退出登录功能
+
+#### 集成测试
+
+- 增加更多特定的端到端测试：
+  - 密码重置流程
+  - 电子邮件验证流程
+  - 国际化测试
+
 ### 测试执行计划
 
 1. **单元测试**：运行`pnpm test`执行所有单元测试（组件和API测试）

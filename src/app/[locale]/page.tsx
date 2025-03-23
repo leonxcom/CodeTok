@@ -2,18 +2,20 @@ import Link from 'next/link'
 
 import { getSiteConfig } from '@/config/site-i18n'
 import { buttonVariants } from '@/components/ui/button'
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { setRequestLocale } from 'next-intl/server'
 import { Locale } from '@/i18n/routing'
 
-export default function IndexPage({
-  params: { locale },
+export default async function IndexPage({
+  params,
 }: {
   params: { locale: Locale }
 }) {
-  setRequestLocale(locale)
+  const dynamicParams = await params;
+  const locale = dynamicParams.locale;
+  await setRequestLocale(locale);
 
-  const t = useTranslations('Index')
+  const t = await getTranslations('Index')
   const siteConfig = getSiteConfig(locale)
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">

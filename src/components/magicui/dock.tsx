@@ -31,13 +31,16 @@ const dockVariants = cva(
 );
 
 // 定义 DockContext 以传递共享值
-const DockContext = React.createContext<{
-  mouseX: MotionValue<number>;
+// 不能在这里调用 hook，在默认值中使用 null
+interface DockContextType {
+  mouseX: MotionValue<number> | null;
   size: number;
   magnification: number;
   distance: number;
-}>({
-  mouseX: useMotionValue(Infinity),
+}
+
+const DockContext = React.createContext<DockContextType>({
+  mouseX: null,
   size: DEFAULT_SIZE,
   magnification: DEFAULT_MAGNIFICATION,
   distance: DEFAULT_DISTANCE,
@@ -119,7 +122,10 @@ const DockIcon = ({
   const padding = Math.max(6, actualSize * 0.2);
   const defaultMouseX = useMotionValue(Infinity);
 
-  const distanceCalc = useTransform(actualMouseX ?? defaultMouseX, (val: number) => {
+  // 确保 actualMouseX 不为 null
+  const safeMouseX = actualMouseX || defaultMouseX;
+
+  const distanceCalc = useTransform(safeMouseX, (val: number) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
     return val - bounds.x - bounds.width / 2;
   });

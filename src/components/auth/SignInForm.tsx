@@ -155,14 +155,16 @@ export function SignInForm({
         toRef={toRef}
       />
 
-      <Card className="border-border/40 bg-background/95 backdrop-blur-sm">
+      <Card className="border-gray-200 bg-white/95 shadow-md backdrop-blur-sm dark:border-white/10 dark:bg-gray-900/90">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-6 p-6"
           >
             <div className="mb-4 space-y-2 text-center">
-              <h1 className="text-2xl font-bold">{labels?.signIn || '登录'}</h1>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+                {labels?.signIn || '登录'}
+              </h1>
               {error && (
                 <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
                   {error}
@@ -175,7 +177,9 @@ export function SignInForm({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{labels.email}</FormLabel>
+                  <FormLabel className="text-gray-700 dark:text-gray-200">
+                    {labels.email}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="you@example.com"
@@ -185,7 +189,7 @@ export function SignInForm({
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500 dark:text-red-400" />
                 </FormItem>
               )}
             />
@@ -196,10 +200,12 @@ export function SignInForm({
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center justify-between">
-                    <FormLabel>{labels.password}</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-200">
+                      {labels.password}
+                    </FormLabel>
                     <Link
                       href={`/${locale}/auth/reset-password`}
-                      className="text-xs text-muted-foreground hover:text-primary"
+                      className="text-xs text-blue-600 hover:text-blue-700 dark:text-gray-400 dark:hover:text-white"
                     >
                       {labels.forgotPassword}
                     </Link>
@@ -213,24 +219,24 @@ export function SignInForm({
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500 dark:text-red-400" />
                 </FormItem>
               )}
             />
 
             <ShimmerButton
               type="submit"
-              className="w-full"
+              className="w-full bg-blue-600 font-medium text-white hover:bg-blue-700 dark:bg-gray-800 dark:hover:bg-gray-700"
               disabled={isLoading}
             >
-              {isLoading ? 'Signing in...' : labels.signIn}
+              {isLoading ? '登录中...' : labels.signIn}
             </ShimmerButton>
 
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-gray-600 dark:text-gray-400">
               {labels.noAccount}{' '}
               <Link
                 href={`/${locale}/auth/signup`}
-                className="font-medium text-primary hover:underline"
+                className="font-medium text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
               >
                 {labels.signUp}
               </Link>

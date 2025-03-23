@@ -108,3 +108,34 @@ These components work with the following API endpoints:
 ## Styling
 
 The components use Shadcn UI and MagicUI for styling, with Tailwind CSS for layout and design.
+
+## Testing
+
+All authentication components and API routes must be thoroughly tested before being considered complete. The testing process should include:
+
+1. **Component Testing**:
+
+   - Verify form validations work correctly
+   - Test error handling for invalid inputs
+   - Ensure UI elements appear/disappear as expected
+   - Confirm internationalization works for all supported languages
+
+2. **API Testing**:
+
+   - Test each API endpoint with valid and invalid inputs
+   - Verify correct response status codes and data structures
+   - Test error handling for edge cases
+   - Confirm API security (unauthorized access prevention)
+
+3. **Integration Testing**:
+
+   - Test the full authentication flow from registration to login
+   - Verify email verification process works end-to-end
+   - Test password reset flow from request to completion
+   - Confirm redirect behavior after successful operations
+
+4. **Cross-browser Testing**:
+   - Verify components render correctly across different browsers
+   - Test functionality in mobile and desktop environments
+
+**Note**: Testing is a mandatory step for module completion. No module should be considered complete until all tests have been performed and passed successfully.

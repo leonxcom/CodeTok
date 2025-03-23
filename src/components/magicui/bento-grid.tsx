@@ -1,5 +1,5 @@
 import { ArrowRightIcon } from "@radix-ui/react-icons";
-import { ComponentPropsWithoutRef, ReactNode } from "react";
+import React, { ComponentPropsWithoutRef, ReactNode } from "react";
 
 import { Button } from "@/components/shadcnui/button";
 import { cn } from "@/lib/utils";

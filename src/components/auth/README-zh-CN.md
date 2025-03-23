@@ -1,189 +1,147 @@
 # 认证组件
 
-该模块提供了一套用于处理 NoStudy.ai 用户认证的组件。这些组件设计用于与 Better Auth 配合使用，并支持国际化。
+该目录包含与用户认证相关的所有组件，用于处理登录、注册、密码重置和邮箱验证等功能。
 
-## 组件
+## 组件列表
 
-### SignInForm
-
-用户登录表单组件。
-
-**属性：**
-
-- `locale`：当前语言区域（例如，'en'，'zh'）
-- `callbackUrl`：登录成功后重定向的 URL
-- `labels`：包含表单翻译标签的对象
-
-**功能：**
-
-- 电子邮件和密码认证
-- 表单验证
-- 错误处理
-- 记住登录选项
-- 链接到注册和密码重置页面
-
-### SignUpForm
-
-用户注册表单组件。
-
-**属性：**
-
-- `locale`：当前语言区域（例如，'en'，'zh'）
-- `callbackUrl`：注册成功后重定向的 URL
-- `labels`：包含表单翻译标签的对象
-
-**功能：**
-
-- 使用姓名、电子邮件和密码进行用户注册
-- 密码确认
-- 具有复杂密码要求的表单验证
-- 成功消息和重定向
-- 链接到登录页面
-
-### PasswordResetForm
-
-处理密码重置请求和密码更改的组件。
-
-**属性：**
-
-- `locale`：当前语言区域（例如，'en'，'zh'）
-- `labels`：包含表单翻译标签的对象
-
-**功能：**
-
-- 通过电子邮件请求密码重置
-- 使用令牌重置密码
-- 表单验证
-- 成功消息和反馈
-- 返回登录页面链接
-
-### VerifyEmailForm
-
-电子邮件验证组件。
-
-**属性：**
-
-- `locale`：当前语言区域（例如，'en'，'zh'）
-- `labels`：包含表单翻译标签的对象
-
-**功能：**
-
-- 使用 URL 中的令牌进行电子邮件验证
-- 重新发送验证邮件
-- 加载状态
-- 成功和错误消息
-- 导航回登录页面
+| 组件名称          | 描述             | 路径                    |
+| ----------------- | ---------------- | ----------------------- |
+| SignInForm        | 用户登录表单     | `SignInForm.tsx`        |
+| SignUpForm        | 用户注册表单     | `SignUpForm.tsx`        |
+| PasswordResetForm | 密码重置请求表单 | `PasswordResetForm.tsx` |
+| VerifyEmailForm   | 邮箱验证处理组件 | `VerifyEmailForm.tsx`   |
 
 ## 使用方法
 
+### 登录表单
+
 ```tsx
-// SignInForm 的示例用法
 import { SignInForm } from '@/components/auth/SignInForm'
 
-export default function LoginPage({ locale, translations }) {
+export default function LoginPage() {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center">
-      <SignInForm
-        locale={locale}
-        callbackUrl="/dashboard"
-        labels={translations}
-      />
+    <div className="container">
+      <SignInForm />
     </div>
   )
 }
 ```
 
-## API 集成
+### 注册表单
 
-这些组件与以下 API 端点配合使用：
+```tsx
+import { SignUpForm } from '@/components/auth/SignUpForm'
 
-- `/api/auth/signin` - 用户登录
-- `/api/auth/signup` - 用户注册
-- `/api/auth/reset-password` - 请求密码重置
-- `/api/auth/reset-password/reset` - 使用令牌确认密码重置
-- `/api/auth/verify-email` - 使用令牌验证电子邮件
-- `/api/auth/verify-email/resend` - 重新发送验证邮件
-- `/api/auth/signout` - 用户登出
+export default function RegisterPage() {
+  return (
+    <div className="container">
+      <SignUpForm />
+    </div>
+  )
+}
+```
 
-## 样式
+### 密码重置表单
 
-这些组件使用 Shadcn UI 和 MagicUI 进行样式设计，使用 Tailwind CSS 进行布局和设计。
+```tsx
+import { PasswordResetForm } from '@/components/auth/PasswordResetForm'
+
+export default function ResetPasswordPage() {
+  return (
+    <div className="container">
+      <PasswordResetForm />
+    </div>
+  )
+}
+```
+
+### 邮箱验证组件
+
+```tsx
+import { VerifyEmailForm } from '@/components/auth/VerifyEmailForm'
+
+export default function VerifyEmailPage() {
+  return (
+    <div className="container">
+      <VerifyEmailForm />
+    </div>
+  )
+}
+```
+
+## 功能特性
+
+- 全面的表单验证
+- 响应式设计，适配移动和桌面设备
+- 国际化支持，支持中英文界面
+- 加载状态处理
+- 错误提示和成功消息
+- 安全的认证流程
+
+## 认证流程
+
+1. **注册流程**:
+
+   - 用户填写邮箱和密码
+   - 创建账户
+   - 发送验证邮件
+   - 用户点击邮件中的验证链接
+   - 验证完成后可以登录
+
+2. **登录流程**:
+
+   - 用户输入邮箱和密码
+   - 验证凭据
+   - 创建会话
+   - 重定向到应用首页
+
+3. **密码重置**:
+   - 用户请求重置密码
+   - 发送重置链接到用户邮箱
+   - 用户点击链接后设置新密码
+   - 更新密码并重定向到登录页
+
+## 依赖项
+
+- Next.js App Router
+- React Hook Form - 表单管理
+- Zod - 表单验证
+- Shadcn UI - UI组件
+- Next Auth - 认证库
 
 ## 测试
 
-### 概述
+所有认证组件都有相应的测试文件，确保功能正确和用户体验一致。测试文件位于`tests`目录下。
 
-每个认证组件和API路由在被视为完成之前必须经过全面测试。这确保我们提供的认证系统能够在各种场景下正确运行。
+### 组件测试
 
-### 测试工具
+- `SignInForm.test.tsx` - 测试登录表单的渲染、验证和提交功能
+- `SignUpForm.test.tsx` - 测试注册表单的渲染、验证和提交功能
+- `PasswordResetForm.test.tsx` - 测试密码重置表单的渲染、验证和提交功能
+- `VerifyEmailForm.test.tsx` - 测试邮箱验证组件的各种状态和交互
 
-认证系统使用以下测试工具：
+### 端到端测试
 
-- **Vitest**：用于组件和API路由的单元测试
-- **React Testing Library**：用于测试UI组件
-- **Supertest**：用于API测试
-- **MSW (Mock Service Worker)**：用于模拟API响应
-- **Playwright**：用于端到端测试
+端到端测试位于`__tests__/e2e/auth.spec.ts`，测试完整的认证流程，包括：
 
-### 测试状态
+- 用户注册
+- 用户登录
+- 密码重置
+- 邮箱验证
+- 响应式设计测试
 
-已实现以下测试：
+### 运行测试
 
-#### 组件测试
+```bash
+# 运行组件测试
+pnpm test
 
-- `SignInForm.test.tsx`：测试渲染、验证和表单提交行为
-  - 位置：`src/__tests__/components/auth/SignInForm.test.tsx`
+# 运行端到端测试
+pnpm test:e2e
+```
 
-#### API测试
+## 注意事项
 
-- `signin.test.ts`：测试登录API成功/失败场景
-  - 位置：`src/__tests__/api/auth/signin.test.ts`
-- `signup.test.ts`：测试注册API成功/失败场景
-  - 位置：`src/__tests__/api/auth/signup.test.ts`
-
-#### 端到端测试
-
-- `auth.spec.ts`：测试完整用户流程，包括注册、登录、密码重置和电子邮件验证
-  - 位置：`src/__tests__/e2e/auth.spec.ts`
-
-#### 配置文件
-
-- `playwright.config.ts`：Playwright端到端测试配置
-
-### 计划测试
-
-以下测试尚需实现：
-
-#### 组件测试
-
-- `SignUpForm.test.tsx`：将测试渲染、验证和表单提交行为
-- `PasswordResetForm.test.tsx`：将测试请求重置和密码重置行为
-- `VerifyEmailForm.test.tsx`：将测试电子邮件验证渲染和令牌验证
-
-#### API测试
-
-- `password-reset.test.ts`：将测试密码重置请求和重置确认
-- `verify-email.test.ts`：将测试电子邮件验证令牌验证
-- `signout.test.ts`：将测试退出登录功能
-
-#### 集成测试
-
-- 增加更多特定的端到端测试：
-  - 密码重置流程
-  - 电子邮件验证流程
-  - 国际化测试
-
-### 测试执行计划
-
-1. **单元测试**：运行`pnpm test`执行所有单元测试（组件和API测试）
-2. **端到端测试**：运行`pnpm test:e2e`执行Playwright测试
-3. **CI集成**：所有测试已集成到CI管道中，并在每次提交时自动运行
-
-### 测试完成标准
-
-- 所有组件必须有相应的单元测试
-- 所有API路由必须有相应的API测试
-- 关键用户流程必须有端到端测试覆盖
-- 所有测试必须通过，且代码覆盖率至少达到80%
-
-任何模块在所有测试成功通过之前都不能被视为完成。
+- 所有表单组件都支持自定义样式和布局
+- 请确保在环境变量中正确配置了邮件服务的凭据
+- 组件内部使用了React Context来管理认证状态，请确保在适当的地方使用Provider

@@ -38,6 +38,7 @@ Shadcn UI 是一套基于 Radix UI 和 Tailwind CSS 构建的无样式组件集�
 组件位于 `src/components/shadcnui` 目录，通过 `@/lib/ui.ts` 中的 `shadcn` 命名空间导出。
 
 主要组件包括：
+
 - Button, Input, Form 等基础组件
 - Dialog, Sheet, Popover 等交互组件
 - Table, DataTable 等数据展示组件
@@ -49,6 +50,7 @@ Magic UI 是一个基于 React、Tailwind CSS 和 Framer Motion 构建的动画 
 组件位于 `src/components/magicui` 目录，通过 `@/lib/ui.ts` 中的 `magicui` 命名空间导出。
 
 Magic UI 组件分为以下类别：
+
 - 基础组件（Marquee, Terminal, BentoGrid 等）
 - 设备模拟（Safari, iPhone, Android 等）
 - 特效组件（AnimatedBeam, Confetti, Meteors 等）
@@ -59,6 +61,10 @@ Magic UI 组件分为以下类别：
 详细组件列表请参考 `src/components/magicui/README-zh-CN.md`。
 
 ## 开发规范
+
+### 核心原则
+
+**始终遵循官方文档**: 在集成库、框架或API时，必须严格按照其官方文档作为首要参考标准进行开发。这确保了兼容性、正确的实现方式，并利用了技术创建者推荐的最佳实践。官方文档的优先级高于其他参考资料或之前的实现模式。
 
 ### 代码风格
 
@@ -146,4 +152,4 @@ pnpm start
 
 如遇到与 Magic UI 组件导入相关的问题，可能是导入路径问题。Magic UI 组件默认从 `@/components/ui` 导入依赖，而我们的项目结构中这些组件位于 `@/components/shadcnui`。
 
-如需修复导入路径，可参考之前使用的脚本修复方法。 
+如需修复导入路径，可参考之前使用的脚本修复方法。

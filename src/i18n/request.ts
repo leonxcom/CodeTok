@@ -3,16 +3,16 @@ import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 
 export default getRequestConfig(async ({ requestLocale }) => {
-  // 获取请求中的语言参数，对应[locale]路径参数
+  // Get locale parameter from request, corresponding to [locale] path parameter
   let locale = await requestLocale;
 
-  // 确保使用有效的语言
+  // Ensure a valid locale is used
   if (!locale || !routing.locales.includes(locale as any)) {
     locale = routing.defaultLocale;
   }
 
   try {
-    // 动态导入对应语言的消息文件
+    // Dynamically import messages for the corresponding locale
     const messages = (await import(`../../messages/${locale}.json`)).default;
     
     return {
@@ -20,7 +20,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
       messages,
     };
   } catch (error) {
-    // 如果找不到语言文件，返回404页面
+    // If language file is not found, return 404 page
     notFound();
     return { locale: routing.defaultLocale, messages: {} };
   }

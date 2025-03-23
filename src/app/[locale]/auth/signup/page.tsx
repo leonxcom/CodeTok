@@ -3,11 +3,13 @@ import { SignUpForm } from '@/components/auth'
 import { getTranslations } from 'next-intl/server'
 import { Locale } from '@/i18n/routing'
 
+type Params = Promise<{
+  locale: Locale
+  [key: string]: string | string[]
+}>
+
 interface SignUpPageProps {
-  params: {
-    locale: Locale
-    [key: string]: string | string[]
-  }
+  params: Params
   searchParams: {
     callbackUrl?: string
     [key: string]: string | string[] | undefined
@@ -15,8 +17,9 @@ interface SignUpPageProps {
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: SignUpPageProps): Promise<Metadata> {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   return {
@@ -26,9 +29,10 @@ export async function generateMetadata({
 }
 
 export default async function SignUpPage({
-  params: { locale },
+  params,
   searchParams: { callbackUrl = '/' },
 }: SignUpPageProps) {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   const labels = {

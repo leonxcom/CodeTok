@@ -3,11 +3,13 @@ import { VerifyEmailForm } from '@/components/auth'
 import { getTranslations } from 'next-intl/server'
 import { Locale } from '@/i18n/routing'
 
+type Params = Promise<{
+  locale: Locale
+  [key: string]: string | string[]
+}>
+
 interface VerifyEmailPageProps {
-  params: {
-    locale: Locale
-    [key: string]: string | string[]
-  }
+  params: Params
   searchParams: {
     token?: string
     email?: string
@@ -16,8 +18,9 @@ interface VerifyEmailPageProps {
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: VerifyEmailPageProps): Promise<Metadata> {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   return {
@@ -27,9 +30,10 @@ export async function generateMetadata({
 }
 
 export default async function VerifyEmailPage({
-  params: { locale },
+  params,
   searchParams: { token, email },
 }: VerifyEmailPageProps) {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   const labels = {

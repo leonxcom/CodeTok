@@ -8,13 +8,21 @@ import { MobileNav } from '@/components/mobile-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Locale } from '@/i18n/routing'
 import { LanguageToggle } from './language-toggle'
+import { getTranslations } from 'next-intl/server'
+import { AuthButtons } from '@/components/auth-buttons'
 
 interface SiteHeaderProps {
   locale: Locale
 }
 
-export function SiteHeader({ locale }: SiteHeaderProps) {
+export async function SiteHeader({ locale }: SiteHeaderProps) {
   const siteConfig = getSiteConfig(locale)
+  const t = await getTranslations('Auth')
+
+  const authLabels = {
+    signin: t('signin'),
+    signup: t('signup'),
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -39,8 +47,17 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
             </Link>
           </nav>
           <LanguageToggle locale={locale} />
+
           <ThemeToggle />
-          <MobileNav items={siteConfig.mainNav} locale={locale} />
+
+          {/* 认证按钮 */}
+          <AuthButtons locale={locale} labels={authLabels} />
+
+          <MobileNav
+            items={siteConfig.mainNav}
+            locale={locale}
+            authLabels={authLabels}
+          />
         </div>
       </div>
     </header>

@@ -1,10 +1,11 @@
 import { Metadata } from 'next'
 import { SignInForm } from '@/components/auth'
 import { getTranslations } from 'next-intl/server'
+import { Locale } from '@/i18n/routing'
 
 interface SignInPageProps {
   params: {
-    locale: string
+    locale: Locale
   }
   searchParams: {
     callbackUrl?: string

@@ -18,11 +18,13 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
 }
 
+type LayoutParams = {
+  params: { locale: Locale }
+}
+
 export async function generateMetadata({
   params,
-}: Readonly<{
-  params: { locale: Locale }
-}>): Promise<Metadata> {
+}: LayoutParams): Promise<Metadata> {
   const locale = params.locale
   await setRequestLocale(locale)
 
@@ -44,10 +46,10 @@ export async function generateMetadata({
 export default async function RootLayout({
   children,
   params,
-}: Readonly<{
+}: {
   children: React.ReactNode
   params: { locale: Locale }
-}>) {
+}) {
   const locale = params.locale
   await setRequestLocale(locale)
 

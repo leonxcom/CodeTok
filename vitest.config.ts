@@ -15,6 +15,10 @@ export default defineConfig({
       exclude: ['node_modules/', 'src/app/test/**', 'src/__tests__/e2e/**'],
       all: true,
     },
+    pool: 'forks',
+    isolate: true,
+    passWithNoTests: true,
+    bail: process.env.CI ? 1 : 0,
   },
   resolve: {
     alias: {

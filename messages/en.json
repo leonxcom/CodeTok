@@ -3,5 +3,17 @@
     "title": "No study! Build real projects in public, and gain your first 1000 loyal supporters worldwide!",
     "github": "GitHub",
     "twitter": "Twitter"
+  },
+  "About": {
+    "title": "About Us",
+    "description": "NoStudy.ai is a platform that helps content creators showcase their skills through real projects. We believe that by building and sharing meaningful projects, you can attract a loyal audience while improving your skills.",
+    "mission": {
+      "title": "Our Mission",
+      "description": "Our mission is to help every creator gain their first 1000 loyal supporters by building real projects in public. We believe that building in public not only provides valuable feedback but also establishes personal branding and credibility."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "description": "If you have any questions or suggestions, please feel free to contact us at: support@nostudy.ai"
+    }
   }
 }

@@ -111,31 +111,56 @@ The components use Shadcn UI and MagicUI for styling, with Tailwind CSS for layo
 
 ## Testing
 
-All authentication components and API routes must be thoroughly tested before being considered complete. The testing process should include:
+### Overview
 
-1. **Component Testing**:
+Every authentication component and API route must undergo thorough testing before it can be considered complete. This ensures we deliver a reliable authentication system that operates correctly in various scenarios.
 
-   - Verify form validations work correctly
-   - Test error handling for invalid inputs
-   - Ensure UI elements appear/disappear as expected
-   - Confirm internationalization works for all supported languages
+### Testing Tools
 
-2. **API Testing**:
+The authentication system uses the following testing tools:
 
-   - Test each API endpoint with valid and invalid inputs
-   - Verify correct response status codes and data structures
-   - Test error handling for edge cases
-   - Confirm API security (unauthorized access prevention)
+- **Vitest**: For unit testing components and API routes
+- **React Testing Library**: For testing UI components
+- **Supertest**: For API testing
+- **MSW (Mock Service Worker)**: For mocking API responses
+- **Playwright**: For end-to-end testing
 
-3. **Integration Testing**:
+### Testing Status
 
-   - Test the full authentication flow from registration to login
-   - Verify email verification process works end-to-end
-   - Test password reset flow from request to completion
-   - Confirm redirect behavior after successful operations
+The following tests have been implemented:
 
-4. **Cross-browser Testing**:
-   - Verify components render correctly across different browsers
-   - Test functionality in mobile and desktop environments
+#### Component Tests
 
-**Note**: Testing is a mandatory step for module completion. No module should be considered complete until all tests have been performed and passed successfully.
+- `SignInForm.test.tsx`: Tests render, validation, and form submission behavior
+  - Located at: `src/__tests__/components/auth/SignInForm.test.tsx`
+
+#### API Tests
+
+- `signin.test.ts`: Tests login API success/failure scenarios
+  - Located at: `src/__tests__/api/auth/signin.test.ts`
+- `signup.test.ts`: Tests registration API success/failure scenarios
+  - Located at: `src/__tests__/api/auth/signup.test.ts`
+
+#### End-to-End Tests
+
+- `auth.spec.ts`: Tests full user flows including registration, login, password reset, and email verification
+  - Located at: `src/__tests__/e2e/auth.spec.ts`
+
+#### Configuration Files
+
+- `playwright.config.ts`: Configuration for end-to-end testing with Playwright
+
+### Testing Execution Plan
+
+1. **Unit Tests**: Run `pnpm test` to execute all unit tests (component and API tests)
+2. **End-to-End Tests**: Run `pnpm test:e2e` to execute Playwright tests
+3. **CI Integration**: All tests are integrated into the CI pipeline and run automatically on each commit
+
+### Testing Completion Criteria
+
+- All components must have corresponding unit tests
+- All API routes must have corresponding API tests
+- Critical user flows must be covered by end-to-end tests
+- All tests must pass with at least 80% code coverage
+
+No module is considered complete until all tests are passed successfully.

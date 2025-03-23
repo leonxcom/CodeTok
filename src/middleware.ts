@@ -18,7 +18,10 @@ const protectedPaths = [
  * Create the internationalization middleware
  */
 const intlMiddleware = createIntlMiddleware({
-  ...routing
+  ...routing,
+  // Force default locale (Chinese) regardless of browser settings
+  defaultLocale: 'zh',
+  localeDetection: false
 });
 
 /**

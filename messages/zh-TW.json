@@ -1,8 +1,9 @@
 {
   "Index": {
-    "title": "告別悶頭學習，公開構建真實項目，獲得你的前1000位忠實支持者！",
+    "title": "告別悶頭學習，公開構建真實項目，獲得你的前1000位鐵桿粉絲！",
     "github": "GitHub",
-    "twitter": "推特"
+    "twitter": "推特",
+    "version": "3"
   },
   "About": {
     "title": "關於我們",
@@ -16,4 +17,4 @@
       "description": "如果您有任何問題或建議，請隨時通過以下方式聯繫我們：support@nostudy.ai"
     }
   }
-} 
+}

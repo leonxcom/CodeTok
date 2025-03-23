@@ -36,6 +36,12 @@
     "or": "or",
     "continue": "Continue",
     "resetPasswordInstructions": "Enter your email address and we'll send you instructions to reset your password.",
-    "verifyEmailInstructions": "We've sent a verification link to your email. Please check your inbox and follow the instructions to verify your account."
+    "verifyEmailInstructions": "We've sent a verification link to your email. Please check your inbox and follow the instructions to verify your account.",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "emailNotVerified": "Please verify your email before signing in.",
+    "signInSuccess": "Sign in successful!",
+    "generalError": "An error occurred. Please try again later.",
+    "passwordRequirements": "Password must be at least 8 characters long.",
+    "formError": "Please check the form for errors."
   }
 }

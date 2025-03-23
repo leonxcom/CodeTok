@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -43,6 +43,10 @@ interface SignInFormProps {
     forgotPassword: string
     noAccount: string
     signUp: string
+    invalidCredentials?: string
+    emailNotVerified?: string
+    signInSuccess?: string
+    generalError?: string
   }
 }
 
@@ -53,7 +57,7 @@ export function SignInForm({
     signIn: 'Sign In',
     email: 'Email',
     password: 'Password',
-    forgotPassword: 'Forgot password?',
+    forgotPassword: 'Forgot Password?',
     noAccount: "Don't have an account?",
     signUp: 'Sign Up',
   },
@@ -61,6 +65,7 @@ export function SignInForm({
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [csrfToken, setCsrfToken] = useState<string>('')
 
   // Define form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -76,6 +81,21 @@ export function SignInForm({
   const fromRef = useRef<HTMLDivElement>(null)
   const toRef = useRef<HTMLDivElement>(null)
 
+  // 在组件挂载时获取CSRF令牌
+  useEffect(() => {
+    async function fetchCsrfToken() {
+      try {
+        const response = await fetch('/api/auth/csrf')
+        const data = await response.json()
+        setCsrfToken(data.csrfToken)
+      } catch (err) {
+        console.error('Failed to fetch CSRF token:', err)
+      }
+    }
+
+    fetchCsrfToken()
+  }, [])
+
   // Handle form submission
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true)
@@ -86,6 +106,7 @@ export function SignInForm({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken || '',
         },
         body: JSON.stringify(values),
       })
@@ -93,21 +114,37 @@ export function SignInForm({
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to sign in')
+        if (data.error === 'Invalid credentials') {
+          throw new Error(labels?.invalidCredentials || '邮箱或密码不正确')
+        } else if (data.error === 'Email not verified') {
+          throw new Error(labels?.emailNotVerified || '请先验证您的邮箱')
+        } else {
+          throw new Error(data.error || data.message || '登录失败，请稍后重试')
+        }
       }
 
-      // Redirect to callback URL or homepage
+      const successMessage = labels?.signInSuccess || '登录成功'
+      console.log(successMessage)
+
       router.push(callbackUrl)
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? err.message : '发生错误，请稍后重试')
     } finally {
       setIsLoading(false)
     }
   }
 
+  // 在表单重置时清除错误
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      if (error) setError(null)
+    })
+    return () => subscription.unsubscribe()
+  }, [form, error])
+
   return (
-    <div className="relative w-full max-w-md px-8 py-12" ref={containerRef}>
+    <div className="relative w-full max-w-md px-8" ref={containerRef}>
       <div className="hidden" ref={fromRef}></div>
       <div className="hidden" ref={toRef}></div>
 
@@ -118,88 +155,88 @@ export function SignInForm({
         toRef={toRef}
       />
 
-      <Card className="w-full bg-background/80 backdrop-blur-sm">
-        <div className="px-8 py-10">
-          <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold">{labels.signIn}</h2>
-          </div>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <Card className="border-border/40 bg-background/95 backdrop-blur-sm">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 p-6"
+          >
+            <div className="mb-4 space-y-2 text-center">
+              <h1 className="text-2xl font-bold">{labels?.signIn || '登录'}</h1>
               {error && (
-                <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400">
                   {error}
                 </div>
               )}
+            </div>
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{labels.email}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="you@example.com"
-                        type="email"
-                        autoComplete="email"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{labels.email}</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="you@example.com"
+                      type="email"
+                      autoComplete="email"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel>{labels.password}</FormLabel>
-                      <Link
-                        href={`/${locale}/auth/reset-password`}
-                        className="text-xs text-muted-foreground hover:text-primary"
-                      >
-                        {labels.forgotPassword}
-                      </Link>
-                    </div>
-                    <FormControl>
-                      <Input
-                        placeholder="••••••••"
-                        type="password"
-                        autoComplete="current-password"
-                        disabled={isLoading}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>{labels.password}</FormLabel>
+                    <Link
+                      href={`/${locale}/auth/reset-password`}
+                      className="text-xs text-muted-foreground hover:text-primary"
+                    >
+                      {labels.forgotPassword}
+                    </Link>
+                  </div>
+                  <FormControl>
+                    <Input
+                      placeholder="••••••••"
+                      type="password"
+                      autoComplete="current-password"
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-              <ShimmerButton
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
+            <ShimmerButton
+              type="submit"
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : labels.signIn}
+            </ShimmerButton>
+
+            <div className="text-center text-sm text-muted-foreground">
+              {labels.noAccount}{' '}
+              <Link
+                href={`/${locale}/auth/signup`}
+                className="font-medium text-primary hover:underline"
               >
-                {isLoading ? 'Signing in...' : labels.signIn}
-              </ShimmerButton>
-
-              <div className="text-center text-sm text-muted-foreground">
-                {labels.noAccount}{' '}
-                <Link
-                  href={`/${locale}/auth/signup`}
-                  className="font-medium text-primary hover:underline"
-                >
-                  {labels.signUp}
-                </Link>
-              </div>
-            </form>
-          </Form>
-        </div>
+                {labels.signUp}
+              </Link>
+            </div>
+          </form>
+        </Form>
       </Card>
     </div>
   )

@@ -10,7 +10,7 @@ import { db } from '@/db'
  * - Support for account verification
  */
 export const auth = betterAuth({
-  // Connect to our existing database
+  // Connect to our existing database using the latest recommended approach
   database: db,
 
   // Configure email and password authentication

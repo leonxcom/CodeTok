@@ -16,5 +16,26 @@
       "title": "Contact Us",
       "description": "If you have any questions or suggestions, please feel free to contact us at: support@nostudy.ai"
     }
+  },
+  "Auth": {
+    "signin": "Sign In",
+    "signup": "Sign Up",
+    "signout": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "resetPassword": "Reset Password",
+    "forgotPassword": "Forgot Password?",
+    "verifyEmail": "Verify Email",
+    "resendVerification": "Resend Verification",
+    "rememberMe": "Remember Me",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInWithEmail": "Sign in with Email",
+    "signUpWithEmail": "Sign up with Email",
+    "or": "or",
+    "continue": "Continue",
+    "resetPasswordInstructions": "Enter your email address and we'll send you instructions to reset your password.",
+    "verifyEmailInstructions": "We've sent a verification link to your email. Please check your inbox and follow the instructions to verify your account."
   }
 }

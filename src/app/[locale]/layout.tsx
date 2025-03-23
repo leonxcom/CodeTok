@@ -23,10 +23,9 @@ export async function generateMetadata({
 }: Readonly<{
   params: { locale: Locale }
 }>): Promise<Metadata> {
-  const dynamicParams = await params;
-  const locale = dynamicParams.locale;
-  await setRequestLocale(locale);
-  
+  const locale = params.locale
+  await setRequestLocale(locale)
+
   const siteConfig = getSiteConfig(locale)
   return {
     title: {
@@ -42,19 +41,16 @@ export async function generateMetadata({
   }
 }
 
-export type PageProps = Readonly<{
-  children: React.ReactNode
-  params: { locale: Locale }
-}>
-
 export default async function RootLayout({
   children,
   params,
-}: PageProps) {
-  const dynamicParams = await params;
-  const locale = dynamicParams.locale;
-  await setRequestLocale(locale);
-  
+}: Readonly<{
+  children: React.ReactNode
+  params: { locale: Locale }
+}>) {
+  const locale = params.locale
+  await setRequestLocale(locale)
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <head />

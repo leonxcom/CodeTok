@@ -1,7 +1,7 @@
 {
   "name": "nostudy-ai",
   "version": 2,
-  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm build",
+  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm vercel-build",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "outputDirectory": ".next",
   "framework": "nextjs",

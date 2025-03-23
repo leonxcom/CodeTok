@@ -14,6 +14,7 @@ Say goodbye to isolated learning! Build real projects in public and gain your fi
 - [Deployment Architecture](#deployment-architecture)
 - [Quick Start](#quick-start)
 - [License](#license)
+- [本地构建测试](#本地构建测试)
 
 ## 💡 Core Concepts
 
@@ -259,3 +260,36 @@ We welcome contributions of all kinds! If you want to participate in project dev
 5. Create a Pull Request
 
 For detailed contribution guidelines, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## 本地构建测试
+
+为了避免在Vercel部署时出现问题，我们添加了本地构建测试流程。在推送代码前，Git钩子会自动运行构建测试，确保代码能够成功构建。
+
+你也可以手动运行以下命令进行测试：
+
+```bash
+# 运行lint检查
+pnpm lint
+
+# 运行构建测试
+pnpm build:test
+
+# 或者一次性运行两者
+pnpm lint && pnpm build:test
+```
+
+如果你需要模拟Vercel环境的构建，可以使用：
+
+```bash
+pnpm vercel-build
+```
+
+### 常见问题排查
+
+如果你的构建失败，可能是由于以下原因：
+
+1. **类型错误** - 检查TypeScript类型是否正确
+2. **导入路径错误** - 确保所有导入路径正确
+3. **依赖问题** - 确保`pnpm-lock.yaml`与`package.json`同步
+
+如果遇到Vercel特有的问题，请参考Vercel文档：[Vercel构建文档](https://vercel.com/docs/deployments/builds)

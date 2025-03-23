@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { shadcn } from '@/lib/ui'
 import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
 import { useTheme } from 'next-themes'
@@ -24,124 +24,124 @@ export function ScriptCopyBtn({
   commandMap,
   className,
 }: ScriptCopyBtnProps) {
-  const packageManagers = Object.keys(commandMap)
-  const [packageManager, setPackageManager] = useState(packageManagers[0])
+  const { resolvedTheme } = useTheme()
+  const installers = Object.keys(commandMap)
+  const [active, setActive] = useState<string>(installers[0])
   const [copied, setCopied] = useState(false)
-  const [highlightedCode, setHighlightedCode] = useState('')
-  const { theme } = useTheme()
-  const command = commandMap[packageManager]
+  const [highlightedCode, setHighlightedCode] = useState<string>('')
 
   useEffect(() => {
-    async function loadHighlightedCode() {
-      try {
-        const { codeToHtml } = await import('shiki')
-        const highlighted = await codeToHtml(command, {
-          lang: codeLanguage,
-          themes: {
-            light: lightTheme,
-            dark: darkTheme,
-          },
-          defaultColor: theme === 'dark' ? 'dark' : 'light',
-        })
-        setHighlightedCode(highlighted)
-      } catch (error) {
-        console.error('Error highlighting code:', error)
-        setHighlightedCode(`<pre>${command}</pre>`)
-      }
-    }
+    loadHighlightedCode().catch(console.error)
 
-    loadHighlightedCode()
-  }, [command, theme, codeLanguage, lightTheme, darkTheme])
+    async function loadHighlightedCode() {
+      const shiki = await import('shiki')
+      const highlighter = await shiki.createHighlighter({
+        themes: [lightTheme, darkTheme],
+        langs: [codeLanguage],
+      })
+
+      const light = highlighter.codeToHtml(commandMap[active], {
+        lang: codeLanguage,
+        theme: lightTheme,
+      })
+      const dark = highlighter.codeToHtml(commandMap[active], {
+        lang: codeLanguage,
+        theme: darkTheme,
+      })
+
+      setHighlightedCode(
+        light
+          .replace(
+            '<pre class=',
+            '<pre class="dark:hidden w-full h-full overflow-auto break-words [text-wrap:balance]" ',
+          )
+          .concat(
+            dark.replace(
+              '<pre class=',
+              '<pre class="hidden dark:block w-full h-full overflow-auto break-words [text-wrap:balance]" ',
+            ),
+          ),
+      )
+    }
+  }, [active, commandMap, codeLanguage, lightTheme, darkTheme])
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(command)
     setCopied(true)
+    navigator.clipboard.writeText(commandMap[active])
     setTimeout(() => setCopied(false), 2000)
   }
 
   return (
     <div
       className={cn(
-        'mx-auto flex max-w-md items-center justify-center',
+        'rounded-lg border bg-background p-2 flex flex-col items-center justify-start overflow-hidden text-background-foreground relative w-full',
         className,
       )}
     >
-      <div className="w-full space-y-2">
-        <div className="mb-2 flex items-center justify-between">
-          {showMultiplePackageOptions && (
-            <div className="relative">
-              <div className="inline-flex overflow-hidden rounded-md border border-border text-xs">
-                {packageManagers.map((pm, index) => (
-                  <div key={pm} className="flex items-center">
-                    {index > 0 && (
-                      <div className="h-4 w-px bg-border" aria-hidden="true" />
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`relative rounded-none bg-background px-2 py-1 hover:bg-background ${
-                        packageManager === pm
-                          ? 'text-primary'
-                          : 'text-muted-foreground'
-                      }`}
-                      onClick={() => setPackageManager(pm)}
-                    >
-                      {pm}
-                      {packageManager === pm && (
-                        <motion.div
-                          className="absolute inset-x-0 bottom-[1px] mx-auto h-0.5 w-[90%] bg-primary"
-                          layoutId="activeTab"
-                          initial={false}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 500,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="relative flex items-center">
-          <div className="min-w-[300px] grow font-mono">
-            {highlightedCode ? (
-              <div
-                className={`[&>pre]:overflow-x-auto [&>pre]:rounded-md [&>pre]:p-2 [&>pre]:px-4 [&>pre]:font-mono ${
-                  theme === 'dark' ? 'dark' : 'light'
-                }`}
-                dangerouslySetInnerHTML={{ __html: highlightedCode }}
-              />
-            ) : (
-              <pre className="rounded-md border border-border bg-white p-2 px-4 font-mono dark:bg-black">
-                {command}
-              </pre>
-            )}
-          </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="relative ml-2 rounded-md"
-            onClick={copyToClipboard}
-            aria-label={copied ? 'Copied' : 'Copy to clipboard'}
-          >
-            <span className="sr-only">{copied ? 'Copied' : 'Copy'}</span>
-            <CopyIcon
-              className={`h-4 w-4 transition-all duration-300 ${
-                copied ? 'scale-0' : 'scale-100'
-              }`}
-            />
-            <CheckIcon
-              className={`absolute inset-0 m-auto h-4 w-4 transition-all duration-300 ${
-                copied ? 'scale-100' : 'scale-0'
-              }`}
-            />
-          </Button>
+      <div
+        className={cn(
+          'max-w-full overflow-x-auto mb-2',
+          showMultiplePackageOptions ? 'w-full' : 'hidden',
+        )}
+      >
+        <div className="flex items-center flex-nowrap gap-2">
+          {showMultiplePackageOptions &&
+            installers.map((installer) => (
+              <shadcn.Button.Button
+                key={installer}
+                onClick={() => setActive(installer)}
+                variant={active === installer ? 'default' : 'outline'}
+                className="px-2 py-1"
+              >
+                {installer}
+              </shadcn.Button.Button>
+            ))}
         </div>
       </div>
+      <div className="flex w-full flex-col-reverse lg:flex-row items-center lg:items-stretch gap-2">
+        <div
+          className="w-full text-sm min-h-[7.5rem] max-h-[14rem] relative"
+          dangerouslySetInnerHTML={{ __html: highlightedCode }}
+        />
+        <shadcn.Button.Button
+          size={'icon'}
+          variant="ghost"
+          onClick={copyToClipboard}
+          className="self-end group"
+        >
+          <AnimatedCopyButton
+            copied={copied}
+            className="p-2 h-8 w-8 transition-all"
+          />
+        </shadcn.Button.Button>
+      </div>
+    </div>
+  )
+}
+
+function AnimatedCopyButton({
+  copied,
+  className,
+}: {
+  copied: boolean
+  className?: string
+}) {
+  return (
+    <div className={cn('relative', className)}>
+      <motion.div
+        initial={{ scale: 1 }}
+        animate={{ scale: copied ? 0 : 1 }}
+        className="absolute inset-0 transform-gpu"
+      >
+        <CopyIcon className="size-full" />
+      </motion.div>
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: copied ? 1 : 0 }}
+        className="absolute inset-0 transform-gpu text-green-500 dark:text-green-400"
+      >
+        <CheckIcon className="size-full" />
+      </motion.div>
     </div>
   )
 }

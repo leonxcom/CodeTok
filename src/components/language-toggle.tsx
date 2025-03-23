@@ -4,13 +4,7 @@ import * as React from 'react'
 import { useRouter } from 'next/navigation'
 import { usePathname } from 'next/navigation'
 
-import { buttonVariants } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { shadcn } from '@/lib/ui'
 import { Icons } from '@/components/icons'
 import { Locale, locales, languageNames } from '@/i18n/routing'
 
@@ -29,10 +23,10 @@ export function LanguageToggle({ locale }: LanguageToggleProps) {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
+    <shadcn.DropdownMenu.DropdownMenu>
+      <shadcn.DropdownMenu.DropdownMenuTrigger>
         <div
-          className={buttonVariants({
+          className={shadcn.Button.buttonVariants({
             size: 'icon',
             variant: 'ghost',
           })}
@@ -40,14 +34,14 @@ export function LanguageToggle({ locale }: LanguageToggleProps) {
           <Icons.Languages className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
           <span className="sr-only">Toggle language</span>
         </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      </shadcn.DropdownMenu.DropdownMenuTrigger>
+      <shadcn.DropdownMenu.DropdownMenuContent>
         {locales.map((lang) => (
-          <DropdownMenuItem key={lang} onClick={() => switchLanguage(lang)}>
+          <shadcn.DropdownMenu.DropdownMenuItem key={lang} onClick={() => switchLanguage(lang)}>
             {languageNames[lang]}
-          </DropdownMenuItem>
+          </shadcn.DropdownMenu.DropdownMenuItem>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </shadcn.DropdownMenu.DropdownMenuContent>
+    </shadcn.DropdownMenu.DropdownMenu>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import { FileIcon, FolderIcon, FolderOpenIcon } from 'lucide-react'
+import { FileIcon, FolderIcon, FolderOpenIcon, ChevronDown } from 'lucide-react'
 import React, {
   createContext,
   forwardRef,
@@ -11,9 +11,8 @@ import React, {
   useState,
 } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
+import { shadcn } from '@/lib/ui'
 
 type TreeViewElement = {
   id: string
@@ -334,56 +333,51 @@ const File = forwardRef<
 
 File.displayName = 'File'
 
-const CollapseButton = forwardRef<
-  HTMLButtonElement,
-  {
-    elements: TreeViewElement[]
-    expandAll?: boolean
-  } & React.HTMLAttributes<HTMLButtonElement>
->(({ className, elements, expandAll = false, children, ...props }, ref) => {
-  const { expandedItems, setExpandedItems } = useTree()
+const CollapseButton = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
+  ({ className, elements, expandAll = false, children, ...props }, ref) => {
+    const { expandedItems, setExpandedItems } = useTree()
 
-  const expendAllTree = useCallback((elements: TreeViewElement[]) => {
-    const expandTree = (element: TreeViewElement) => {
-      const isSelectable = element.isSelectable ?? true
-      if (isSelectable && element.children && element.children.length > 0) {
-        setExpandedItems?.((prev) => [...(prev ?? []), element.id])
-        element.children.forEach(expandTree)
+    const expendAllTree = useCallback((elements: TreeViewElement[]) => {
+      const expandTree = (element: TreeViewElement) => {
+        const isSelectable = element.isSelectable ?? true
+        if (isSelectable && element.children && element.children.length > 0) {
+          setExpandedItems?.((prev) => [...(prev ?? []), element.id])
+          element.children.forEach(expandTree)
+        }
       }
-    }
 
-    elements.forEach(expandTree)
-  }, [])
+      elements.forEach(expandTree)
+    }, [])
 
-  const closeAll = useCallback(() => {
-    setExpandedItems?.([])
-  }, [])
+    const closeAll = useCallback(() => {
+      setExpandedItems?.([])
+    }, [])
 
-  useEffect(() => {
-    console.log(expandAll)
-    if (expandAll) {
-      expendAllTree(elements)
-    }
-  }, [expandAll])
-
-  return (
-    <Button
-      variant={'ghost'}
-      className="absolute bottom-1 right-2 h-8 w-fit p-1"
-      onClick={
-        expandedItems && expandedItems.length > 0
-          ? closeAll
-          : () => expendAllTree(elements)
+    useEffect(() => {
+      console.log(expandAll)
+      if (expandAll) {
+        expendAllTree(elements)
       }
-      ref={ref}
-      {...props}
-    >
-      {children}
-      <span className="sr-only">Toggle</span>
-    </Button>
-  )
-})
+    }, [expandAll])
 
+    return (
+      <shadcn.Button.Button
+        variant={'ghost'}
+        className="absolute bottom-1 right-2 h-8 w-fit p-1"
+        onClick={
+          expandedItems && expandedItems.length > 0
+            ? closeAll
+            : () => expendAllTree(elements)
+        }
+        ref={ref}
+        {...props}
+      >
+        {children}
+        <span className="sr-only">Toggle</span>
+      </shadcn.Button.Button>
+    )
+  }
+)
 CollapseButton.displayName = 'CollapseButton'
 
 export { CollapseButton, File, Folder, Tree, type TreeViewElement }

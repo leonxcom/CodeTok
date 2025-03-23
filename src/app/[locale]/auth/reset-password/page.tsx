@@ -3,11 +3,13 @@ import { PasswordResetForm } from '@/components/auth'
 import { getTranslations } from 'next-intl/server'
 import { Locale } from '@/i18n/routing'
 
+type Params = Promise<{
+  locale: Locale
+  [key: string]: string | string[]
+}>
+
 interface PasswordResetPageProps {
-  params: {
-    locale: Locale
-    [key: string]: string | string[]
-  }
+  params: Params
   searchParams: {
     token?: string
     [key: string]: string | string[] | undefined
@@ -15,8 +17,9 @@ interface PasswordResetPageProps {
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: PasswordResetPageProps): Promise<Metadata> {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   return {
@@ -26,9 +29,10 @@ export async function generateMetadata({
 }
 
 export default async function PasswordResetPage({
-  params: { locale },
+  params,
   searchParams: { token },
 }: PasswordResetPageProps) {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   const labels = {

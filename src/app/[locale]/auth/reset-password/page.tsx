@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { PasswordResetForm } from '@/components/auth/PasswordResetForm'
+import { PasswordResetForm } from '@/components/auth'
 import { getTranslations } from 'next-intl/server'
 
 interface PasswordResetPageProps {

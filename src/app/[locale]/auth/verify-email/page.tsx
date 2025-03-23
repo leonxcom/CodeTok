@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { VerifyEmailForm } from '@/components/auth/VerifyEmailForm'
+import { VerifyEmailForm } from '@/components/auth'
 import { getTranslations } from 'next-intl/server'
 
 interface VerifyEmailPageProps {

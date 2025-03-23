@@ -259,39 +259,3 @@ We welcome contributions of all kinds! If you want to participate in project dev
 5. Create a Pull Request
 
 For detailed contribution guidelines, please see [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## 开发规范
-
-1. 用英文进行代码注释，禁止使用中文
-2. 模块开发，每个模块开发归档两份 README，一份英文文档，一份简体中文，文档内容总结功能、接口和使用方式
-3. 小步快跑，每次只开发一个功能，代码遵循最佳实践，不搞黑科技，每完成一个节点提交一下git暂存
-4. 始终用中文回复
-5. 始终使用pnpm进行包管理
-6. 始终使用英文进行Git Commit
-7. 参考官方文档开发（重要参考标准）
-
-## 技术栈
-
-- Next.js
-- React
-- TypeScript
-- TailwindCSS
-- Shadcn UI
-
-## 安装
-
-```bash
-pnpm install
-```
-
-## 开发
-
-```bash
-pnpm dev
-```
-
-## 构建
-
-```bash
-pnpm build
-```

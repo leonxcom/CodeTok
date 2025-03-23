@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { SignUpForm } from '@/components/auth/SignUpForm'
+import { SignUpForm } from '@/components/auth'
 import { getTranslations } from 'next-intl/server'
 
 interface SignUpPageProps {

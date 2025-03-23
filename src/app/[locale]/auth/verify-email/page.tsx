@@ -1,10 +1,11 @@
 import { Metadata } from 'next'
 import { VerifyEmailForm } from '@/components/auth'
 import { getTranslations } from 'next-intl/server'
+import { Locale } from '@/i18n/routing'
 
 interface VerifyEmailPageProps {
   params: {
-    locale: string
+    locale: Locale
   }
   searchParams: {
     token?: string

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Card } from '@/components/shadcnui/card'
 import { ShimmerButton } from '@/components/magicui/shimmer-button'
-import { ShineBorderCard } from '@/components/magicui/shine-border'
+import { ShineBorderCard } from '@/components/magicui/shine-border-card'
 import { SpinningText } from '@/components/magicui/spinning-text'
 
 interface VerifyEmailFormProps {
@@ -133,11 +133,9 @@ export function VerifyEmailForm({
       return (
         <div className="flex flex-col items-center justify-center space-y-6 py-6">
           <div className="relative h-24 w-24">
-            <SpinningText
-              className="text-primary"
-              text={labels.verifying}
-              fontSize={14}
-            />
+            <SpinningText className="text-primary" fontSize={24}>
+              {labels.verifying}
+            </SpinningText>
           </div>
           <p className="text-center text-muted-foreground">
             {labels.verifying}

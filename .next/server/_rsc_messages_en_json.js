@@ -17,7 +17,7 @@ exports.modules = {
   \**************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"Index":{"title":"No study! Build real projects in public, and gain your first 1000 loyal supporters worldwide!"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"Index":{"title":"No study! Build real projects in public, and gain your first 1000 loyal supporters worldwide!"}}');
 
 /***/ })
 

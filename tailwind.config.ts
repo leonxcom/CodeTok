@@ -85,10 +85,75 @@ const config = {
             height: '0',
           },
         },
+        marquee: {
+          from: {
+            transform: 'translateX(0)',
+          },
+          to: {
+            transform: 'translateX(calc(-100% - var(--gap)))',
+          },
+        },
+        'marquee-vertical': {
+          from: {
+            transform: 'translateY(0)',
+          },
+          to: {
+            transform: 'translateY(calc(-100% - var(--gap)))',
+          },
+        },
+        orbit: {
+          '0%': {
+            transform:
+              'rotate(calc(var(--angle) * 1deg)) translateY(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg))',
+          },
+          '100%': {
+            transform:
+              'rotate(calc(var(--angle) * 1deg + 360deg)) translateY(calc(var(--radius) * 1px)) rotate(calc((var(--angle) * -1deg) - 360deg))',
+          },
+        },
+        shine: {
+          '0%': {
+            'background-position': '0% 0%',
+          },
+          '50%': {
+            'background-position': '100% 100%',
+          },
+          to: {
+            'background-position': '0% 0%',
+          },
+        },
+        meteor: {
+          '0%': {
+            transform: 'rotate(var(--angle)) translateX(0)',
+            opacity: '1',
+          },
+          '70%': {
+            opacity: '1',
+          },
+          '100%': {
+            transform: 'rotate(var(--angle)) translateX(-500px)',
+            opacity: '0',
+          },
+        },
+        'background-position-spin': {
+          '0%': {
+            backgroundPosition: 'top center',
+          },
+          '100%': {
+            backgroundPosition: 'bottom center',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        marquee: 'marquee var(--duration) infinite linear',
+        'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
+        orbit: 'orbit calc(var(--duration)*1s) linear infinite',
+        shine: 'shine var(--duration) infinite linear',
+        meteor: 'meteor 5s linear infinite',
+        'background-position-spin':
+          'background-position-spin 3000ms infinite alternate',
       },
     },
   },

@@ -38,6 +38,7 @@ Shadcn UI is a collection of unstyled components built on Radix UI and Tailwind 
 Components are located in the `src/components/shadcnui` directory and exported through the `shadcn` namespace in `@/lib/ui.ts`.
 
 Main components include:
+
 - Basic components: Button, Input, Form, etc.
 - Interactive components: Dialog, Sheet, Popover, etc.
 - Data display components: Table, DataTable, etc.
@@ -49,6 +50,7 @@ Magic UI is a collection of animated UI components built with React, Tailwind CS
 Components are located in the `src/components/magicui` directory and exported through the `magicui` namespace in `@/lib/ui.ts`.
 
 Magic UI components are categorized as follows:
+
 - Basic components (Marquee, Terminal, BentoGrid, etc.)
 - Device simulation (Safari, iPhone, Android, etc.)
 - Special effects (AnimatedBeam, Confetti, Meteors, etc.)
@@ -59,6 +61,10 @@ Magic UI components are categorized as follows:
 For a detailed list of components, please refer to `src/components/magicui/README.md`.
 
 ## Development Guidelines
+
+### Core Principle
+
+**Always Follow Official Documentation**: When integrating libraries, frameworks, or APIs, strictly adhere to their official documentation as the primary reference standard. This ensures compatibility, proper implementation, and leverages best practices recommended by the technology creators. Official documentation takes precedence over other references or previous implementation patterns.
 
 ### Code Style
 
@@ -146,4 +152,4 @@ pnpm start
 
 If you encounter issues related to Magic UI component imports, it might be due to import path problems. Magic UI components by default import dependencies from `@/components/ui`, while in our project structure these components are located in `@/components/shadcnui`.
 
-For fixing import paths, refer to the script fix method used previously. 
+For fixing import paths, refer to the script fix method used previously.

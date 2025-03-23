@@ -150,6 +150,29 @@ The following tests have been implemented:
 
 - `playwright.config.ts`: Configuration for end-to-end testing with Playwright
 
+### Planned Tests
+
+The following tests still need to be implemented:
+
+#### Component Tests
+
+- `SignUpForm.test.tsx`: Will test render, validation, and form submission behavior
+- `PasswordResetForm.test.tsx`: Will test request reset and password reset behavior
+- `VerifyEmailForm.test.tsx`: Will test email verification rendering and token verification
+
+#### API Tests
+
+- `password-reset.test.ts`: Will test password reset request and reset confirmation
+- `verify-email.test.ts`: Will test email verification token validation
+- `signout.test.ts`: Will test sign-out functionality
+
+#### Integration Tests
+
+- Add more specific end-to-end tests for:
+  - Password reset flow
+  - Email verification flow
+  - Internationalization testing
+
 ### Testing Execution Plan
 
 1. **Unit Tests**: Run `pnpm test` to execute all unit tests (component and API tests)

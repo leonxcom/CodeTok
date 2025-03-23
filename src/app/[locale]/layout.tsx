@@ -19,8 +19,14 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({
-  params: { locale },
-}: PageProps): Promise<Metadata> {
+  params,
+}: Readonly<{
+  params: { locale: Locale }
+}>): Promise<Metadata> {
+  const dynamicParams = await params;
+  const locale = dynamicParams.locale;
+  await setRequestLocale(locale);
+  
   const siteConfig = getSiteConfig(locale)
   return {
     title: {
@@ -41,11 +47,14 @@ export type PageProps = Readonly<{
   params: { locale: Locale }
 }>
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-  params: { locale },
+  params,
 }: PageProps) {
-  setRequestLocale(locale)
+  const dynamicParams = await params;
+  const locale = dynamicParams.locale;
+  await setRequestLocale(locale);
+  
   return (
     <html lang={locale} suppressHydrationWarning>
       <head />

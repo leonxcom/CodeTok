@@ -40,7 +40,6 @@ import * as Switch from "@/components/shadcnui/switch";
 import * as Table from "@/components/shadcnui/table";
 import * as Tabs from "@/components/shadcnui/tabs";
 import * as Textarea from "@/components/shadcnui/textarea";
-import * as Toast from "@/components/shadcnui/toast";
 import * as Toggle from "@/components/shadcnui/toggle";
 import * as Tooltip from "@/components/shadcnui/tooltip";
 
@@ -103,7 +102,6 @@ export const shadcn = {
   Table,
   Tabs,
   Textarea,
-  Toast,
   Toggle,
   Tooltip
 };

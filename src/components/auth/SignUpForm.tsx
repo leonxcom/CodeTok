@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -98,6 +98,11 @@ export function SignUpForm({
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
+  // Create refs for AnimatedBeam
+  const containerRef = useRef<HTMLDivElement>(null)
+  const fromRef = useRef<HTMLDivElement>(null)
+  const toRef = useRef<HTMLDivElement>(null)
+
   // Define form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -148,8 +153,16 @@ export function SignUpForm({
   }
 
   return (
-    <div className="relative w-full max-w-md px-8 py-12">
-      <AnimatedBeam className="absolute left-1/2 top-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2" />
+    <div className="relative w-full max-w-md px-8 py-12" ref={containerRef}>
+      <div className="hidden" ref={fromRef}></div>
+      <div className="hidden" ref={toRef}></div>
+
+      <AnimatedBeam
+        className="absolute left-1/2 top-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2"
+        containerRef={containerRef}
+        fromRef={fromRef}
+        toRef={toRef}
+      />
 
       {success && <Confetti />}
 

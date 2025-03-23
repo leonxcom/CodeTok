@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/shadcnui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { useTheme } from "next-themes";

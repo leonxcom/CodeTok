@@ -24,42 +24,45 @@ import { Card } from '@/components/shadcnui/card'
 import { Confetti } from '@/components/magicui/confetti'
 
 // Define form schema with password validation
-const formSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: '姓名长度至少为2个字符。',
-    }),
-    email: z.string().email({
-      message: '请输入有效的电子邮件地址。',
-    }),
-    password: z
-      .string()
-      .min(8, {
-        message: '密码长度至少为8个字符。',
-      })
-      .refine(
-        (password) => {
-          // Check for at least one lowercase letter
-          const hasLowercase = /[a-z]/.test(password)
-          // Check for at least one uppercase letter
-          const hasUppercase = /[A-Z]/.test(password)
-          // Check for at least one number
-          const hasNumber = /[0-9]/.test(password)
-          // Check for at least one special character
-          const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password)
+const formSchema = (labels: SignUpFormProps['labels']) =>
+  z
+    .object({
+      name: z.string().min(2, {
+        message: labels?.nameMinLength || '姓名长度至少为2个字符。',
+      }),
+      email: z.string().email({
+        message: labels?.invalidEmail || '请输入有效的电子邮件地址。',
+      }),
+      password: z
+        .string()
+        .min(8, {
+          message: labels?.passwordRequirements || '密码长度至少为8个字符。',
+        })
+        .refine(
+          (password) => {
+            // Check for at least one lowercase letter
+            const hasLowercase = /[a-z]/.test(password)
+            // Check for at least one uppercase letter
+            const hasUppercase = /[A-Z]/.test(password)
+            // Check for at least one number
+            const hasNumber = /[0-9]/.test(password)
+            // Check for at least one special character
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password)
 
-          return hasLowercase && hasUppercase && hasNumber && hasSpecial
-        },
-        {
-          message: '密码必须包含大小写字母、数字和特殊字符。',
-        },
-      ),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: '两次输入的密码不匹配。',
-    path: ['confirmPassword'],
-  })
+            return hasLowercase && hasUppercase && hasNumber && hasSpecial
+          },
+          {
+            message:
+              labels?.passwordComplexity ||
+              '密码必须包含大小写字母、数字和特殊字符。',
+          },
+        ),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: labels?.passwordMismatch || '两次输入的密码不匹配。',
+      path: ['confirmPassword'],
+    })
 
 // Define props
 interface SignUpFormProps {
@@ -68,13 +71,18 @@ interface SignUpFormProps {
   labels?: {
     signUp: string
     name: string
+    nameMinLength?: string
     email: string
+    invalidEmail?: string
     password: string
     confirmPassword: string
     hasAccount: string
     signIn: string
     creating: string
     success: string
+    passwordRequirements?: string
+    passwordComplexity?: string
+    passwordMismatch?: string
   }
 }
 
@@ -104,8 +112,8 @@ export function SignUpForm({
   const toRef = useRef<HTMLDivElement>(null)
 
   // Define form
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<ReturnType<typeof formSchema>>>({
+    resolver: zodResolver(formSchema(labels)),
     defaultValues: {
       name: '',
       email: '',
@@ -115,7 +123,7 @@ export function SignUpForm({
   })
 
   // Handle form submission
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<ReturnType<typeof formSchema>>) {
     setIsLoading(true)
     setError(null)
 
@@ -268,7 +276,7 @@ export function SignUpForm({
 
                 <ShimmerButton
                   type="submit"
-                  className="w-full"
+                  className="w-full font-medium text-white"
                   disabled={isLoading}
                 >
                   {isLoading ? labels.creating : labels.signUp}

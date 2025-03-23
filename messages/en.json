@@ -42,6 +42,16 @@
     "signInSuccess": "Sign in successful!",
     "generalError": "An error occurred. Please try again later.",
     "passwordRequirements": "Password must be at least 8 characters long.",
-    "formError": "Please check the form for errors."
+    "passwordComplexity": "Password must include uppercase and lowercase letters, numbers, and special characters.",
+    "passwordMismatch": "Passwords do not match.",
+    "formError": "Please check the form for errors.",
+    "creating": "Creating account...",
+    "signUpSuccess": "Registration successful! Please check your email for verification.",
+    "name": "Name",
+    "nameMinLength": "Name must be at least 2 characters long.",
+    "invalidEmail": "Please enter a valid email address.",
+    "signUpDescription": "Create a new account to start your learning journey.",
+    "resetPasswordDescription": "Reset your password to regain access to your account.",
+    "verifyEmailDescription": "Verify your email address to complete your registration."
   }
 }

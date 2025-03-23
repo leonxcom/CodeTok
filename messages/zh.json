@@ -42,6 +42,16 @@
     "signInSuccess": "登录成功！",
     "generalError": "发生错误，请稍后重试。",
     "passwordRequirements": "密码必须至少包含8个字符。",
-    "formError": "请检查表单中的错误。"
+    "passwordComplexity": "密码必须包含大小写字母、数字和特殊字符。",
+    "passwordMismatch": "两次输入的密码不匹配。",
+    "formError": "请检查表单中的错误。",
+    "creating": "正在创建账号...",
+    "signUpSuccess": "注册成功！请检查您的邮箱进行验证。",
+    "name": "姓名",
+    "nameMinLength": "姓名长度至少为2个字符。",
+    "invalidEmail": "请输入有效的电子邮件地址。",
+    "signUpDescription": "创建一个新账号，开始您的学习之旅。",
+    "resetPasswordDescription": "重置您的密码，重新获得账号访问权限。",
+    "verifyEmailDescription": "验证您的电子邮件地址，完成注册流程。"
   }
 }

@@ -36,6 +36,22 @@
     "or": "或",
     "continue": "繼續",
     "resetPasswordInstructions": "輸入您的電子郵件地址，我們將向您發送重設密碼的指引。",
-    "verifyEmailInstructions": "我們已經向您的郵箱發送了驗證連結。請查看您的收件箱並按照指示驗證您的帳號。"
+    "verifyEmailInstructions": "我們已經向您的郵箱發送了驗證連結。請查看您的收件箱並按照指示驗證您的帳號。",
+    "invalidCredentials": "電子郵件或密碼不正確，請重試。",
+    "emailNotVerified": "請在登入前驗證您的電子郵件。",
+    "signInSuccess": "登入成功！",
+    "generalError": "發生錯誤，請稍後重試。",
+    "passwordRequirements": "密碼必須至少包含8個字符。",
+    "passwordComplexity": "密碼必須包含大小寫字母、數字和特殊字符。",
+    "passwordMismatch": "兩次輸入的密碼不匹配。",
+    "formError": "請檢查表單中的錯誤。",
+    "creating": "正在創建帳號...",
+    "signUpSuccess": "註冊成功！請檢查您的郵箱進行驗證。",
+    "name": "姓名",
+    "nameMinLength": "姓名長度至少為2個字符。",
+    "invalidEmail": "請輸入有效的電子郵件地址。",
+    "signUpDescription": "創建一個新帳號，開始您的學習之旅。",
+    "resetPasswordDescription": "重設您的密碼，重新獲得帳號訪問權限。",
+    "verifyEmailDescription": "驗證您的電子郵件地址，完成註冊流程。"
   }
 }

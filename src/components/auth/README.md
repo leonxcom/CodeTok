@@ -1,189 +1,147 @@
 # Authentication Components
 
-This module provides a set of components for handling user authentication in NoStudy.ai. The components are designed to work with Better Auth and support internationalization.
+This directory contains all components related to user authentication, handling login, registration, password reset, and email verification functionalities.
 
-## Components
+## Component List
 
-### SignInForm
-
-A form component for user login.
-
-**Props:**
-
-- `locale`: The current locale (e.g., 'en', 'zh')
-- `callbackUrl`: URL to redirect after successful login
-- `labels`: Object containing translated labels for the form
-
-**Features:**
-
-- Email and password authentication
-- Form validation
-- Error handling
-- Remember me option
-- Links to sign up and reset password
-
-### SignUpForm
-
-A form component for user registration.
-
-**Props:**
-
-- `locale`: The current locale (e.g., 'en', 'zh')
-- `callbackUrl`: URL to redirect after successful registration
-- `labels`: Object containing translated labels for the form
-
-**Features:**
-
-- User registration with name, email, and password
-- Password confirmation
-- Form validation with complex password requirements
-- Success message and redirection
-- Link to sign in page
-
-### PasswordResetForm
-
-A component for handling password reset requests and password changes.
-
-**Props:**
-
-- `locale`: The current locale (e.g., 'en', 'zh')
-- `labels`: Object containing translated labels for the form
-
-**Features:**
-
-- Request password reset via email
-- Reset password with token
-- Form validation
-- Success messages and feedback
-- Back to login link
-
-### VerifyEmailForm
-
-A component for email verification.
-
-**Props:**
-
-- `locale`: The current locale (e.g., 'en', 'zh')
-- `labels`: Object containing translated labels for the form
-
-**Features:**
-
-- Email verification using token from URL
-- Resend verification email
-- Loading states
-- Success and error messages
-- Navigation back to login
+| Component Name    | Description                           | Path                    |
+| ----------------- | ------------------------------------- | ----------------------- |
+| SignInForm        | User login form                       | `SignInForm.tsx`        |
+| SignUpForm        | User registration form                | `SignUpForm.tsx`        |
+| PasswordResetForm | Password reset request form           | `PasswordResetForm.tsx` |
+| VerifyEmailForm   | Email verification handling component | `VerifyEmailForm.tsx`   |
 
 ## Usage
 
+### Login Form
+
 ```tsx
-// Example usage of SignInForm
 import { SignInForm } from '@/components/auth/SignInForm'
 
-export default function LoginPage({ locale, translations }) {
+export default function LoginPage() {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center">
-      <SignInForm
-        locale={locale}
-        callbackUrl="/dashboard"
-        labels={translations}
-      />
+    <div className="container">
+      <SignInForm />
     </div>
   )
 }
 ```
 
-## API Integration
+### Registration Form
 
-These components work with the following API endpoints:
+```tsx
+import { SignUpForm } from '@/components/auth/SignUpForm'
 
-- `/api/auth/signin` - User login
-- `/api/auth/signup` - User registration
-- `/api/auth/reset-password` - Request password reset
-- `/api/auth/reset-password/reset` - Confirm password reset with token
-- `/api/auth/verify-email` - Verify email with token
-- `/api/auth/verify-email/resend` - Resend verification email
-- `/api/auth/signout` - User logout
+export default function RegisterPage() {
+  return (
+    <div className="container">
+      <SignUpForm />
+    </div>
+  )
+}
+```
 
-## Styling
+### Password Reset Form
 
-The components use Shadcn UI and MagicUI for styling, with Tailwind CSS for layout and design.
+```tsx
+import { PasswordResetForm } from '@/components/auth/PasswordResetForm'
+
+export default function ResetPasswordPage() {
+  return (
+    <div className="container">
+      <PasswordResetForm />
+    </div>
+  )
+}
+```
+
+### Email Verification Component
+
+```tsx
+import { VerifyEmailForm } from '@/components/auth/VerifyEmailForm'
+
+export default function VerifyEmailPage() {
+  return (
+    <div className="container">
+      <VerifyEmailForm />
+    </div>
+  )
+}
+```
+
+## Features
+
+- Comprehensive form validation
+- Responsive design, adapting to mobile and desktop devices
+- Internationalization support for Chinese and English interfaces
+- Loading state management
+- Error notifications and success messages
+- Secure authentication flow
+
+## Authentication Flow
+
+1. **Registration Process**:
+
+   - User fills in email and password
+   - Account is created
+   - Verification email is sent
+   - User clicks the verification link in the email
+   - After verification, user can log in
+
+2. **Login Process**:
+
+   - User enters email and password
+   - Credentials are verified
+   - Session is created
+   - Redirect to application homepage
+
+3. **Password Reset**:
+   - User requests password reset
+   - Reset link is sent to user's email
+   - User sets new password after clicking the link
+   - Password is updated and redirected to login page
+
+## Dependencies
+
+- Next.js App Router
+- React Hook Form - Form management
+- Zod - Form validation
+- Shadcn UI - UI components
+- Next Auth - Authentication library
 
 ## Testing
 
-### Overview
+All authentication components have corresponding test files to ensure functionality correctness and consistent user experience. Test files are located in the `tests` directory.
 
-Every authentication component and API route must undergo thorough testing before it can be considered complete. This ensures we deliver a reliable authentication system that operates correctly in various scenarios.
+### Component Tests
 
-### Testing Tools
+- `SignInForm.test.tsx` - Tests the login form rendering, validation, and submission
+- `SignUpForm.test.tsx` - Tests the registration form rendering, validation, and submission
+- `PasswordResetForm.test.tsx` - Tests the password reset form rendering, validation, and submission
+- `VerifyEmailForm.test.tsx` - Tests the email verification component various states and interactions
 
-The authentication system uses the following testing tools:
+### End-to-End Tests
 
-- **Vitest**: For unit testing components and API routes
-- **React Testing Library**: For testing UI components
-- **Supertest**: For API testing
-- **MSW (Mock Service Worker)**: For mocking API responses
-- **Playwright**: For end-to-end testing
+End-to-end tests are located in `__tests__/e2e/auth.spec.ts`, testing the complete authentication flow, including:
 
-### Testing Status
+- User registration
+- User login
+- Password reset
+- Email verification
+- Responsive design testing
 
-The following tests have been implemented:
+### Running Tests
 
-#### Component Tests
+```bash
+# Run component tests
+pnpm test
 
-- `SignInForm.test.tsx`: Tests render, validation, and form submission behavior
-  - Located at: `src/__tests__/components/auth/SignInForm.test.tsx`
+# Run end-to-end tests
+pnpm test:e2e
+```
 
-#### API Tests
+## Notes
 
-- `signin.test.ts`: Tests login API success/failure scenarios
-  - Located at: `src/__tests__/api/auth/signin.test.ts`
-- `signup.test.ts`: Tests registration API success/failure scenarios
-  - Located at: `src/__tests__/api/auth/signup.test.ts`
-
-#### End-to-End Tests
-
-- `auth.spec.ts`: Tests full user flows including registration, login, password reset, and email verification
-  - Located at: `src/__tests__/e2e/auth.spec.ts`
-
-#### Configuration Files
-
-- `playwright.config.ts`: Configuration for end-to-end testing with Playwright
-
-### Planned Tests
-
-The following tests still need to be implemented:
-
-#### Component Tests
-
-- `SignUpForm.test.tsx`: Will test render, validation, and form submission behavior
-- `PasswordResetForm.test.tsx`: Will test request reset and password reset behavior
-- `VerifyEmailForm.test.tsx`: Will test email verification rendering and token verification
-
-#### API Tests
-
-- `password-reset.test.ts`: Will test password reset request and reset confirmation
-- `verify-email.test.ts`: Will test email verification token validation
-- `signout.test.ts`: Will test sign-out functionality
-
-#### Integration Tests
-
-- Add more specific end-to-end tests for:
-  - Password reset flow
-  - Email verification flow
-  - Internationalization testing
-
-### Testing Execution Plan
-
-1. **Unit Tests**: Run `pnpm test` to execute all unit tests (component and API tests)
-2. **End-to-End Tests**: Run `pnpm test:e2e` to execute Playwright tests
-3. **CI Integration**: All tests are integrated into the CI pipeline and run automatically on each commit
-
-### Testing Completion Criteria
-
-- All components must have corresponding unit tests
-- All API routes must have corresponding API tests
-- Critical user flows must be covered by end-to-end tests
-- All tests must pass with at least 80% code coverage
-
-No module is considered complete until all tests are passed successfully.
+- All form components support custom styling and layout
+- Ensure email service credentials are properly configured in environment variables
+- Components use React Context internally to manage authentication state, make sure to use the Provider in appropriate places

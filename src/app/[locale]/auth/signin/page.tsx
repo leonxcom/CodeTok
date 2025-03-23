@@ -26,8 +26,8 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
   return {
-    title: t('signIn'),
-    description: t('signInDescription'),
+    title: t('signin'),
+    description: t('signInWithEmail'),
   }
 }
 
@@ -39,17 +39,24 @@ export default async function SignInPage({
   const { callbackUrl = '/' } = await searchParams
   const t = await getTranslations({ locale, namespace: 'Auth' })
 
+  // 不再在服务器组件中生成CSRF令牌
+  // const csrfToken = await generateCsrfToken()
+
   const labels = {
-    signIn: t('signIn'),
+    signIn: t('signin'),
     email: t('email'),
     password: t('password'),
     forgotPassword: t('forgotPassword'),
-    noAccount: t('noAccount'),
-    signUp: t('signUp'),
+    noAccount: t('dontHaveAccount'),
+    signUp: t('signup'),
+    invalidCredentials: t('invalidCredentials'),
+    emailNotVerified: t('emailNotVerified'),
+    signInSuccess: t('signInSuccess'),
+    generalError: t('generalError'),
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center">
+    <div className="-mt-20 flex min-h-screen w-full items-center justify-center">
       <SignInForm locale={locale} callbackUrl={callbackUrl} labels={labels} />
     </div>
   )

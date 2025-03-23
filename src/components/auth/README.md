@@ -77,6 +77,8 @@ export default function VerifyEmailPage() {
 - Loading state management
 - Error notifications and success messages
 - Secure authentication flow
+- CSRF protection mechanism
+- User-friendly error handling
 
 ## Authentication Flow
 
@@ -92,6 +94,7 @@ export default function VerifyEmailPage() {
 
    - User enters email and password
    - Credentials are verified
+   - Email verification status is checked
    - Session is created
    - Redirect to application homepage
 
@@ -101,13 +104,20 @@ export default function VerifyEmailPage() {
    - User sets new password after clicking the link
    - Password is updated and redirected to login page
 
+## Security Features
+
+- **CSRF Protection**: All form submissions include CSRF tokens to prevent cross-site request forgery attacks
+- **Error Handling**: Provides friendly error messages without exposing sensitive information
+- **Password Security**: Ensures passwords meet minimum complexity requirements
+- **State Management**: Securely handles user sessions and authentication states
+
 ## Dependencies
 
 - Next.js App Router
 - React Hook Form - Form management
 - Zod - Form validation
 - Shadcn UI - UI components
-- Next Auth - Authentication library
+- Better Auth - Authentication library
 
 ## Testing
 

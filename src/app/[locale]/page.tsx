@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { getSiteConfig } from '@/config/site-i18n'
-import { buttonVariants } from '@/components/ui/button'
+import { shadcn } from '@/lib/ui'
 import { getTranslations } from 'next-intl/server'
 import { setRequestLocale } from 'next-intl/server'
 import { Locale } from '@/i18n/routing'
@@ -27,24 +27,14 @@ export default async function IndexPage({
         <p className="max-w-[700px] text-lg text-muted-foreground">
           {t('title')}
         </p>
-      </div>
-      <div className="flex gap-4">
-        <Link
-          href={siteConfig.links.docs}
-          target="_blank"
-          rel="noreferrer"
-          className={buttonVariants()}
-        >
-          开始使用
-        </Link>
-        <Link
-          target="_blank"
-          rel="noreferrer"
-          href={siteConfig.links.github}
-          className={buttonVariants({ variant: 'outline' })}
-        >
-          GitHub
-        </Link>
+        <div className="flex gap-4">
+          <Link href={siteConfig.links.github} target="_blank" rel="noreferrer" className={shadcn.Button.buttonVariants()}>
+            {t('github')}
+          </Link>
+          <Link href={siteConfig.links.twitter} target="_blank" rel="noreferrer" className={shadcn.Button.buttonVariants({ variant: 'outline' })}>
+            {t('twitter')}
+          </Link>
+        </div>
       </div>
     </section>
   )

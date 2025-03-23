@@ -1,6 +1,6 @@
 'use client'
 
-import { buttonVariants } from '@/components/ui/button'
+import { shadcn } from '@/lib/ui'
 import Link from 'next/link'
 
 // Render the default Next.js 404 page when a route
@@ -23,7 +23,7 @@ export default function NotFound() {
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
                 href="/"
-                className={buttonVariants({
+                className={shadcn.Button.buttonVariants({
                   variant: 'outline',
                 })}
               >

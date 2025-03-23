@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { getSiteConfig } from '@/config/site-i18n'
-import { buttonVariants } from '@/components/ui/button'
+import { shadcn } from '@/lib/ui'
 import { Icons } from '@/components/icons'
 import { MainNav } from '@/components/main-nav'
 import { MobileNav } from '@/components/mobile-nav'
@@ -28,7 +28,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
               rel="noreferrer"
             >
               <div
-                className={buttonVariants({
+                className={shadcn.Button.buttonVariants({
                   size: 'icon',
                   variant: 'ghost',
                 })}

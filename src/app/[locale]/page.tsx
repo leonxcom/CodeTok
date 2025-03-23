@@ -6,14 +6,15 @@ import { getTranslations } from 'next-intl/server'
 import { setRequestLocale } from 'next-intl/server'
 import { Locale } from '@/i18n/routing'
 
+type PageParamsPromise = Promise<{ locale: Locale }>
+
 export default async function IndexPage({
   params,
 }: {
-  params: { locale: Locale }
+  params: PageParamsPromise
 }) {
-  const dynamicParams = await params;
-  const locale = dynamicParams.locale;
-  await setRequestLocale(locale);
+  const { locale } = await params
+  await setRequestLocale(locale)
 
   const t = await getTranslations('Index')
   const siteConfig = getSiteConfig(locale)

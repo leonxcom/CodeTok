@@ -18,7 +18,7 @@ export const defaultLocale = 'zh';
 export const routing = defineRouting({
   locales,
   defaultLocale,
-  // Use 'as-needed' strategy, which only shows language prefix in URL for non-default languages
-  // Default language (zh) will not show prefix in URL
-  localePrefix: 'as-needed',
+  // Use 'always' strategy, which shows language prefix in URL for all languages
+  // including the default language (zh)
+  localePrefix: 'always',
 }); 

@@ -6,27 +6,95 @@ NoStudy.ai is a modern web application built with Next.js. It uses TypeScript as
 
 ## Technology Stack
 
-- **Framework**: Next.js 15.2.x
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Component Libraries**: Shadcn UI, Magic UI
+- **Framework**:
+  - Next.js 15 (App Router)
+  - React 18.3.1
+- **UI Library**:
+  - React 19 (Next.js)
+  - React 18.3.1
+- **Development Language**: TypeScript
+- **Styling**:
+  - Tailwind CSS v4 (Next.js)
+  - Tailwind CSS 3.4.4
+- **Component Libraries**:
+  - Shadcn UI
+  - MagicUI Design
+  - Radix UI (Primitives)
+- **Build Tools**:
+  - Vite 5.2.13
+- **Icon Library**:
+  - Lucide React 0.424.0
+- **Utility Libraries**:
+  - clsx - Tool for constructing className strings
+  - tailwind-merge - Merge Tailwind CSS classes without style conflicts
+  - class-variance-authority - Type-safe UI component variants
 - **Package Management**: pnpm
+
+### Backend & Database
+
+- **Database**: Neon Database (Serverless PostgreSQL)
+- **ORM**: Drizzle ORM
+- **Authentication**: Better Auth
+- **API**: Next.js API Routes + Next Safe Action
+- **Email Service**: Resend
+- **Payment Processing**:
+  - Stripe
+  - Creem.io
+
+### Internationalization
+
+- **i18n Framework**: Next-intl
+
+### Analytics & AI
+
+- **Analytics Tools**:
+  - Plausible Analytics
+  - Google Analytics
+- **AI Integration**: Vercel AI SDK
+- **Content Management**: Content Collections
+
+### Data Visualization
+
+- **Tables**: Tanstack Table
+
+### Development Tools
+
+- **AI IDE**: Trae
+- **Code Quality**:
+  - ESLint
+  - Prettier
+  - TypeScript Strict Mode
+- **Git Workflow**:
+  - Conventional Commits
+  - Branch Development
+  - GitHub Actions CI/CD
 
 ## Directory Structure
 
 ```
-/
-├── src/                # Source code directory
-│   ├── app/            # Next.js app router
-│   ├── components/     # Components directory
-│   │   ├── shadcnui/   # Shadcn UI components
-│   │   ├── magicui/    # Magic UI components
-│   │   └── ...         # Other custom components
-│   ├── lib/            # Utility functions and libraries
-│   └── ...             # Other source code directories
-├── public/             # Static assets
-├── messages/           # Internationalization message files
-└── ...                 # Other configuration files
+Nostudy.ai/
+├── app/                      # Next.js 15 App Router
+│   ├── [locale]/            # Internationalized routes
+│   ├── api/                 # API routes
+│   └── providers.tsx        # Global providers
+├── components/              # React components
+│   ├── ui/                 # Shadcn UI components
+│   ├── magic/              # MagicUI components
+│   └── features/           # Feature components
+├── db/                      # Database Schema and Client
+│   ├── schema.ts           # Drizzle Schema
+│   └── index.ts            # DB Client
+├── config/                  # Configuration files
+├── i18n/                    # Internationalization
+│   ├── client.ts           # Client-side i18n
+│   └── server.ts           # Server-side i18n
+├── lib/                     # Utility functions
+│   ├── auth.ts             # Authentication logic
+│   ├── actions.ts          # Server actions
+│   └── stripe.ts           # Payment logic
+├── messages/               # Translation files
+├── public/                 # Static assets
+└── styles/                 # Global styles
 ```
 
 ## Component Libraries

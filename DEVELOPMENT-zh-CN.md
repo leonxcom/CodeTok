@@ -6,27 +6,95 @@ NoStudy.ai 是一个基于 Next.js 构建的现代化 Web 应用程序。它采�
 
 ## 技术栈
 
-- **框架**: Next.js 15.2.x
-- **语言**: TypeScript
-- **样式**: Tailwind CSS
-- **组件库**: Shadcn UI, Magic UI
+- **框架**:
+  - Next.js 15 (App Router)
+  - React 18.3.1
+- **UI库**:
+  - React 19 (Next.js)
+  - React 18.3.1
+- **开发语言**: TypeScript
+- **样式**:
+  - Tailwind CSS v4 (Next.js)
+  - Tailwind CSS 3.4.4
+- **组件库**:
+  - Shadcn UI
+  - MagicUI Design
+  - Radix UI (Primitives)
+- **构建工具**:
+  - Vite 5.2.13
+- **图标库**:
+  - Lucide React 0.424.0
+- **工具库**:
+  - clsx - 用于构造类名字符串的工具
+  - tailwind-merge - 合并Tailwind CSS类而不产生样式冲突
+  - class-variance-authority - 类型安全的UI组件变体
 - **包管理**: pnpm
+
+### 后端与数据库
+
+- **数据库**: Neon Database (Serverless PostgreSQL)
+- **ORM**: Drizzle ORM
+- **身份认证**: Better Auth
+- **API**: Next.js API Routes + Next Safe Action
+- **邮件服务**: Resend
+- **支付处理**:
+  - Stripe
+  - Creem.io
+
+### 国际化
+
+- **i18n框架**: Next-intl
+
+### 分析与AI
+
+- **分析工具**:
+  - Plausible Analytics
+  - Google Analytics
+- **AI集成**: Vercel AI SDK
+- **内容管理**: Content Collections
+
+### 数据展示
+
+- **表格**: Tanstack Table
+
+### 开发工具
+
+- **AI IDE**: Trae
+- **代码质量**:
+  - ESLint
+  - Prettier
+  - TypeScript严格模式
+- **Git工作流**:
+  - 约定式提交
+  - 分支开发
+  - GitHub Actions CI/CD
 
 ## 目录结构
 
 ```
-/
-├── src/                # 源代码目录
-│   ├── app/            # Next.js 应用路由
-│   ├── components/     # 组件目录
-│   │   ├── shadcnui/   # Shadcn UI 组件
-│   │   ├── magicui/    # Magic UI 组件
-│   │   └── ...         # 其他自定义组件
-│   ├── lib/            # 工具函数和库
-│   └── ...             # 其他源码目录
-├── public/             # 静态资源
-├── messages/           # 国际化消息文件
-└── ...                 # 其他配置文件
+Nostudy.ai/
+├── app/                      # Next.js 15 App Router
+│   ├── [locale]/            # 国际化路由
+│   ├── api/                 # API路由
+│   └── providers.tsx        # 全局提供者
+├── components/              # React组件
+│   ├── ui/                 # Shadcn UI组件
+│   ├── magic/              # MagicUI组件
+│   └── features/           # 功能组件
+├── db/                      # 数据库Schema和客户端
+│   ├── schema.ts           # Drizzle Schema
+│   └── index.ts            # DB客户端
+├── config/                  # 配置文件
+├── i18n/                    # 国际化
+│   ├── client.ts           # 客户端国际化
+│   └── server.ts           # 服务端国际化
+├── lib/                     # 工具函数
+│   ├── auth.ts             # 认证逻辑
+│   ├── actions.ts          # 服务器操作
+│   └── stripe.ts           # 支付逻辑
+├── messages/               # 翻译文件
+├── public/                 # 静态资源
+└── styles/                 # 全局样式
 ```
 
 ## 组件库

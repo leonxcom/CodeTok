@@ -3,7 +3,23 @@
 // Inspired by react-hot-toast library
 import * as React from 'react'
 
-import type { ToastActionElement, ToastProps } from '@/components/ui/toast'
+// 移除对不存在的组件的导入，改为在内部定义类型
+// import type { ToastActionElement, ToastProps } from '@/components/ui/toast'
+
+// 定义类型
+export interface ToastProps {
+  variant?: 'default' | 'destructive'
+  title?: React.ReactNode
+  description?: React.ReactNode
+  action?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+export type ToastActionElement = React.ReactElement<{
+  onClick: () => void
+  altText?: string
+}>
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000

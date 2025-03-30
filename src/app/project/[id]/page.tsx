@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 
 // This type will be replaced by the actual Project type from your DB schema
 type Project = {
@@ -132,9 +133,9 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
         <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
           Random Next
         </button>
-        <a href="/" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
+        <Link href="/" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
           Home
-        </a>
+        </Link>
       </div>
     </div>
   )

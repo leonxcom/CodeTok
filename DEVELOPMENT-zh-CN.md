@@ -1,8 +1,8 @@
-# NoStudy.ai 开发文档
+# ViliVili 开发文档
 
 ## 项目概述
 
-NoStudy.ai 是一个基于 Next.js 构建的现代化 Web 应用程序。它采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
+ViliVili 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
 
 ## 技术栈
 
@@ -18,7 +18,6 @@ NoStudy.ai 是一个基于 Next.js 构建的现代化 Web 应用程序。它采�
   - Tailwind CSS 3.4.4
 - **组件库**:
   - Shadcn UI
-  - MagicUI Design
   - Radix UI (Primitives)
 - **构建工具**:
   - Vite 5.2.13
@@ -72,14 +71,13 @@ NoStudy.ai 是一个基于 Next.js 构建的现代化 Web 应用程序。它采�
 ## 目录结构
 
 ```
-Nostudy.ai/
+ViliVili/
 ├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # 国际化路由
 │   ├── api/                 # API路由
 │   └── providers.tsx        # 全局提供者
 ├── components/              # React组件
 │   ├── ui/                 # Shadcn UI组件
-│   ├── magic/              # MagicUI组件
 │   └── features/           # 功能组件
 ├── db/                      # 数据库Schema和客户端
 │   ├── schema.ts           # Drizzle Schema
@@ -111,22 +109,7 @@ Shadcn UI 是一套基于 Radix UI 和 Tailwind CSS 构建的无样式组件集�
 - Dialog, Sheet, Popover 等交互组件
 - Table, DataTable 等数据展示组件
 
-### Magic UI
 
-Magic UI 是一个基于 React、Tailwind CSS 和 Framer Motion 构建的动画 UI 组件集合，提供了丰富的动效和交互体验。
-
-组件位于 `src/components/magicui` 目录，通过 `@/lib/ui.ts` 中的 `magicui` 命名空间导出。
-
-Magic UI 组件分为以下类别：
-
-- 基础组件（Marquee, Terminal, BentoGrid 等）
-- 设备模拟（Safari, iPhone, Android 等）
-- 特效组件（AnimatedBeam, Confetti, Meteors 等）
-- 文字动画（TextReveal, TypingAnimation, SpinningText 等）
-- 按钮（RainbowButton, ShimmerButton 等）
-- 背景（WarpBackground, GridPattern 等）
-
-详细组件列表请参考 `src/components/magicui/README-zh-CN.md`。
 
 ## 开发规范
 
@@ -193,13 +176,7 @@ Magic UI 组件分为以下类别：
 pnpm dlx shadcn@latest add <component-name>
 ```
 
-#### Magic UI 组件
 
-```bash
-pnpm dlx shadcn@latest add "https://magicui.design/r/<component-name>" --yes --overwrite
-```
-
-也可以使用项目根目录中的 `install-magicui.sh` 脚本安装多个组件。
 
 ## 构建与部署
 

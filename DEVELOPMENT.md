@@ -1,8 +1,8 @@
-# NoStudy.ai Development Documentation
+# ViliVili Development Documentation
 
 ## Project Overview
 
-NoStudy.ai is a modern web application built with Next.js. It uses TypeScript as the development language and integrates multiple UI component libraries to provide a rich user interface experience.
+ViliVili is an innovative AI project and code application sharing platform. It is built with Next.js, uses TypeScript as the development language, and integrates multiple UI component libraries to provide a rich user interface experience.
 
 ## Technology Stack
 
@@ -18,7 +18,6 @@ NoStudy.ai is a modern web application built with Next.js. It uses TypeScript as
   - Tailwind CSS 3.4.4
 - **Component Libraries**:
   - Shadcn UI
-  - MagicUI Design
   - Radix UI (Primitives)
 - **Build Tools**:
   - Vite 5.2.13
@@ -72,14 +71,13 @@ NoStudy.ai is a modern web application built with Next.js. It uses TypeScript as
 ## Directory Structure
 
 ```
-Nostudy.ai/
+ViliVili/
 ├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # Internationalized routes
 │   ├── api/                 # API routes
 │   └── providers.tsx        # Global providers
 ├── components/              # React components
 │   ├── ui/                 # Shadcn UI components
-│   ├── magic/              # MagicUI components
 │   └── features/           # Feature components
 ├── db/                      # Database Schema and Client
 │   ├── schema.ts           # Drizzle Schema
@@ -111,22 +109,7 @@ Main components include:
 - Interactive components: Dialog, Sheet, Popover, etc.
 - Data display components: Table, DataTable, etc.
 
-### Magic UI
 
-Magic UI is a collection of animated UI components built with React, Tailwind CSS, and Framer Motion, providing rich animation and interactive experiences.
-
-Components are located in the `src/components/magicui` directory and exported through the `magicui` namespace in `@/lib/ui.ts`.
-
-Magic UI components are categorized as follows:
-
-- Basic components (Marquee, Terminal, BentoGrid, etc.)
-- Device simulation (Safari, iPhone, Android, etc.)
-- Special effects (AnimatedBeam, Confetti, Meteors, etc.)
-- Text animations (TextReveal, TypingAnimation, SpinningText, etc.)
-- Buttons (RainbowButton, ShimmerButton, etc.)
-- Backgrounds (WarpBackground, GridPattern, etc.)
-
-For a detailed list of components, please refer to `src/components/magicui/README.md`.
 
 ## Development Guidelines
 
@@ -192,13 +175,7 @@ For a detailed list of components, please refer to `src/components/magicui/READM
 pnpm dlx shadcn@latest add <component-name>
 ```
 
-#### Magic UI Components
 
-```bash
-pnpm dlx shadcn@latest add "https://magicui.design/r/<component-name>" --yes --overwrite
-```
-
-You can also use the `install-magicui.sh` script in the project root to install multiple components.
 
 ## Building and Deployment
 

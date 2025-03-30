@@ -20,8 +20,11 @@ export function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || ''
   const path = url.pathname
   
+  console.log('[Middleware] Processing path:', path);
+  
   // 如果是静态资源请求，直接跳过处理
   if (isStaticAsset(path)) {
+    console.log('[Middleware] Static asset detected, skipping');
     return NextResponse.next();
   }
   
@@ -31,6 +34,7 @@ export function middleware(request: NextRequest) {
   if (hostname !== 'vibetok.app' && hostname.endsWith('vibetok.app')) {
     // Rewrite the URL to the project page
     url.pathname = `/project/${subdomain}`
+    console.log('[Middleware] Subdomain detected, rewriting to:', url.pathname);
     return NextResponse.rewrite(url)
   }
   
@@ -42,10 +46,12 @@ export function middleware(request: NextRequest) {
     !path.startsWith('/api')
   )) {
     url.pathname = `/zh-cn${path === '/' ? '' : path}`
+    console.log('[Middleware] Redirecting to locale path:', url.pathname);
     return NextResponse.redirect(url)
   }
   
   // Continue with i18n middleware for regular routes
+  console.log('[Middleware] Passing to i18n middleware');
   return i18nMiddleware(request)
 }
 

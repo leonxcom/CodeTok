@@ -25,46 +25,50 @@ export async function GET() {
       }, { status: 404 })
     }
     
-    // 更新访问量
-    await safeQuery(async () => {
-      if (db) {
-        await db.update(projects)
-          .set({ views: (randomProject.views || 0) + 1 })
-          .where(eq(projects.id, randomProject.id))
-      }
-    }, null)
+    // 异步更新访问量，不阻塞响应
+    void (async () => {
+      await safeQuery(async () => {
+        if (db) {
+          await db.update(projects)
+            .set({ views: (randomProject.views || 0) + 1 })
+            .where(eq(projects.id, randomProject.id))
+        }
+      }, null)
+    })()
     
     // 获取文件列表
     let files: string[] = []
-    let fileContents: Record<string, string> = {}
+    let mainFileContent: string | null = null
     
     if (randomProject.files) {
       const projectFiles = randomProject.files as ProjectFile[]
       files = projectFiles.map((file: ProjectFile) => file.pathname)
       
-      // 对于小型项目，预加载文件内容
-      if (files.length <= 5) {
-        for (const file of projectFiles) {
-          try {
-            const response = await fetch(file.url)
-            if (response.ok) {
-              const content = await response.text()
-              fileContents[file.pathname] = content
-            }
-          } catch (error) {
-            console.error(`Error fetching file ${file.pathname}:`, error)
+      // 只获取主文件内容
+      const mainFile = projectFiles.find(file => file.pathname === randomProject.mainFile)
+      
+      if (mainFile) {
+        try {
+          const response = await fetch(mainFile.url)
+          if (response.ok) {
+            mainFileContent = await response.text()
           }
+        } catch (error) {
+          console.error(`Error fetching main file ${mainFile.pathname}:`, error)
         }
       }
     }
     
+    // 构建响应对象 - 只包含必要信息，减少传输数据量
     return NextResponse.json({
       projectId: randomProject.id,
       title: randomProject.title,
       description: randomProject.description,
       files,
       mainFile: randomProject.mainFile,
-      fileContents,
+      fileContents: mainFileContent 
+        ? { [randomProject.mainFile as string]: mainFileContent } 
+        : {},
       views: randomProject.views
     })
   } catch (error) {

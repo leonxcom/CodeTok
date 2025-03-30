@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, notFound } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Locale } from '../../../../../i18n/config'
@@ -31,11 +31,41 @@ export default function ProjectPage() {
   const [showingFrame, setShowingFrame] = useState(true)
   const tsxPreviewRef = useRef<HTMLDivElement>(null)
   
-  // 加载项目数据
+  // 互动状态
+  const [isLiked, setIsLiked] = useState(false)
+  const [isBookmarked, setIsBookmarked] = useState(false)
+  const [likesCount, setLikesCount] = useState(0)
+  const [commentsCount, setCommentsCount] = useState(0)
+  
+  // 渐进式加载状态
+  const [basicInfoLoaded, setBasicInfoLoaded] = useState(false)
+  const [filesLoaded, setFilesLoaded] = useState(false)
+  
+  // 加载项目数据 - 使用渐进式加载
   useEffect(() => {
+    // 创建一个基本信息加载完成的标志
+    let isMounted = true
+    
     const fetchProjectData = async () => {
       try {
-        const response = await fetch(`/api/projects/${projectId}`)
+        const apiUrl = `/api/projects/${projectId}`;
+        
+        // 先显示加载状态
+        setIsLoading(true)
+        
+        // 使用AbortController以便在组件卸载时取消请求
+        const controller = new AbortController()
+        const signal = controller.signal
+        
+        // 发起请求
+        const response = await fetch(apiUrl, { signal })
+        
+        if (!isMounted) return
+        
+        if (response.status === 404) {
+          document.location.href = `/${locale}/not-found`;
+          return;
+        }
         
         if (!response.ok) {
           throw new Error(
@@ -45,10 +75,28 @@ export default function ProjectPage() {
           )
         }
         
+        // 直接解析JSON数据，不要尝试同时使用getReader()和json()
         const data = await response.json()
+        
+        if (!isMounted) return
+        
+        // 设置基本项目信息，允许UI开始渲染核心内容
         setProjectData(data)
         setSelectedFile(data.mainFile)
+        setBasicInfoLoaded(true)
+        
+        // 如果文件列表加载完成，也标记加载状态为完成
+        if (data.fileContents && Object.keys(data.fileContents).length > 0) {
+          setFilesLoaded(true)
+          setIsLoading(false)
+        }
+        
+        // 预加载下一个随机项目数据
+        prefetchNextProject()
+        
       } catch (error) {
+        if (!isMounted) return
+        
         console.error('Error loading project:', error)
         setError(
           typeof error === 'object' && error !== null && 'message' in error
@@ -57,31 +105,74 @@ export default function ProjectPage() {
               ? '加载项目失败'
               : 'Failed to load project'
         )
-      } finally {
         setIsLoading(false)
       }
     }
     
     fetchProjectData()
+    
+    // 清理函数
+    return () => {
+      isMounted = false
+    }
   }, [projectId, locale])
   
-  // 渲染TSX文件
-  useEffect(() => {
-    if (
-      !isLoading && 
-      projectData && 
-      selectedFile && 
-      selectedFile.endsWith('.tsx') && 
-      !showingFrame && 
-      tsxPreviewRef.current
-    ) {
-      const tsxCode = projectData.fileContents[selectedFile]
-      renderTSX(tsxCode, tsxPreviewRef.current)
+  // 预加载下一个随机项目的数据
+  const prefetchNextProject = async () => {
+    try {
+      // 使用 fetchPriority 降低此请求的优先级，不干扰当前页面加载
+      const response = await fetch('/api/projects/random', {
+        priority: 'low',
+      } as RequestInit) // 使用类型断言
+      
+      // 只预取数据但不会处理，以便将其缓存在浏览器中
+      if (response.ok) {
+        const data = await response.json()
+        
+        // 预加载项目页面
+        const nextPageUrl = `/${locale}/project/${data.projectId}`
+        const link = document.createElement('link')
+        link.rel = 'prefetch'
+        link.href = nextPageUrl
+        document.head.appendChild(link)
+      }
+    } catch (error) {
+      // 静默失败，这只是优化
+      console.warn('Error prefetching next project:', error)
     }
-  }, [isLoading, projectData, selectedFile, showingFrame])
+  }
   
+  // 渲染加载状态的骨架屏
+  const renderSkeleton = () => {
+    return (
+      <div className="animate-pulse">
+        <div className="flex flex-1 overflow-hidden">
+          {/* 文件列表骨架 */}
+          <div className="w-64 bg-gray-100 p-4 border-r">
+            <div className="h-5 bg-gray-200 rounded w-1/2 mb-4"></div>
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="h-4 bg-gray-200 rounded w-full"></div>
+              ))}
+            </div>
+          </div>
+          
+          {/* 主内容区骨架 */}
+          <div className="flex-1 flex flex-col overflow-hidden relative p-4">
+            <div className="h-6 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="flex-1 bg-gray-100 rounded"></div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  
+  // 跳转到随机项目 - 优化为使用URL替换而不是整页刷新
   const handleRandomProject = async () => {
     try {
+      // 先显示加载状态，同时保留当前页面
+      setIsLoading(true)
+      
       const response = await fetch('/api/projects/random')
       
       if (!response.ok) {
@@ -93,9 +184,26 @@ export default function ProjectPage() {
       }
       
       const data = await response.json()
-      window.location.href = `/${locale}/project/${data.projectId}`
+      
+      // 使用history.pushState替代整页刷新，保持已加载的资源
+      const nextUrl = `/${locale}/project/${data.projectId}`
+      window.history.pushState({}, '', nextUrl)
+      
+      // 重新加载项目数据
+      setProjectData(data)
+      setSelectedFile(data.mainFile)
+      setBasicInfoLoaded(true)
+      
+      // 如果文件列表加载完成，标记加载状态为完成
+      if (data.fileContents && Object.keys(data.fileContents).length > 0) {
+        setFilesLoaded(true)
+        setIsLoading(false)
+      } else {
+        setFilesLoaded(false)
+      }
     } catch (error) {
       console.error('Error loading random project:', error)
+      setIsLoading(false)
       alert(
         locale === 'zh-cn' 
           ? '加载随机项目失败，请稍后再试'
@@ -103,6 +211,51 @@ export default function ProjectPage() {
       )
     }
   }
+
+  // 跳转到下一个随机项目 - 使用相同的优化逻辑
+  const handleNextProject = async () => {
+    // 重用优化后的随机项目导航逻辑
+    handleRandomProject()
+  }
+  
+  // 滑动手势初始化
+  useEffect(() => {
+    let touchstartX = 0
+    let touchendX = 0
+    let touchstartY = 0
+    let touchendY = 0
+    
+    const handleTouchStart = (e: TouchEvent) => {
+      touchstartX = e.changedTouches[0].screenX
+      touchstartY = e.changedTouches[0].screenY
+    }
+    
+    const handleTouchEnd = (e: TouchEvent) => {
+      touchendX = e.changedTouches[0].screenX
+      touchendY = e.changedTouches[0].screenY
+      handleSwipeGesture()
+    }
+    
+    const handleSwipeGesture = () => {
+      // 上滑超过50像素，加载下一个项目
+      if (touchendY < touchstartY - 50) {
+        handleNextProject()
+      }
+      // 下滑超过50像素，也加载一个随机项目
+      else if (touchendY > touchstartY + 50) {
+        handleRandomProject()
+      }
+    }
+    
+    // 添加滑动手势事件监听
+    document.addEventListener('touchstart', handleTouchStart)
+    document.addEventListener('touchend', handleTouchEnd)
+    
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [])
   
   const toggleFrame = () => {
     setShowingFrame(!showingFrame)
@@ -121,14 +274,60 @@ export default function ProjectPage() {
   // 是否为TSX文件
   const isTsxFile = selectedFile?.endsWith('.tsx')
   
+  // 获取文件的MIME类型
+  const getMimeType = (filename: string): string => {
+    const extension = filename.split('.').pop()?.toLowerCase()
+    switch (extension) {
+      case 'html': return 'text/html'
+      case 'css': return 'text/css'
+      case 'js': return 'application/javascript'
+      case 'jsx': case 'ts': case 'tsx': return 'application/javascript'
+      case 'json': return 'application/json'
+      case 'xml': return 'application/xml'
+      case 'svg': return 'image/svg+xml'
+      case 'png': return 'image/png'
+      case 'jpg': case 'jpeg': return 'image/jpeg'
+      case 'gif': return 'image/gif'
+      default: return 'text/plain'
+    }
+  }
+  
+  // 为HTML内容创建完整的HTML结构
+  const createFullHtml = (content: string, filename: string): string => {
+    // 如果是HTML文件且不包含DOCTYPE或HTML标签，添加基本结构
+    if (filename.endsWith('.html') && !content.toLowerCase().includes('<!doctype') && !content.toLowerCase().includes('<html')) {
+      return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${filename}</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  </style>
+</head>
+<body>
+${content}
+</body>
+</html>`;
+    }
+    return content;
+  }
+  
   // 构建预览URL
   const previewUrl = showingFrame && projectData?.mainFile
     ? projectData.fileContents[projectData.mainFile].startsWith('http')
       ? projectData.fileContents[projectData.mainFile]
-      : `/api/preview/${projectId}/${projectData.mainFile}`
+      : projectData.mainFile.endsWith('.html')
+        ? `data:${getMimeType(projectData.mainFile)};charset=utf-8,${encodeURIComponent(createFullHtml(projectData.fileContents[projectData.mainFile], projectData.mainFile))}`
+        : '' // 非HTML文件不使用iframe预览
     : ''
+    
+  // 是否显示代码编辑器视图（在带框架模式中非HTML文件也显示为代码）
+  const showCodeView = !showingFrame || (showingFrame && !projectData?.mainFile.endsWith('.html'))
   
-  if (isLoading) {
+  // 渲染函数改进，支持渐进式加载
+  if (isLoading && !basicInfoLoaded) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
@@ -159,87 +358,45 @@ export default function ProjectPage() {
   
   return (
     <div className="flex flex-col h-screen">
-      {/* 顶部导航 */}
-      <div className="bg-white shadow-sm p-4 flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <Link href={`/${locale}`}>
-            <Button variant="outline">
-              {locale === 'zh-cn' ? '首页' : 'Home'}
-            </Button>
-          </Link>
-          <Button 
-            onClick={handleRandomProject} 
-            variant="outline"
-            className="group relative"
-          >
-            <span className="text-2xl group-hover:animate-spin">🎲</span>
-            <span className="sr-only">{locale === 'zh-cn' ? '随机项目' : 'Random Project'}</span>
-          </Button>
-          
-          {projectData.title && (
-            <h1 className="text-lg font-medium ml-2">{projectData.title}</h1>
-          )}
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          {projectData.views !== undefined && (
-            <span className="text-sm text-gray-500">
-              👁️ {projectData.views}
-            </span>
-          )}
-          <Button 
-            variant="outline" 
-            onClick={toggleFrame}
-          >
-            {showingFrame 
-              ? (locale === 'zh-cn' ? '移除边框' : 'Remove Frame') 
-              : (locale === 'zh-cn' ? '显示边框' : 'Show Frame')}
-          </Button>
-        </div>
-      </div>
-      
-      {/* 项目描述 */}
-      {projectData.description && (
-        <div className="bg-gray-50 px-4 py-2 border-b">
-          <p className="text-sm text-gray-700">{projectData.description}</p>
-        </div>
-      )}
-      
-      {/* 主内容区 */}
+      {/* 主体内容 - 左右8:2布局 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* 左侧：文件列表 */}
-        <div className="w-64 bg-gray-100 overflow-y-auto p-4 border-r">
-          <h2 className="font-semibold mb-3">
-            {locale === 'zh-cn' ? '项目文件' : 'Project Files'}
-          </h2>
-          <ul className="space-y-1">
-            {projectData.files.map((file) => (
-              <li key={file}>
-                <button
-                  className={`w-full text-left py-1 px-2 rounded text-sm hover:bg-gray-200 truncate ${
-                    selectedFile === file ? 'bg-gray-200 font-medium' : ''
-                  }`}
-                  onClick={() => setSelectedFile(file)}
-                >
-                  {file}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        
-        {/* 主内容区 */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {showingFrame ? (
-            // 代码预览
+        {/* 左侧主内容区 (80%) */}
+        <div className="w-4/5 flex flex-col relative overflow-hidden">
+          {/* 上下滑动按钮 - TikTok风格 */}
+          <div className="absolute right-4 bottom-4 z-10 flex flex-col gap-2">
+            {/* 上滑按钮 */}
+            <button 
+              className="w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors"
+              aria-label={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
+              onClick={handleRandomProject}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+            </button>
+            
+            {/* 下滑按钮 */}
+            <button 
+              className="w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors"
+              aria-label={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
+              onClick={handleNextProject}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+          
+          {showingFrame && projectData.mainFile.endsWith('.html') ? (
+            // HTML预览
             <iframe
               src={previewUrl}
               className="w-full h-full border-0"
               title="Code Preview"
-              sandbox="allow-scripts allow-same-origin"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
             />
           ) : (
-            // 代码编辑器视图
+            // 代码编辑器视图 - 简化，只显示当前选择的文件
             <div className="flex flex-col h-full">
               {selectedFile && (
                 <>
@@ -277,40 +434,143 @@ export default function ProjectPage() {
           )}
         </div>
         
-        {/* 右侧交互按钮 */}
-        <div className="fixed right-4 top-1/2 transform -translate-y-1/2 flex flex-col space-y-3">
-          <button
-            className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
-            title={locale === 'zh-cn' ? '点赞' : 'Like'}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
-          <button
-            className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
-            title={locale === 'zh-cn' ? '评论' : 'Comment'}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </button>
-          <button
-            className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
-            title={locale === 'zh-cn' ? '收藏' : 'Favorite'}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-          </button>
-          <button
-            className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100"
-            title={locale === 'zh-cn' ? '分享' : 'Share'}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-            </svg>
-          </button>
+        {/* 右侧交互区 (20%) */}
+        <div className="w-1/5 border-l bg-gray-50 flex flex-col">
+          {/* 项目信息区 */}
+          <div className="p-4 border-b">
+            {projectData.title && (
+              <h2 className="font-medium text-lg mb-2 line-clamp-2">{projectData.title}</h2>
+            )}
+            {projectData.description && (
+              <p className="text-sm text-gray-600 mb-3 line-clamp-3">{projectData.description}</p>
+            )}
+            {projectData.createdAt && (
+              <div className="text-xs text-gray-500">
+                {new Date(projectData.createdAt).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+          
+          {/* 文件选择区 */}
+          {projectData.files.length > 1 && (
+            <div className="p-4 border-b">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {locale === 'zh-cn' ? '文件' : 'Files'}
+              </label>
+              <select 
+                className="w-full bg-white border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={selectedFile || ''}
+                onChange={(e) => setSelectedFile(e.target.value)}
+              >
+                {projectData.files.map(file => (
+                  <option key={file} value={file}>{file}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          
+          {/* 主要功能按钮 */}
+          <div className="p-4 border-b">
+            <div className="flex flex-col gap-3">
+              {/* 随机项目按钮 */}
+              <button
+                onClick={handleRandomProject}
+                className="flex items-center justify-center gap-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-sm font-medium transition-colors"
+                disabled={isLoading}
+              >
+                <span className={`text-xl ${isLoading ? '' : 'group-hover:animate-spin'}`}>🎲</span>
+                <span>{locale === 'zh-cn' ? '随机项目' : 'Random Project'}</span>
+              </button>
+              
+              {/* 查看代码/预览切换按钮 */}
+              <button
+                onClick={toggleFrame}
+                className="flex items-center justify-center gap-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-sm font-medium transition-colors"
+                disabled={isLoading}
+              >
+                {showingFrame ? (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <span>{locale === 'zh-cn' ? '查看代码' : 'View Code'}</span>
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>{locale === 'zh-cn' ? '查看效果' : 'View Preview'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+          
+          {/* 交互按钮区 */}
+          <div className="p-4 flex flex-col gap-3">
+            {/* 点赞按钮 */}
+            <button 
+              onClick={() => setIsLiked(!isLiked)}
+              className="flex items-center justify-center gap-2 hover:bg-gray-100 rounded-md py-2 px-3 text-sm transition-colors"
+            >
+              {isLiked ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#f43f5e" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              )}
+              <span>{locale === 'zh-cn' ? '点赞' : 'Like'}</span>
+              <span className="text-gray-500">{likesCount > 0 ? likesCount : ''}</span>
+            </button>
+            
+            {/* 评论按钮 */}
+            <button 
+              className="flex items-center justify-center gap-2 hover:bg-gray-100 rounded-md py-2 px-3 text-sm transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+              </svg>
+              <span>{locale === 'zh-cn' ? '评论' : 'Comment'}</span>
+              <span className="text-gray-500">{commentsCount > 0 ? commentsCount : ''}</span>
+            </button>
+            
+            {/* 收藏按钮 */}
+            <button 
+              onClick={() => setIsBookmarked(!isBookmarked)}
+              className="flex items-center justify-center gap-2 hover:bg-gray-100 rounded-md py-2 px-3 text-sm transition-colors"
+            >
+              {isBookmarked ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#3b82f6" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+              )}
+              <span>{locale === 'zh-cn' ? '收藏' : 'Save'}</span>
+            </button>
+            
+            {/* 分享按钮 */}
+            <button 
+              className="flex items-center justify-center gap-2 hover:bg-gray-100 rounded-md py-2 px-3 text-sm transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              <span>{locale === 'zh-cn' ? '分享' : 'Share'}</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

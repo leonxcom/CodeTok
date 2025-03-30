@@ -16,7 +16,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
   const siteConfig = getSiteConfig(locale)
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
+    <header className="sticky top-0 z-40 w-full border-b border-gray-800 bg-black">
       <div className="container flex h-16 items-center justify-center">
         <MainNav items={siteConfig.mainNav} locale={locale} />
         <div className="absolute right-4 flex items-center space-x-1">

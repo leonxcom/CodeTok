@@ -452,7 +452,7 @@ ${content}
         </div>
         
         {/* 右侧交互区 (20%) - 保持深色背景 */}
-        <div className="w-1/5 border-l border-gray-800 bg-gray-900 flex flex-col">
+        <div className="w-1/5 border-l border-gray-800 bg-black flex flex-col">
           {/* 项目信息区 */}
           <div className="p-4 border-b border-gray-800">
             {projectData.title && (

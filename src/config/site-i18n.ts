@@ -13,32 +13,32 @@ type SiteConfig = {
 
 const siteConfigBase: Record<Locale, SiteConfig> = {
   en: {
-    name: "Vilivili",
-    description: "Vilivili is an innovative platform for sharing AI projects and code applications, integrating Next.js, Tailwind CSS, ShadcnUI, designed for efficient, customizable, and multilingual project development.",
+    name: "VibeTok",
+    description: "Vibetok is an innovative platform for sharing AI projects and code applications, integrating Next.js, Tailwind CSS, ShadcnUI, designed for efficient, customizable, and multilingual project development.",
     mainNav: [],
     links: {
       twitter: "https://twitter.com/leonzeng2024",
-      github: "https://github.com/leohuangbest/vilivili",
+      github: "https://github.com/leohuangbest/vibetok",
       docs: "/docs",
     },
   },
   "zh-cn": {
-    name: "Vilivili",
-    description: "Vilivili 是一个创新的AI项目和代码应用分享平台，集成了Next.js、Tailwind CSS和ShadcnUI，旨在高效开发可定制的多语言项目。",
+    name: "VibeTok",
+    description: "Vibetok 是一个创新的AI项目和代码应用分享平台，集成了Next.js、Tailwind CSS和ShadcnUI，旨在高效开发可定制的多语言项目。",
     mainNav: [],
     links: {
       twitter: "https://twitter.com/leonzeng2024",
-      github: "https://github.com/leohuangbest/vilivili",
+      github: "https://github.com/leohuangbest/vibetok",
       docs: "/docs",
     },
   },
   fr: {
-    name: "Vilivili",
-    description: "Vilivili est une plateforme innovante pour le partage de projets d'IA et d'applications de code, intégrant Next.js, Tailwind CSS et ShadcnUI, conçue pour un développement efficace de projets personnalisables et multilingues.",
+    name: "VibeTok",
+    description: "Vibetok est une plateforme innovante pour le partage de projets d'IA et d'applications de code, intégrant Next.js, Tailwind CSS et ShadcnUI, conçue pour un développement efficace de projets personnalisables et multilingues.",
     mainNav: [],
     links: {
       twitter: "https://twitter.com/leonzeng2024",
-      github: "https://github.com/leohuangbest/vilivili",
+      github: "https://github.com/leohuangbest/vibetok",
       docs: "/docs",
     },
   },

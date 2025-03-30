@@ -2,7 +2,7 @@ import '@/styles/globals.css'
 import { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Locale, locales } from '../../../i18n/config'
-import { setRequestLocale } from 'next-intl/server'
+import { setRequestLocale, getLocale } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
 
 import { getSiteConfig } from '@/config/site-i18n'
@@ -19,17 +19,20 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({
-  params,
+  params: nonAwaitedParams,
 }: {
   params: { locale: string }
 }): Promise<Metadata> {
+  const params = await nonAwaitedParams;
   const locale = params.locale as Locale;
+  await setRequestLocale(locale);
+  
   const siteConfig = getSiteConfig(locale)
   
   // Set different title formats based on locale
   const pageTitle = locale === 'zh-cn' 
-    ? 'Vilivili - 氛围，编程，分享' 
-    : 'Vilivili - Vibe, Code, Share';
+    ? 'VibeTok - 氛围，编程，分享' 
+    : 'VibeTok - Vibe, Code, Share';
   
   return {
     title: {
@@ -47,13 +50,14 @@ export async function generateMetadata({
 
 export default async function RootLayout({
   children,
-  params,
+  params: nonAwaitedParams,
 }: {
   children: React.ReactNode
   params: { locale: string }
 }) {
+  const params = await nonAwaitedParams;
   const locale = params.locale as Locale;
-  await setRequestLocale(locale)
+  await setRequestLocale(locale);
   
   let messages;
   try {

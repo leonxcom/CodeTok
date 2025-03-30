@@ -1,8 +1,8 @@
-# Vilivili - An Innovative Platform for Sharing AI Projects and Code Applications
+# Vibetok - An Innovative Platform for Sharing AI Projects and Code Applications
 
 English | [简体中文](./README-zh-CN.md)
 
-Vilivili is an innovative platform for sharing AI projects and code applications. It's built with Next.js, uses TypeScript as the development language, and integrates multiple UI component libraries to provide a rich user interface experience.
+Vibetok is an innovative platform for sharing AI projects and code applications. It's built with Next.js, uses TypeScript as the development language, and integrates multiple UI component libraries to provide a rich user interface experience.
 
 ## 📑 Table of Contents
 
@@ -79,7 +79,7 @@ Vilivili is an innovative platform for sharing AI projects and code applications
 ### System Architecture
 
 ```
-Vilivili/
+Vibetok/
 ├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # Internationalized routes
 │   ├── api/                 # API routes
@@ -188,7 +188,7 @@ Vilivili/
 Use `create-next-app` to create a new project based on this template by running:
 
 ```bash
-pnpm create next-app -e https://github.com/leohuangbest/vilivili
+pnpm create next-app -e https://github.com/leohuangbest/vibetok
 ```
 
 ### Install dependencies

@@ -21,7 +21,7 @@ export function MainNav({ items, locale }: MainNavProps) {
       <Link href="/" className="flex items-center gap-2">
         <Image 
           src="/favicon.png" 
-          alt="Vilivili Logo" 
+          alt="VibeTok Logo" 
           width={36} 
           height={36} 
           className="rounded-sm"

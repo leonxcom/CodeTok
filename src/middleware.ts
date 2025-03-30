@@ -1,15 +1,58 @@
+import { NextResponse, type NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 import { locales, defaultLocale, localePrefix } from '../i18n/config'
 
-export default createMiddleware({
-  // A list of all locales that are supported
+// Create the i18n middleware
+const i18nMiddleware = createMiddleware({
   locales,
-  localePrefix,
-  // Used when no locale matches
   defaultLocale,
+  localePrefix
 })
 
-// 遵循next-intl官方文档推荐的matcher配置
+// 检查路径是否为静态资源
+function isStaticAsset(path: string): boolean {
+  // 检查常见静态资源扩展名
+  return /\.(svg|png|jpg|jpeg|gif|ico|css|js|woff|woff2|ttf|eot|map)$/.test(path);
+}
+
+export function middleware(request: NextRequest) {
+  const url = request.nextUrl.clone()
+  const hostname = request.headers.get('host') || ''
+  const path = url.pathname
+  
+  // 如果是静态资源请求，直接跳过处理
+  if (isStaticAsset(path)) {
+    return NextResponse.next();
+  }
+  
+  // Check if using a subdomain for code sharing
+  const subdomain = hostname.split('.')[0]
+  
+  if (hostname !== 'vibetok.app' && hostname.endsWith('vibetok.app')) {
+    // Rewrite the URL to the project page
+    url.pathname = `/project/${subdomain}`
+    return NextResponse.rewrite(url)
+  }
+  
+  // Force default language to be zh-cn
+  // If path is root or doesn't include a locale prefix, redirect to zh-cn
+  if (path === '/' || (
+    !locales.some(locale => path.startsWith(`/${locale}`)) && 
+    !path.startsWith('/_next') && 
+    !path.startsWith('/api')
+  )) {
+    url.pathname = `/zh-cn${path === '/' ? '' : path}`
+    return NextResponse.redirect(url)
+  }
+  
+  // Continue with i18n middleware for regular routes
+  return i18nMiddleware(request)
+}
+
 export const config = {
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  // 使用Next.js支持的格式定义matcher
+  matcher: [
+    // 匹配除了api和_next路径外的所有路径
+    '/((?!api|_next/static|_next/image|favicon.ico).*)'
+  ]
 }

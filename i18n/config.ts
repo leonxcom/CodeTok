@@ -6,5 +6,5 @@ export const languageNames: Record<Locale, string> = {
 }
 
 export type Locale = (typeof locales)[number]
-export const defaultLocale = 'en'
+export const defaultLocale = 'zh-cn'
 export const localePrefix = 'always' 

@@ -1,8 +1,8 @@
-# ViliVili Development Documentation
+# Vilivili Development Documentation
 
 ## Project Overview
 
-ViliVili is an innovative AI project and code application sharing platform. It is built with Next.js, uses TypeScript as the development language, and integrates multiple UI component libraries to provide a rich user interface experience.
+Vilivili is an innovative AI project and code application sharing platform. It is built with Next.js, uses TypeScript as the development language, and integrates multiple UI component libraries to provide a rich user interface experience.
 
 ## Technology Stack
 
@@ -71,7 +71,7 @@ ViliVili is an innovative AI project and code application sharing platform. It i
 ## Directory Structure
 
 ```
-ViliVili/
+Vilivili/
 ├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # Internationalized routes
 │   ├── api/                 # API routes

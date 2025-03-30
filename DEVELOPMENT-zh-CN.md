@@ -1,8 +1,8 @@
-# ViliVili 开发文档
+# Vilivili 开发文档
 
 ## 项目概述
 
-ViliVili 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
+Vilivili 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
 
 ## 技术栈
 
@@ -71,7 +71,7 @@ ViliVili 是一个创新的 AI项目 和代码应用的分享平台。它基于 
 ## 目录结构
 
 ```
-ViliVili/
+Vilivili/
 ├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # 国际化路由
 │   ├── api/                 # API路由

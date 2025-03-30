@@ -2,21 +2,33 @@ import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { sql } from '@vercel/postgres';
 import * as schema from './schema';
 
-// 数据库连接URL
-const connectionString = process.env.DATABASE_URL || '';
-
-// 检查环境变量
-if (!connectionString) {
-  console.warn('DATABASE_URL is not defined. Using mock database for development.');
+// 数据库连接函数
+function createDbConnection() {
+  try {
+    // 尝试获取数据库连接URL（支持多种环境变量名称）
+    const connectionString = process.env.DATABASE_URL || 
+                          process.env.POSTGRES_URL || 
+                          process.env.VERCEL_POSTGRES_URL;
+    
+    if (!connectionString) {
+      console.warn('数据库连接URL未定义。使用模拟数据库进行开发/构建。');
+      return null;
+    }
+    
+    return drizzle(sql);
+  } catch (error) {
+    console.error('数据库连接初始化失败:', error);
+    return null;
+  }
 }
 
-// 创建drizzle ORM实例或模拟数据库
-export const db = connectionString ? drizzle(sql) : null;
+// 创建drizzle ORM实例或使用模拟数据库
+export const db = createDbConnection();
 
 // 直接导出表模式
 export { projects, users, favorites } from './schema';
 
-// 模拟项目数据（仅用于开发环境）
+// 模拟项目数据（用于开发环境和构建）
 const mockProjects = [
   {
     id: 'demo-project',
@@ -50,9 +62,9 @@ export async function safeQuery<T>(
   defaultValue: T
 ): Promise<T> {
   if (!db) {
-    console.warn('Using mock database. Real database queries will not execute.');
+    console.warn('使用模拟数据。实际数据库查询将不会执行。');
     
-    // 返回模拟数据用于开发（仅用于项目查询）
+    // 返回模拟数据用于开发/构建（仅用于项目查询）
     if (defaultValue === null && queryFn.toString().includes('projects')) {
       // @ts-ignore - 模拟数据用于开发环境
       return mockProjects[0];
@@ -64,7 +76,7 @@ export async function safeQuery<T>(
   try {
     return await queryFn();
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error('数据库查询错误:', error);
     return defaultValue;
   }
 } 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -24,12 +24,12 @@ export default function IndexPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
-  // 获取随机项目
-  const fetchRandomProject = async () => {
-    setLoading(true)
-    setError(null)
-    
+  // 使用useCallback包装fetchRandomProject，避免不必要的重新创建
+  const fetchRandomProject = useCallback(async () => {
     try {
+      setLoading(true)
+      setError(null)
+      
       const response = await fetch('/api/projects/random')
       
       if (!response.ok) {
@@ -49,23 +49,21 @@ export default function IndexPage() {
       const data = await response.json()
       setProject(data)
     } catch (error) {
-      console.error('Error loading random project:', error)
+      console.error('Error fetching random project:', error)
       setError(
-        typeof error === 'object' && error !== null && 'message' in error
-          ? String(error.message)
-          : locale === 'zh-cn' 
-            ? '加载随机项目失败'
-            : 'Failed to load random project'
+        locale === 'zh-cn' 
+          ? '加载项目失败，请稍后再试'
+          : 'Failed to load project, please try again later'
       )
     } finally {
       setLoading(false)
     }
-  }
+  }, [locale])
   
   // 首次加载时获取随机项目
   useEffect(() => {
     fetchRandomProject()
-  }, [locale])
+  }, [locale, fetchRandomProject])
   
   // 跳转到随机项目页面
   const handleRandomProject = async () => {
@@ -175,7 +173,7 @@ export default function IndexPage() {
       </div>
       
       <footer className="mt-16 pt-8 border-t text-center text-gray-500 text-sm">
-        <p>{locale === 'zh-cn' ? '不要把代码藏起来 - 与世界分享它' : 'Don\'t Keep Your Code to Yourself - Share It With the World'}</p>
+        <p>{locale === 'zh-cn' ? '不要把代码藏起来 - 与世界分享它' : 'Don&apos;t Keep Your Code to Yourself - Share It With the World'}</p>
       </footer>
     </div>
   )

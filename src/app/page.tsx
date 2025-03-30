@@ -129,7 +129,7 @@ export default function Home() {
       </div>
       
       <footer className="mt-16 pt-8 border-t text-center text-gray-500 text-sm">
-        <p>Don't Keep Your Code to Yourself - Share It With the World</p>
+        <p>Don&apos;t Keep Your Code to Yourself - Share It With the World</p>
       </footer>
     </div>
   )

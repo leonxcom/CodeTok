@@ -8,7 +8,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params
+    // 先使用await处理params对象
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     
     // 从数据库获取项目
     const project = await safeQuery(async () => {
@@ -29,54 +31,79 @@ export async function GET(
       }, { status: 404 })
     }
     
-    // 更新访问量
-    await safeQuery(async () => {
-      if (db) {
-        await db.update(projects)
-          .set({ views: (project.views || 0) + 1 })
-          .where(eq(projects.id, id))
-      }
-    }, null)
+    // 异步更新访问量，不阻塞响应
+    void (async () => {
+      await safeQuery(async () => {
+        if (db) {
+          await db.update(projects)
+            .set({ views: (project.views || 0) + 1 })
+            .where(eq(projects.id, id))
+        }
+      }, null)
+    })()
     
     // 获取文件列表
     let files: string[] = []
-    let fileContents: Record<string, string> = {}
+    let mainFileContent: string | null = null
+    let hasTsxFiles = false
     
     if (project.files) {
       const projectFiles = project.files as ProjectFile[]
       files = projectFiles.map((file: ProjectFile) => file.pathname)
       
-      // 获取所有文件内容
-      for (const file of projectFiles) {
+      // 检测是否包含TSX文件
+      hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'))
+      
+      // 先返回基本项目信息和主文件内容
+      const mainFile = projectFiles.find(file => file.pathname === project.mainFile)
+      
+      if (mainFile) {
         try {
-          const response = await fetch(file.url)
+          const response = await fetch(mainFile.url)
           if (response.ok) {
-            const content = await response.text()
-            fileContents[file.pathname] = content
+            mainFileContent = await response.text()
           }
         } catch (error) {
-          console.error(`Error fetching file ${file.pathname}:`, error)
-          fileContents[file.pathname] = `// Error loading content: ${error}`
+          console.error(`Error fetching main file ${mainFile.pathname}:`, error)
+          mainFileContent = `// Error loading content: ${error}`
         }
       }
+      
+      // 构建初始响应对象
+      const initialResponse = {
+        projectId: project.id,
+        title: project.title,
+        description: project.description,
+        files,
+        mainFile: project.mainFile,
+        fileContents: mainFileContent 
+          ? { [project.mainFile as string]: mainFileContent } 
+          : {},
+        hasTsxFiles,
+        views: project.views,
+        createdAt: project.createdAt
+      }
+      
+      // 先返回基本信息和主文件内容
+      return NextResponse.json(initialResponse)
     }
     
-    // 检测是否包含TSX文件
-    const hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'))
-    
+    // 如果没有文件，则返回基本项目信息
     return NextResponse.json({
       projectId: project.id,
       title: project.title,
       description: project.description,
-      files,
-      mainFile: project.mainFile,
-      fileContents,
-      hasTsxFiles,
+      files: [],
+      mainFile: project.mainFile || '',
+      fileContents: {},
+      hasTsxFiles: false,
       views: project.views,
       createdAt: project.createdAt
     })
   } catch (error) {
-    console.error(`Error fetching project ${params.id}:`, error)
+    // 在错误处理中也使用await处理params
+    const resolvedParams = await params;
+    console.error(`Error fetching project ${resolvedParams.id}:`, error)
     return NextResponse.json(
       { error: 'Failed to fetch project' }, 
       { status: 500 }

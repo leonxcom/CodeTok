@@ -26,7 +26,7 @@ export function MainNav({ items, locale }: MainNavProps) {
           height={36} 
           className="rounded-sm"
         />
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-2xl font-bold text-white">
           {siteConfig.name}
         </h1>
       </Link>
@@ -39,7 +39,7 @@ export function MainNav({ items, locale }: MainNavProps) {
                   key={index}
                   href={item.href}
                   className={cn(
-                    'flex items-center text-sm font-medium text-muted-foreground',
+                    'flex items-center text-sm font-medium text-gray-300 hover:text-white',
                     item.disabled && 'cursor-not-allowed opacity-80',
                   )}
                 >

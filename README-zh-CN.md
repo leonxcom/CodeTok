@@ -1,12 +1,11 @@
-# ViliVili - 一个创新的AI项目和代码应用的分享平台
+# Vilivili - 一个创新的AI项目和代码应用的分享平台
 
 简体中文 | [English](./README.md)
 
-ViliVili 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
+Vilivili 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
 
 ## 📑 目录
 
-- [核心理念](#核心理念)
 - [技术架构](#技术架构)
 - [系统架构](#系统架构)
 - [核心功能实现](#核心功能实现)
@@ -80,7 +79,7 @@ ViliVili 是一个创新的 AI项目 和代码应用的分享平台。它基于 
 ### 系统架构
 
 ```
-ViliVili/
+Vilivili/
 ├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # 国际化路由
 │   ├── api/                 # API路由
@@ -106,32 +105,20 @@ ViliVili/
 
 ## 🔥 核心功能实现
 
-### 1. AI原生学习系统
-- 实时代码分析和反馈
-- 智能进度跟踪
-- 个性化学习路径生成
-- 智能内容推荐
-
-### 2. 项目驱动学习
-- 真实项目模板
-- 步骤引导
-- 自动代码审查
-- 进度跟踪和分析
-
-### 3. 多语言支持
+### 1. 多语言支持
 - 基于路由的动态国际化（支持中文、英文、日语等12种语言）
 - 语言检测和切换
 - RTL支持
 - 区域特定内容
 
-### 4. 性能优化
+### 2. 性能优化
 - 服务器端渲染
 - 静态页面生成
 - 图片优化
 - 代码分割
 - Edge缓存
 
-### 5. 安全措施
+### 3. 安全措施
 - 身份认证和授权
 - 访问限制
 - CORS配置
@@ -201,7 +188,7 @@ ViliVili/
 使用 `create-next-app` 基于此模板创建新项目，运行以下命令：
 
 ```bash
-npx create-next-app -e https://github.com/Nostudy-ai/Nostudy.ai
+pnpm create next-app -e https://github.com/leohuangbest/vilivili
 ```
 
 ### 安装依赖

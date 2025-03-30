@@ -1,8 +1,8 @@
-# ViliVili 贡献指南
+# Vilivili 贡献指南
 
 简体中文 | [English](./CONTRIBUTING.md)
 
-感谢您有兴趣为 ViliVili（一个创新的 AI项目 和代码应用的分享平台）做出贡献！本文档提供了为项目做出贡献的指南和说明。
+感谢您有兴趣为 Vilivili（一个创新的 AI项目 和代码应用的分享平台）做出贡献！本文档提供了为项目做出贡献的指南和说明。
 
 ## 📋 目录
 
@@ -23,12 +23,12 @@
 1. 在 GitHub 上 Fork 仓库
 2. 将您的 Fork 克隆到本地
    ```bash
-   git clone https://github.com/YOUR-USERNAME/ViliVili.git
-   cd ViliVili
+   git clone https://github.com/YOUR-USERNAME/Vilivili.git
+   cd Vilivili
    ```
 3. 添加上游仓库作为远程源
    ```bash
-   git remote add upstream https://github.com/CodeTok-ai/ViliVili.git
+   git remote add upstream https://github.com/CodeTok-ai/Vilivili.git
    ```
 4. 保持您的 Fork 与上游仓库同步
    ```bash
@@ -137,7 +137,7 @@
 
 如果您发现了 bug 或有功能请求：
 
-1. 检查问题是否已经存在于[问题列表](https://github.com/CodeTok-ai/ViliVili/issues)中
+1. 检查问题是否已经存在于[问题列表](https://github.com/CodeTok-ai/Vilivili/issues)中
 2. 如果不存在，使用适当的模板创建一个新问题
 3. 提供详细信息：
    - 对于 bug：重现步骤、预期行为、实际行为、截图
@@ -145,4 +145,4 @@
 
 ---
 
-感谢您为 ViliVili 做出贡献！您的帮助使这个项目对每个人都变得更好。
+感谢您为 Vilivili 做出贡献！您的帮助使这个项目对每个人都变得更好。

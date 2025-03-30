@@ -360,13 +360,13 @@ ${content}
     <div className="flex flex-col h-screen">
       {/* 主体内容 - 左右8:2布局 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* 左侧主内容区 (80%) */}
-        <div className="w-4/5 flex flex-col relative overflow-hidden">
+        {/* 左侧主内容区 (80%) - 保持白色背景 */}
+        <div className="w-4/5 flex flex-col relative overflow-hidden bg-white">
           {/* 上下滑动按钮 - TikTok风格 */}
-          <div className="absolute right-4 bottom-4 z-10 flex flex-col gap-2">
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
             {/* 上滑按钮 */}
             <button 
-              className="w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors"
+              className="w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
               aria-label={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
               onClick={handleRandomProject}
             >
@@ -377,7 +377,7 @@ ${content}
             
             {/* 下滑按钮 */}
             <button 
-              className="w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors"
+              className="w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
               aria-label={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
               onClick={handleNextProject}
             >
@@ -387,8 +387,25 @@ ${content}
             </button>
           </div>
           
+          {/* 项目标题 - TikTok风格叠加在内容上 */}
+          <div className="absolute left-4 bottom-8 z-10 max-w-lg">
+            <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">{projectData.title || 'Hello Neon DB and Vercel Blob'}</h1>
+            {projectData.description && (
+              <p className="text-white text-sm drop-shadow-lg">{projectData.description}</p>
+            )}
+            <div className="flex items-center mt-3">
+              <div className="w-10 h-10 rounded-full bg-gray-700 text-white flex items-center justify-center mr-3">
+                <span className="text-lg">👨‍💻</span>
+              </div>
+              <div>
+                <div className="text-white font-medium">VibeTok Creator</div>
+                <div className="text-white/70 text-xs">{new Date(projectData.createdAt || Date.now()).toLocaleDateString()}</div>
+              </div>
+            </div>
+          </div>
+          
           {showingFrame && projectData.mainFile.endsWith('.html') ? (
-            // HTML预览
+            // HTML预览 - 保持原样
             <iframe
               src={previewUrl}
               className="w-full h-full border-0"
@@ -396,35 +413,35 @@ ${content}
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
             />
           ) : (
-            // 代码编辑器视图 - 简化，只显示当前选择的文件
+            // 代码编辑器视图 - 日间模式
             <div className="flex flex-col h-full">
               {selectedFile && (
                 <>
-                  <div className="bg-gray-800 text-white py-2 px-4 text-sm font-mono flex justify-between items-center">
+                  <div className="bg-gray-100 text-gray-800 py-2 px-4 text-sm font-mono flex justify-between items-center border-b border-gray-200">
                     <div>{selectedFile} - {getFileType(selectedFile)}</div>
                     {isTsxFile && (
                       <div className="flex space-x-2">
-                        <span className="px-2 py-1 bg-blue-600 text-xs rounded">TSX</span>
+                        <span className="px-2 py-1 bg-blue-600 text-xs rounded text-white">TSX</span>
                       </div>
                     )}
                   </div>
                   
                   {isTsxFile ? (
-                    // TSX文件预览模式
+                    // TSX文件预览模式 - 内容区保持亮色背景
                     <div className="flex flex-col h-full">
-                      <div className="bg-gray-50 flex-1 overflow-auto">
+                      <div className="bg-white flex-1 overflow-auto">
                         {/* TSX编译预览区 */}
                         <div ref={tsxPreviewRef} className="h-full w-full"></div>
                       </div>
-                      <div className="bg-gray-100 p-2 border-t">
-                        <div className="font-mono text-xs p-2 bg-white rounded border">
+                      <div className="bg-gray-100 p-2 border-t border-gray-200">
+                        <div className="font-mono text-xs p-2 bg-white rounded border border-gray-200 text-gray-800">
                           <pre className="whitespace-pre-wrap">{projectData.fileContents[selectedFile]}</pre>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    // 普通代码预览
-                    <pre className="flex-1 overflow-auto p-4 bg-gray-50 font-mono text-sm">
+                    // 普通代码预览 - 日间模式
+                    <pre className="flex-1 overflow-auto p-4 bg-white font-mono text-sm text-gray-900">
                       {projectData.fileContents[selectedFile]}
                     </pre>
                   )}
@@ -434,15 +451,15 @@ ${content}
           )}
         </div>
         
-        {/* 右侧交互区 (20%) */}
-        <div className="w-1/5 border-l bg-gray-50 flex flex-col">
+        {/* 右侧交互区 (20%) - 保持深色背景 */}
+        <div className="w-1/5 border-l border-gray-800 bg-gray-900 flex flex-col">
           {/* 项目信息区 */}
-          <div className="p-4 border-b">
+          <div className="p-4 border-b border-gray-800">
             {projectData.title && (
-              <h2 className="font-medium text-lg mb-2 line-clamp-2">{projectData.title}</h2>
+              <h2 className="font-medium text-lg mb-2 line-clamp-2 text-white">{projectData.title}</h2>
             )}
             {projectData.description && (
-              <p className="text-sm text-gray-600 mb-3 line-clamp-3">{projectData.description}</p>
+              <p className="text-sm text-gray-400 mb-3 line-clamp-3">{projectData.description}</p>
             )}
             {projectData.createdAt && (
               <div className="text-xs text-gray-500">
@@ -453,12 +470,12 @@ ${content}
           
           {/* 文件选择区 */}
           {projectData.files.length > 1 && (
-            <div className="p-4 border-b">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="p-4 border-b border-gray-800">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 {locale === 'zh-cn' ? '文件' : 'Files'}
               </label>
               <select 
-                className="w-full bg-white border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
                 value={selectedFile || ''}
                 onChange={(e) => setSelectedFile(e.target.value)}
               >
@@ -470,12 +487,12 @@ ${content}
           )}
           
           {/* 主要功能按钮 */}
-          <div className="p-4 border-b">
+          <div className="p-4 border-b border-gray-800">
             <div className="flex flex-col gap-3">
               {/* 随机项目按钮 */}
               <button
                 onClick={handleRandomProject}
-                className="flex items-center justify-center gap-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-sm font-medium transition-colors"
+                className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-sm font-medium transition-colors text-white"
                 disabled={isLoading}
               >
                 <span className={`text-xl ${isLoading ? '' : 'group-hover:animate-spin'}`}>🎲</span>
@@ -485,7 +502,7 @@ ${content}
               {/* 查看代码/预览切换按钮 */}
               <button
                 onClick={toggleFrame}
-                className="flex items-center justify-center gap-2 bg-white hover:bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-sm font-medium transition-colors"
+                className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-sm font-medium transition-colors text-white"
                 disabled={isLoading}
               >
                 {showingFrame ? (
@@ -514,7 +531,7 @@ ${content}
             {/* 点赞按钮 */}
             <button 
               onClick={() => setIsLiked(!isLiked)}
-              className="flex items-center justify-center gap-2 hover:bg-gray-100 rounded-md py-2 px-3 text-sm transition-colors"
+              className="flex items-center justify-center gap-2 hover:bg-gray-800 rounded-md py-2 px-3 text-sm transition-colors text-white"
             >
               {isLiked ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#f43f5e" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -526,24 +543,24 @@ ${content}
                 </svg>
               )}
               <span>{locale === 'zh-cn' ? '点赞' : 'Like'}</span>
-              <span className="text-gray-500">{likesCount > 0 ? likesCount : ''}</span>
+              <span className="text-gray-400">{likesCount > 0 ? likesCount : ''}</span>
             </button>
             
             {/* 评论按钮 */}
             <button 
-              className="flex items-center justify-center gap-2 hover:bg-gray-100 rounded-md py-2 px-3 text-sm transition-colors"
+              className="flex items-center justify-center gap-2 hover:bg-gray-800 rounded-md py-2 px-3 text-sm transition-colors text-white"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
               </svg>
               <span>{locale === 'zh-cn' ? '评论' : 'Comment'}</span>
-              <span className="text-gray-500">{commentsCount > 0 ? commentsCount : ''}</span>
+              <span className="text-gray-400">{commentsCount > 0 ? commentsCount : ''}</span>
             </button>
             
             {/* 收藏按钮 */}
             <button 
               onClick={() => setIsBookmarked(!isBookmarked)}
-              className="flex items-center justify-center gap-2 hover:bg-gray-100 rounded-md py-2 px-3 text-sm transition-colors"
+              className="flex items-center justify-center gap-2 hover:bg-gray-800 rounded-md py-2 px-3 text-sm transition-colors text-white"
             >
               {isBookmarked ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#3b82f6" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -559,7 +576,7 @@ ${content}
             
             {/* 分享按钮 */}
             <button 
-              className="flex items-center justify-center gap-2 hover:bg-gray-100 rounded-md py-2 px-3 text-sm transition-colors"
+              className="flex items-center justify-center gap-2 hover:bg-gray-800 rounded-md py-2 px-3 text-sm transition-colors text-white"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="18" cy="5" r="3"></circle>

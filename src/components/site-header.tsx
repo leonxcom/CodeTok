@@ -7,6 +7,7 @@ import { MainNav } from '@/components/main-nav'
 import { Locale } from '../../i18n/config'
 import { LanguageToggle } from './language-toggle'
 import { Button } from './ui/button'
+import { SideNav } from './side-nav'
 
 interface SiteHeaderProps {
   locale: Locale
@@ -18,6 +19,9 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-gray-800 bg-black">
       <div className="container flex h-16 items-center justify-center">
+        <div className="absolute left-4">
+          <SideNav />
+        </div>
         <MainNav items={siteConfig.mainNav} locale={locale} />
         <div className="absolute right-4 flex items-center space-x-3">
           {/* 暂时隐藏多语言切换图标 */}

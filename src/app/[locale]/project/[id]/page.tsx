@@ -44,11 +44,13 @@ export default function ProjectPage() {
   // 渐进式加载状态
   const [basicInfoLoaded, setBasicInfoLoaded] = useState(false)
   const [filesLoaded, setFilesLoaded] = useState(false)
+  const [uiFrameworkLoaded, setUiFrameworkLoaded] = useState(false)
   
   // 处理外部项目显示逻辑
   const isExternalProject = projectData?.externalEmbed && projectData?.externalUrl;
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState<string | null>(null);
+  const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
   
   // 处理iframe加载事件 - 与iframe-test完全一致
   const handleIframeLoad = () => {
@@ -138,10 +140,20 @@ export default function ProjectPage() {
         setSelectedFile(data.mainFile)
         setBasicInfoLoaded(true)
         
+        // 立即标记UI框架已加载完成，显示右侧工具栏
+        setUiFrameworkLoaded(true)
+        
         // 如果文件列表加载完成，也标记加载状态为完成
         if (data.fileContents && Object.keys(data.fileContents).length > 0) {
           setFilesLoaded(true)
           setIsLoading(false)
+          
+          // 在基本UI渲染完成后，延迟加载iframe内容
+          setTimeout(() => {
+            if (isMounted) {
+              setShouldLoadIframe(true)
+            }
+          }, 500) // 延迟500ms让UI先渲染完成
         }
         
         // 预加载下一个随机项目数据
@@ -394,10 +406,66 @@ ${content}
   // 渲染函数改进，支持渐进式加载
   if (isLoading && !basicInfoLoaded) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
-          <p>{locale === 'zh-cn' ? '加载中...' : 'Loading...'}</p>
+      <div className="flex flex-col h-screen">
+        {/* 主体内容 - 左右8:2布局 */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* 左侧主内容区 (80%) - 保持白色背景 */}
+          <div className="w-4/5 flex flex-col relative overflow-hidden bg-white">
+            <div className="flex h-screen items-center justify-center">
+              <div className="text-center">
+                <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
+                <p>{locale === 'zh-cn' ? '加载中...' : 'Loading...'}</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* 右侧交互区 (20%) - 在加载阶段也显示框架 */}
+          <div className="w-1/5 border-l border-gray-800 bg-black flex flex-col">
+            {/* 项目信息区 */}
+            <div className="p-4 border-b border-gray-800">
+              <div className="h-6 bg-gray-800 rounded w-3/4 mb-3"></div>
+              <div className="h-4 bg-gray-800 rounded w-full mb-2"></div>
+              <div className="h-4 bg-gray-800 rounded w-4/5 mb-2"></div>
+              <div className="h-4 bg-gray-800 rounded w-5/6 mb-3"></div>
+              <div className="flex items-center text-xs mb-2">
+                <div className="bg-gray-800 px-2 py-1 rounded w-16 h-5 mr-1"></div>
+                <div className="bg-gray-800 w-24 h-5 rounded ml-1"></div>
+              </div>
+              <div className="h-3 bg-gray-800 rounded w-1/3 mt-2"></div>
+            </div>
+            
+            {/* 文件选择区 */}
+            <div className="p-4 border-b border-gray-800">
+              <div className="h-4 bg-gray-800 rounded w-1/3 mb-2"></div>
+              <div className="w-full bg-gray-800 border border-gray-700 rounded-md h-8"></div>
+            </div>
+            
+            {/* 主要功能按钮区 */}
+            <div className="p-4 border-b border-gray-800">
+              <div className="flex flex-col gap-3">
+                {/* 随机项目按钮 */}
+                <div className="h-10 bg-gray-800 border border-gray-700 rounded-md"></div>
+                
+                {/* 切换代码/预览按钮 */}
+                <div className="h-10 bg-gray-800 border border-gray-700 rounded-md"></div>
+              </div>
+            </div>
+            
+            {/* 交互按钮区 */}
+            <div className="p-4 flex flex-col gap-3">
+              {/* 点赞按钮 */}
+              <div className="h-10 bg-gray-800/50 rounded-md"></div>
+              
+              {/* 评论按钮 */}
+              <div className="h-10 bg-gray-800/50 rounded-md"></div>
+              
+              {/* 收藏按钮 */}
+              <div className="h-10 bg-gray-800/50 rounded-md"></div>
+              
+              {/* 分享按钮 */}
+              <div className="h-10 bg-gray-800/50 rounded-md"></div>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -473,10 +541,23 @@ ${content}
           
           {isExternalProject ? (
             <div className="w-full h-full relative">
-              <ExternalEmbed 
-                url={projectData?.externalUrl || ''} 
-                locale={locale} 
-              />
+              {/* 显示加载占位符 */}
+              {!shouldLoadIframe && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                  <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p>{locale === 'zh-cn' ? '加载中...' : 'Loading...'}</p>
+                  </div>
+                </div>
+              )}
+              
+              {/* 延迟加载ExternalEmbed组件 */}
+              {shouldLoadIframe && (
+                <ExternalEmbed 
+                  url={projectData?.externalUrl || ''} 
+                  locale={locale} 
+                />
+              )}
             </div>
           ) : (
             <>
@@ -501,12 +582,27 @@ ${content}
               
               {showingFrame && projectData?.mainFile?.endsWith('.html') ? (
                 // 普通HTML项目预览
-                <iframe
-                  src={previewUrl}
-                  className="w-full h-full border-0"
-                  title="Code Preview"
-                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
-                />
+                <div className="w-full h-full relative">
+                  {/* 显示加载占位符 */}
+                  {!shouldLoadIframe && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                      <div className="text-center">
+                        <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
+                        <p>{locale === 'zh-cn' ? '加载中...' : 'Loading...'}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* 延迟加载iframe */}
+                  {shouldLoadIframe && (
+                    <iframe
+                      src={previewUrl}
+                      className="w-full h-full border-0"
+                      title="Code Preview"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
+                    />
+                  )}
+                </div>
               ) : (
                 // 代码编辑器视图 - 日间模式
                 <div className="flex flex-col h-full">
@@ -548,7 +644,7 @@ ${content}
           )}
         </div>
         
-        {/* 右侧交互区 (20%) - 保持深色背景 */}
+        {/* 右侧交互区 (20%) - 保持深色背景，一旦有基本数据就显示 */}
         <div className="w-1/5 border-l border-gray-800 bg-black flex flex-col">
           {/* 项目信息区 */}
           <div className="p-4 border-b border-gray-800">

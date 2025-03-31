@@ -9,10 +9,16 @@ export const dynamic = 'force-dynamic';
  * 首页组件 - 在这里始终重定向到一个随机项目
  */
 export default async function IndexPage({
-  params: { locale }
+  params
 }: {
   params: { locale: string };
 }) {
+  // 安全获取locale参数 - 需要await解析动态参数
+  const resolvedParams = await params;
+  const locale = resolvedParams.locale;
+  let redirectUrl = `/${locale}/upload`;
+
+  // 首先尝试获取所有可用的项目
   try {
     // 尝试从数据库中获取公开项目列表
     const result = await sql<Project>`
@@ -23,7 +29,7 @@ export default async function IndexPage({
     
     console.log(`找到 ${result.rowCount || 0} 个项目`);
     
-    // 如果有项目，随机选择一个重定向
+    // 如果有项目，随机选择一个
     if (result.rowCount && result.rowCount > 0) {
       // 从数据库结果中获取所有项目ID
       const projectIds = result.rows.map(project => project.id);
@@ -32,10 +38,8 @@ export default async function IndexPage({
       const randomIndex = Math.floor(Math.random() * projectIds.length);
       const randomProjectId = projectIds[randomIndex];
       
-      console.log(`重定向到随机项目: ${randomProjectId}`);
-      
-      // 重定向到随机项目
-      redirect(`/${locale}/project/${randomProjectId}`);
+      console.log(`找到随机项目: ${randomProjectId}`);
+      redirectUrl = `/${locale}/project/${randomProjectId}`;
     } else {
       // 如果没有找到项目，则创建一个示例项目
       console.log('未找到项目，创建示例项目');
@@ -86,16 +90,13 @@ export default async function IndexPage({
         )
       `;
       
-      console.log(`创建了示例项目，ID: ${projectId}，重定向中...`);
-      
-      // 重定向到新创建的示例项目
-      redirect(`/${locale}/project/${projectId}`);
+      console.log(`创建了示例项目，ID: ${projectId}`);
+      redirectUrl = `/${locale}/project/${projectId}`;
     }
   } catch (error) {
-    // 如果发生错误，记录错误并重定向到一个硬编码的备用项目
-    console.error('重定向失败:', error);
+    // 如果发生错误，记录错误并尝试获取任何可用的项目作为备用
+    console.error('获取项目失败:', error);
     
-    // 在发生错误的情况下，尝试获取任何可用的项目ID作为备用
     try {
       const fallbackResult = await sql<{ id: string }>`
         SELECT id FROM projects LIMIT 1
@@ -104,12 +105,17 @@ export default async function IndexPage({
       if (fallbackResult.rowCount && fallbackResult.rowCount > 0) {
         const fallbackId = fallbackResult.rows[0].id;
         console.log(`使用备用项目: ${fallbackId}`);
-        redirect(`/${locale}/project/${fallbackId}`);
+        redirectUrl = `/${locale}/project/${fallbackId}`;
+      } else {
+        console.log('无法获取任何项目，将重定向到上传页面');
       }
-    } catch {
-      // 如果连备用项目都获取失败，重定向到上传页面
-      console.log('无法获取任何项目，重定向到上传页面');
-      redirect(`/${locale}/upload`);
+    } catch (fallbackError) {
+      console.error('获取备用项目失败:', fallbackError);
+      console.log('将重定向到上传页面');
     }
   }
+
+  // 最后执行重定向，不在try-catch块中
+  console.log(`执行重定向到: ${redirectUrl}`);
+  redirect(redirectUrl);
 } 

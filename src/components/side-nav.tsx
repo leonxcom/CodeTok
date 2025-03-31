@@ -24,12 +24,12 @@ export function SideNav() {
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="text-white">
           <Menu className="h-5 w-5" />
-          <span className="sr-only">菜单</span>
+          <span className="sr-only">导航</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="bg-black text-white border-r border-gray-800">
         <SheetHeader>
-          <SheetTitle className="text-white">MENU</SheetTitle>
+          <SheetTitle className="text-white">{locale === "zh-cn" ? "导航" : "Navigation"}</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-4 py-4">
           <Link 

@@ -55,52 +55,13 @@ export async function GET() {
     `;
     console.log('projects 表创建成功');
 
-    // 5. 插入示例项目
-    const exampleProject = {
-      id: 'CAbUiIo=',
-      title: '示例项目',
-      description: '这是一个示例项目',
-      files: JSON.stringify([{
-        filename: 'index.html',
-        content: '<h1>Hello World</h1>',
-        isEntryPoint: true
-      }]),
-      main_file: 'index.html',
-      is_public: true,
-      external_embed: false,
-      type: 'example'
-    };
-
-    await sql`
-      INSERT INTO projects (
-        id, title, description, files, main_file, 
-        is_public, external_embed, type
-      ) 
-      VALUES (
-        ${exampleProject.id},
-        ${exampleProject.title},
-        ${exampleProject.description},
-        ${exampleProject.files}::jsonb,
-        ${exampleProject.main_file},
-        ${exampleProject.is_public},
-        ${exampleProject.external_embed},
-        ${exampleProject.type}
-      )
-      ON CONFLICT (id) DO NOTHING;
-    `;
-    console.log('示例项目创建成功');
-
-    // 6. 验证迁移
+    // 5. 验证迁移
     const projectCount = await sql`SELECT COUNT(*) FROM projects`;
-    const exampleProjectCheck = await sql`
-      SELECT * FROM projects WHERE id = ${exampleProject.id};
-    `;
 
     return NextResponse.json({
       status: 'success',
       message: '数据库迁移完成',
-      projectCount: projectCount.rows[0].count,
-      exampleProject: exampleProjectCheck.rows[0]
+      projectCount: projectCount.rows[0].count
     });
 
   } catch (error) {

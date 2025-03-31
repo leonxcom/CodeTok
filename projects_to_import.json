@@ -1,0 +1,32 @@
+[
+  {
+    "url": "https://firstpersonflappv.com",
+    "title": "First Person Flappy",
+    "description": "A first-person perspective Flappy Bird game",
+    "author": "Flappy Team"
+  },
+  {
+    "url": "https://visualorigins.digitaldigging.org",
+    "title": "Visual Origins",
+    "description": "A digital archaeology visualization project",
+    "author": "Digital Digging"
+  },
+  {
+    "url": "https://fps-sample-project.netlify.app",
+    "title": "FPS Sample Project",
+    "description": "A first-person shooter sample project with basic mechanics",
+    "author": "Sample Author"
+  },
+  {
+    "url": "https://character-sample-project.netlify.app",
+    "title": "Character Sample Project",
+    "description": "A sample project demonstrating character animation and controls",
+    "author": "Sample Author"
+  },
+  {
+    "url": "https://threejs-fps.vercel.app/",
+    "title": "First-Person Shooter Game Demo",
+    "description": "A basic first-person shooter game demo with movement and shooting mechanics",
+    "author": "ThreeJS Demo"
+  }
+]

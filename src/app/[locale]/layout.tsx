@@ -31,8 +31,8 @@ export async function generateMetadata({
   
   // Set different title formats based on locale
   const pageTitle = locale === 'zh-cn' 
-    ? 'VibeTok - 氛围，编程，分享' 
-    : 'VibeTok - Vibe, Code, Share';
+    ? 'VibeTok - 分享你的AI编程大作！' 
+    : 'VibeTok - Share Your AI Coding Project!';
   
   return {
     title: {
@@ -77,7 +77,7 @@ export default async function RootLayout({
           inter.className,
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} forcedTheme="light">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <div className="relative flex min-h-screen flex-col">
               <SiteHeader locale={locale} />

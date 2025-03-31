@@ -1,6 +1,9 @@
+"use client"
+
 import * as React from 'react'
 import { Link } from '@/navigation'
 import Image from 'next/image'
+import { useTheme } from "next-themes"
 
 import { NavItem } from '@/types/nav'
 import { getSiteConfig } from '@/config/site-i18n'
@@ -15,6 +18,8 @@ interface MainNavProps {
 
 export function MainNav({ items, locale }: MainNavProps) {
   const siteConfig = getSiteConfig(locale)
+  const { theme } = useTheme()
+  const isDark = theme === "dark"
 
   return (
     <div className="flex items-center justify-center">
@@ -26,7 +31,10 @@ export function MainNav({ items, locale }: MainNavProps) {
           height={36} 
           className="rounded-sm"
         />
-        <h1 className="text-2xl font-bold text-white">
+        <h1 className={cn(
+          "text-2xl font-bold",
+          isDark ? "text-white" : "text-gray-900"
+        )}>
           {siteConfig.name}
         </h1>
       </Link>
@@ -39,7 +47,10 @@ export function MainNav({ items, locale }: MainNavProps) {
                   key={index}
                   href={item.href}
                   className={cn(
-                    'flex items-center text-sm font-medium text-gray-300 hover:text-white',
+                    'flex items-center text-sm font-medium',
+                    isDark 
+                      ? 'text-gray-300 hover:text-white'
+                      : 'text-gray-600 hover:text-gray-900',
                     item.disabled && 'cursor-not-allowed opacity-80',
                   )}
                 >

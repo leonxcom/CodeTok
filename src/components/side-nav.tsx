@@ -174,9 +174,9 @@ export function SideNav() {
                       : "border-gray-300 hover:bg-gray-100"
                 )}
               >
-                <div className="w-4 h-4 flex items-center justify-center">
-                  <Moon className="h-3 w-3 absolute" style={{ clipPath: 'inset(0 50% 0 0)' }}/>
-                  <Sun className="h-3 w-3 absolute" style={{ clipPath: 'inset(0 0 0 50%)' }}/>
+                <div className="flex items-center justify-center relative w-4 h-4">
+                  <Moon className="h-4 w-4 absolute" style={{ clipPath: 'inset(0 50% 0 0)' }}/>
+                  <Sun className="h-4 w-4 absolute" style={{ clipPath: 'inset(0 0 0 50%)' }}/>
                 </div>
                 <span className="text-xs">{locale === "zh-cn" ? "系统" : "System"}</span>
               </Button>

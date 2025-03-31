@@ -114,7 +114,7 @@ function wrapCodeInScript(compiledCode: string): string {
         console.error('No React component found in the code');
         document.getElementById('tsx-container').innerHTML = '<div class="error">No React component found</div>';
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error rendering component:', error);
       document.getElementById('tsx-container').innerHTML = '<div class="error">Error: ' + (error instanceof Error ? error.message : String(error)) + '</div>';
     }
@@ -151,7 +151,7 @@ export async function renderTSX(tsxCode: string, container: HTMLElement): Promis
     setTimeout(() => {
       script.remove();
     }, 100);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error rendering TSX:', error);
     container.innerHTML = `<div class="error">Error rendering TSX: ${error instanceof Error ? error.message : String(error)}</div>`;
   }

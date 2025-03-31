@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Locale } from '../../../../../i18n/config'
 import { renderTSX } from '@/lib/tsx-compiler'
+import ExternalEmbed from './external-embed'
 
 interface ProjectData {
   projectId: string
@@ -17,6 +18,9 @@ interface ProjectData {
   hasTsxFiles?: boolean
   views?: number
   createdAt?: string
+  externalEmbed?: boolean
+  externalUrl?: string
+  externalAuthor?: string
 }
 
 export default function ProjectPage() {
@@ -40,6 +44,55 @@ export default function ProjectPage() {
   // 渐进式加载状态
   const [basicInfoLoaded, setBasicInfoLoaded] = useState(false)
   const [filesLoaded, setFilesLoaded] = useState(false)
+  
+  // 处理外部项目显示逻辑
+  const isExternalProject = projectData?.externalEmbed && projectData?.externalUrl;
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [iframeError, setIframeError] = useState<string | null>(null);
+  
+  // 处理iframe加载事件 - 与iframe-test完全一致
+  const handleIframeLoad = () => {
+    console.log('iframe加载成功:', projectData?.externalUrl);
+    setIframeLoaded(true);
+    setIframeError(null);
+  };
+  
+  // 处理iframe错误事件 - 与iframe-test完全一致
+  const handleIframeError = () => {
+    console.log('iframe加载失败:', projectData?.externalUrl);
+    setIframeError(locale === 'zh-cn' ? '无法加载iframe内容' : 'Failed to load iframe content');
+    setIframeLoaded(false);
+  };
+  
+  // 强制刷新iframe - 与iframe-test完全一致
+  const refreshIframe = () => {
+    console.log('强制刷新iframe');
+    setIframeLoaded(false);
+    setIframeError(null);
+    setTimeout(() => {
+      const iframe = document.getElementById('external-project-iframe') as HTMLIFrameElement;
+      if (iframe) {
+        // 重新加载iframe的方式与iframe-test完全一致
+        iframe.src = iframe.src;
+      }
+    }, 100);
+  };
+  
+  // 直接访问外部链接
+  const openDirectLink = () => {
+    if (projectData?.externalUrl) {
+      window.open(projectData.externalUrl, '_blank');
+    }
+  };
+  
+  // 提取域名用于显示
+  const getHostname = (url: string) => {
+    try {
+      return new URL(url).hostname;
+    } catch (e) {
+      return url;
+    }
+  };
   
   // 加载项目数据 - 使用渐进式加载
   useEffect(() => {
@@ -315,16 +368,28 @@ ${content}
   }
   
   // 构建预览URL
-  const previewUrl = showingFrame && projectData?.mainFile
-    ? projectData.fileContents[projectData.mainFile].startsWith('http')
-      ? projectData.fileContents[projectData.mainFile]
-      : projectData.mainFile.endsWith('.html')
-        ? `data:${getMimeType(projectData.mainFile)};charset=utf-8,${encodeURIComponent(createFullHtml(projectData.fileContents[projectData.mainFile], projectData.mainFile))}`
-        : '' // 非HTML文件不使用iframe预览
-    : ''
+  const previewUrl = (() => {
+    if (!showingFrame || !projectData?.mainFile) return '';
+    
+    // 处理外部嵌入项目
+    if (projectData?.externalEmbed && projectData?.externalUrl) {
+      return projectData?.externalUrl;
+    }
+    
+    // 处理常规项目
+    if (projectData?.fileContents?.[projectData?.mainFile]?.startsWith('http')) {
+      return projectData?.fileContents?.[projectData?.mainFile];
+    }
+    
+    if (projectData?.mainFile?.endsWith('.html')) {
+      return `data:${getMimeType(projectData?.mainFile)};charset=utf-8,${encodeURIComponent(createFullHtml(projectData?.fileContents?.[projectData?.mainFile] || '', projectData?.mainFile))}`;
+    }
+    
+    return '';
+  })();
     
   // 是否显示代码编辑器视图（在带框架模式中非HTML文件也显示为代码）
-  const showCodeView = !showingFrame || (showingFrame && !projectData?.mainFile.endsWith('.html'))
+  const showCodeView = !showingFrame || (showingFrame && !projectData?.mainFile.endsWith('.html') && !projectData?.externalEmbed)
   
   // 渲染函数改进，支持渐进式加载
   if (isLoading && !basicInfoLoaded) {
@@ -389,65 +454,97 @@ ${content}
           
           {/* 项目标题 - TikTok风格叠加在内容上 */}
           <div className="absolute left-4 bottom-8 z-10 max-w-lg">
-            <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">{projectData.title || 'Hello Neon DB and Vercel Blob'}</h1>
-            {projectData.description && (
-              <p className="text-white text-sm drop-shadow-lg">{projectData.description}</p>
+            <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">{projectData?.title || 'Hello Neon DB and Vercel Blob'}</h1>
+            {projectData?.description && (
+              <p className="text-white text-sm drop-shadow-lg">{projectData?.description}</p>
             )}
             <div className="flex items-center mt-3">
               <div className="w-10 h-10 rounded-full bg-gray-700 text-white flex items-center justify-center mr-3">
                 <span className="text-lg">👨‍💻</span>
               </div>
               <div>
-                <div className="text-white font-medium">VibeTok Creator</div>
-                <div className="text-white/70 text-xs">{new Date(projectData.createdAt || Date.now()).toLocaleDateString()}</div>
+                <div className="text-white font-medium">
+                  {projectData?.externalAuthor || 'VibeTok Creator'}
+                </div>
+                <div className="text-white/70 text-xs">{new Date(projectData?.createdAt || Date.now()).toLocaleDateString()}</div>
               </div>
             </div>
           </div>
           
-          {showingFrame && projectData.mainFile.endsWith('.html') ? (
-            // HTML预览 - 保持原样
-            <iframe
-              src={previewUrl}
-              className="w-full h-full border-0"
-              title="Code Preview"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
-            />
-          ) : (
-            // 代码编辑器视图 - 日间模式
-            <div className="flex flex-col h-full">
-              {selectedFile && (
-                <>
-                  <div className="bg-gray-100 text-gray-800 py-2 px-4 text-sm font-mono flex justify-between items-center border-b border-gray-200">
-                    <div>{selectedFile} - {getFileType(selectedFile)}</div>
-                    {isTsxFile && (
-                      <div className="flex space-x-2">
-                        <span className="px-2 py-1 bg-blue-600 text-xs rounded text-white">TSX</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {isTsxFile ? (
-                    // TSX文件预览模式 - 内容区保持亮色背景
-                    <div className="flex flex-col h-full">
-                      <div className="bg-white flex-1 overflow-auto">
-                        {/* TSX编译预览区 */}
-                        <div ref={tsxPreviewRef} className="h-full w-full"></div>
-                      </div>
-                      <div className="bg-gray-100 p-2 border-t border-gray-200">
-                        <div className="font-mono text-xs p-2 bg-white rounded border border-gray-200 text-gray-800">
-                          <pre className="whitespace-pre-wrap">{projectData.fileContents[selectedFile]}</pre>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    // 普通代码预览 - 日间模式
-                    <pre className="flex-1 overflow-auto p-4 bg-white font-mono text-sm text-gray-900">
-                      {projectData.fileContents[selectedFile]}
-                    </pre>
-                  )}
-                </>
-              )}
+          {isExternalProject ? (
+            <div className="w-full h-full relative">
+              <ExternalEmbed 
+                url={projectData?.externalUrl || ''} 
+                locale={locale} 
+              />
             </div>
+          ) : (
+            <>
+              {/* 项目标题 - TikTok风格叠加在内容上 */}
+              <div className="absolute left-4 bottom-8 z-10 max-w-lg">
+                <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">{projectData?.title || 'Hello Neon DB and Vercel Blob'}</h1>
+                {projectData?.description && (
+                  <p className="text-white text-sm drop-shadow-lg">{projectData?.description}</p>
+                )}
+                <div className="flex items-center mt-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-700 text-white flex items-center justify-center mr-3">
+                    <span className="text-lg">👨‍💻</span>
+                  </div>
+                  <div>
+                    <div className="text-white font-medium">
+                      {projectData?.externalAuthor || 'VibeTok Creator'}
+                    </div>
+                    <div className="text-white/70 text-xs">{new Date(projectData?.createdAt || Date.now()).toLocaleDateString()}</div>
+                  </div>
+                </div>
+              </div>
+              
+              {showingFrame && projectData?.mainFile?.endsWith('.html') ? (
+                // 普通HTML项目预览
+                <iframe
+                  src={previewUrl}
+                  className="w-full h-full border-0"
+                  title="Code Preview"
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
+                />
+              ) : (
+                // 代码编辑器视图 - 日间模式
+                <div className="flex flex-col h-full">
+                  {selectedFile && (
+                    <>
+                      <div className="bg-gray-100 text-gray-800 py-2 px-4 text-sm font-mono flex justify-between items-center border-b border-gray-200">
+                        <div>{selectedFile} - {getFileType(selectedFile)}</div>
+                        {isTsxFile && (
+                          <div className="flex space-x-2">
+                            <span className="px-2 py-1 bg-blue-600 text-xs rounded text-white">TSX</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {isTsxFile ? (
+                        // TSX文件预览模式 - 内容区保持亮色背景
+                        <div className="flex flex-col h-full">
+                          <div className="bg-white flex-1 overflow-auto">
+                            {/* TSX编译预览区 */}
+                            <div ref={tsxPreviewRef} className="h-full w-full"></div>
+                          </div>
+                          <div className="bg-gray-100 p-2 border-t border-gray-200">
+                            <div className="font-mono text-xs p-2 bg-white rounded border border-gray-200 text-gray-800">
+                              <pre className="whitespace-pre-wrap">{projectData?.fileContents?.[selectedFile] || ''}</pre>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        // 普通代码预览 - 日间模式
+                        <pre className="flex-1 overflow-auto p-4 bg-white font-mono text-sm text-gray-900">
+                          {projectData?.fileContents?.[selectedFile] || ''}
+                        </pre>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
         
@@ -455,21 +552,31 @@ ${content}
         <div className="w-1/5 border-l border-gray-800 bg-black flex flex-col">
           {/* 项目信息区 */}
           <div className="p-4 border-b border-gray-800">
-            {projectData.title && (
-              <h2 className="font-medium text-lg mb-2 line-clamp-2 text-white">{projectData.title}</h2>
+            {projectData?.title && (
+              <h2 className="font-medium text-lg mb-2 line-clamp-2 text-white">{projectData?.title}</h2>
             )}
-            {projectData.description && (
-              <p className="text-sm text-gray-400 mb-3 line-clamp-3">{projectData.description}</p>
+            {projectData?.description && (
+              <p className="text-sm text-gray-400 mb-3 line-clamp-3">{projectData?.description}</p>
             )}
-            {projectData.createdAt && (
+            {isExternalProject && projectData?.externalUrl && (
+              <div className="flex items-center text-xs text-gray-400 mb-2">
+                <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded mr-1">
+                  {locale === 'zh-cn' ? '外部项目' : 'External'}
+                </span>
+                <a href={projectData?.externalUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline ml-1">
+                  {new URL(projectData?.externalUrl).hostname}
+                </a>
+              </div>
+            )}
+            {projectData?.createdAt && (
               <div className="text-xs text-gray-500">
-                {new Date(projectData.createdAt).toLocaleDateString()}
+                {new Date(projectData?.createdAt).toLocaleDateString()}
               </div>
             )}
           </div>
           
-          {/* 文件选择区 */}
-          {projectData.files.length > 1 && (
+          {/* 文件选择区 - 只在非外部项目时显示 */}
+          {!isExternalProject && projectData?.files?.length > 1 && (
             <div className="p-4 border-b border-gray-800">
               <label className="block text-sm font-medium text-gray-400 mb-1">
                 {locale === 'zh-cn' ? '文件' : 'Files'}
@@ -479,7 +586,7 @@ ${content}
                 value={selectedFile || ''}
                 onChange={(e) => setSelectedFile(e.target.value)}
               >
-                {projectData.files.map(file => (
+                {projectData?.files?.map(file => (
                   <option key={file} value={file}>{file}</option>
                 ))}
               </select>
@@ -499,30 +606,49 @@ ${content}
                 <span>{locale === 'zh-cn' ? '随机项目' : 'Random Project'}</span>
               </button>
               
-              {/* 查看代码/预览切换按钮 */}
-              <button
-                onClick={toggleFrame}
-                className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-sm font-medium transition-colors text-white"
-                disabled={isLoading}
-              >
-                {showingFrame ? (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="16 18 22 12 16 6"></polyline>
-                      <polyline points="8 6 2 12 8 18"></polyline>
-                    </svg>
-                    <span>{locale === 'zh-cn' ? '查看代码' : 'View Code'}</span>
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    <span>{locale === 'zh-cn' ? '查看效果' : 'View Preview'}</span>
-                  </>
-                )}
-              </button>
+              {/* 切换代码/预览按钮 - 只在非外部项目时显示 */}
+              {!isExternalProject && (
+                <button
+                  onClick={toggleFrame}
+                  className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-sm font-medium transition-colors text-white"
+                  disabled={isLoading}
+                >
+                  {showingFrame ? (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                      </svg>
+                      <span>{locale === 'zh-cn' ? '查看代码' : 'View Code'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      <span>{locale === 'zh-cn' ? '查看效果' : 'View Preview'}</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* 外部项目时，显示访问源站按钮 */}
+              {isExternalProject && (
+                <a
+                  href={projectData?.externalUrl || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-sm font-medium transition-colors text-white"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                  <span>{locale === 'zh-cn' ? '访问源站' : 'Visit Source'}</span>
+                </a>
+              )}
             </div>
           </div>
           

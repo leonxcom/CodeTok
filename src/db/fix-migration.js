@@ -1,18 +1,12 @@
-// 数据库迁移脚本
-import dotenv from 'dotenv';
-import pg from 'pg';
+// 数据库迁移修复脚本
+const { Client } = require('pg');
+require('dotenv').config({ path: '.env.local' });
 
-// 加载环境变量
-dotenv.config({ path: '.env.local' });
-
-// 检查环境变量
+// 获取数据库连接URL
 const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 if (!connectionString) {
   throw new Error('数据库连接URL未定义。请设置DATABASE_URL或POSTGRES_URL环境变量。');
 }
-
-// 创建PG客户端
-const client = new pg.Client({ connectionString });
 
 // 创建表的SQL语句
 const createProjectsTable = `
@@ -54,6 +48,8 @@ CREATE TABLE IF NOT EXISTS favorites (
 
 // 执行迁移
 async function migrate() {
+  const client = new Client({ connectionString });
+  
   try {
     console.log('连接到数据库...');
     await client.connect();
@@ -72,6 +68,41 @@ async function migrate() {
     console.log('创建 favorites 表...');
     await client.query(createFavoritesTable);
     
+    // 测试项目表是否可写
+    console.log('测试项目表...');
+    const testProjectId = 'test-' + Date.now();
+    await client.query(`
+      INSERT INTO projects (id, title, description, files, main_file, is_public)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      ON CONFLICT (id) DO NOTHING
+    `, [
+      testProjectId,
+      '测试项目',
+      '用于测试数据库连接的项目',
+      JSON.stringify([{
+        url: 'https://example.com/test.html',
+        filename: 'test.html',
+        pathname: 'test.html',
+        size: 10,
+        type: 'text/html',
+        isEntryPoint: true
+      }]),
+      'test.html',
+      true
+    ]);
+    
+    // 验证插入是否成功
+    const result = await client.query('SELECT * FROM projects WHERE id = $1', [testProjectId]);
+    if (result.rows.length > 0) {
+      console.log('测试项目创建成功:', result.rows[0].id);
+      
+      // 清理测试数据
+      await client.query('DELETE FROM projects WHERE id = $1', [testProjectId]);
+      console.log('测试项目已删除');
+    } else {
+      console.log('测试项目创建失败');
+    }
+    
     console.log('数据库迁移完成!');
   } catch (error) {
     console.error('数据库迁移失败:', error);
@@ -81,5 +112,5 @@ async function migrate() {
   }
 }
 
-// 导出迁移函数
-export { migrate }; 
+// 执行迁移
+migrate(); 

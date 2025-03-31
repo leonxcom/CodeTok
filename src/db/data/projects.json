@@ -1,0 +1,24 @@
+[
+  {
+    "id": "CAbUiIo=",
+    "title": "示例项目",
+    "description": "这是一个示例项目",
+    "files": [
+      {
+        "content": "<h1>Hello World</h1>",
+        "filename": "index.html",
+        "isEntryPoint": true
+      }
+    ],
+    "main_file": "index.html",
+    "is_public": true,
+    "views": 0,
+    "likes": 0,
+    "created_at": "2025-03-30T23:07:24.772Z",
+    "updated_at": "2025-03-30T23:07:24.772Z",
+    "external_url": null,
+    "external_embed": false,
+    "external_author": null,
+    "type": "example"
+  }
+]

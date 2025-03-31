@@ -11,8 +11,12 @@ import {
   Briefcase, 
   Users, 
   GraduationCap, 
-  ShoppingBag 
+  ShoppingBag,
+  Moon,
+  Sun,
+  Languages
 } from "lucide-react"
+import { useTheme } from "next-themes"
 
 import { Locale } from "../../i18n/config"
 import { Button } from "@/components/ui/button"
@@ -23,6 +27,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { ThemeToggle } from "./theme-toggle"
+import { LanguageToggle } from "./language-toggle"
 
 interface NavItemProps {
   href: string;
@@ -45,6 +51,7 @@ function NavItem({ href, icon, label }: NavItemProps) {
 export function SideNav() {
   const params = useParams()
   const locale = params.locale as Locale || "zh-cn"
+  const { setTheme, theme } = useTheme()
 
   const navItems = [
     {
@@ -105,6 +112,43 @@ export function SideNav() {
               label={item.label}
             />
           ))}
+        </div>
+        
+        {/* 分割线 */}
+        <div className="border-t border-gray-800 my-4"></div>
+        
+        {/* 设置区域 */}
+        <div className="flex flex-col gap-2 px-4">
+          <div className="flex items-center justify-between text-sm py-2">
+            <div className="flex items-center gap-2">
+              {theme === "dark" ? (
+                <Moon className="h-5 w-5" />
+              ) : (
+                <Sun className="h-5 w-5" />
+              )}
+              <span>{locale === "zh-cn" ? "主题切换" : "Theme"}</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              className="h-8 w-8"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+          
+          <div className="flex items-center justify-between text-sm py-2">
+            <div className="flex items-center gap-2">
+              <Languages className="h-5 w-5" />
+              <span>{locale === "zh-cn" ? "语言切换" : "Language"}</span>
+            </div>
+            <LanguageToggle locale={locale} />
+          </div>
         </div>
       </SheetContent>
     </Sheet>

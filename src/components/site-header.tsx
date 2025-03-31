@@ -19,16 +19,9 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ locale }: SiteHeaderProps) {
   const siteConfig = getSiteConfig(locale)
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
-
+  
   return (
-    <header className={cn(
-      "sticky top-0 z-40 w-full border-b",
-      isDark 
-        ? "border-gray-800 bg-black" 
-        : "border-gray-200 bg-white"
-    )}>
+    <header className="sticky top-0 z-40 w-full border-b bg-background border-border">
       <div className="container flex h-16 items-center justify-center">
         <div className="absolute left-4">
           <SideNav />
@@ -47,11 +40,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
           </Button>
           <Button
             variant="outline"
-            className={cn(
-              isDark 
-                ? "border-gray-600 text-white hover:bg-gray-700" 
-                : "border-gray-300 text-gray-900 hover:bg-gray-100"
-            )}
+            className="border-border text-foreground hover:bg-muted"
             asChild
           >
             <Link href={`/${locale}/login`}>

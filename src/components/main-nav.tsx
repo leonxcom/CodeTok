@@ -18,8 +18,6 @@ interface MainNavProps {
 
 export function MainNav({ items, locale }: MainNavProps) {
   const siteConfig = getSiteConfig(locale)
-  const { theme } = useTheme()
-  const isDark = theme === "dark"
 
   return (
     <div className="flex items-center justify-center">
@@ -31,10 +29,7 @@ export function MainNav({ items, locale }: MainNavProps) {
           height={36} 
           className="rounded-sm"
         />
-        <h1 className={cn(
-          "text-2xl font-bold",
-          isDark ? "text-white" : "text-gray-900"
-        )}>
+        <h1 className="text-2xl font-bold text-foreground">
           {siteConfig.name}
         </h1>
       </Link>
@@ -47,10 +42,7 @@ export function MainNav({ items, locale }: MainNavProps) {
                   key={index}
                   href={item.href}
                   className={cn(
-                    'flex items-center text-sm font-medium',
-                    isDark 
-                      ? 'text-gray-300 hover:text-white'
-                      : 'text-gray-600 hover:text-gray-900',
+                    'flex items-center text-sm font-medium text-muted-foreground hover:text-foreground',
                     item.disabled && 'cursor-not-allowed opacity-80',
                   )}
                 >

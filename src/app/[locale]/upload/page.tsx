@@ -1,10 +1,13 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useParams } from 'next/navigation'
 import { Locale } from '../../../../i18n/config'
+
+// 添加动态加载标记，防止静态预渲染
+export const dynamic = 'force-dynamic'
 
 // 扩展Input HTML属性类型以支持webkitdirectory
 declare module 'react' {
@@ -17,7 +20,14 @@ declare module 'react' {
 export default function UploadPage() {
   const router = useRouter()
   const params = useParams()
-  const locale = params.locale as Locale
+  const [locale, setLocale] = useState<Locale>('zh-cn')
+  
+  // 安全地处理locale参数
+  useEffect(() => {
+    if (params && typeof params.locale === 'string') {
+      setLocale(params.locale as Locale)
+    }
+  }, [params])
   
   const [isDragging, setIsDragging] = useState(false)
   const [codeInput, setCodeInput] = useState('')
@@ -251,17 +261,29 @@ export default function UploadPage() {
         </div>
       </div>
       
+      {/* 错误信息 */}
       {errorMessage && (
-        <div className="text-red-500 text-center mb-6">{errorMessage}</div>
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+          {errorMessage}
+        </div>
       )}
       
-      <div className="text-center">
-        <p className="text-gray-600">
-          {locale === 'zh-cn' 
-            ? '无需登录，立即分享你的代码创作' 
-            : 'No login required, share your code creation instantly'}
-        </p>
-      </div>
+      {/* 上传状态 */}
+      {isUploading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-sm w-full">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+              <h3 className="text-lg font-medium mb-2">
+                {locale === 'zh-cn' ? '处理中...' : 'Processing...'}
+              </h3>
+              <p className="text-gray-600">
+                {locale === 'zh-cn' ? '请稍候，我们正在处理您的文件' : 'Please wait while we process your files'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

@@ -4,21 +4,25 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { Locale } from '../../../../i18n/config'
 
+// 添加动态加载标记，防止静态预渲染
+export const dynamic = 'force-dynamic'
+
 export default function IframeTestPage() {
-  // 添加默认的locale以避免服务器端渲染问题
-  const [locale, setLocale] = useState<Locale>('zh-cn')
+  // 在组件顶层调用useParams，但不立即使用它
+  const params = useParams()
   
+  // 默认值作为后备方案
+  const [locale, setLocale] = useState<Locale>('zh-cn')
   const [url, setUrl] = useState('https://character-sample-project.netlify.app/')
   const [iframeLoaded, setIframeLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
-  // 在客户端加载后再获取params
+  // 使用useEffect以确保在客户端运行时安全地访问params
   useEffect(() => {
-    const params = useParams()
-    if (params && params.locale) {
+    if (params && typeof params.locale === 'string') {
       setLocale(params.locale as Locale)
     }
-  }, [])
+  }, [params])
   
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value)
@@ -139,4 +143,4 @@ export default function IframeTestPage() {
       </div>
     </div>
   )
-} 
+}

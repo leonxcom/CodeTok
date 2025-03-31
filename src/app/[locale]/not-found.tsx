@@ -1,19 +1,28 @@
 import { buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
-import { locales } from '../../../i18n/config'
+import { locales, type Locale } from '../../../i18n/config'
 
 interface Props {
-  params: { locale: string }
+  params?: { locale?: string }
 }
+
+// 添加动态加载标记，防止静态预渲染
+export const dynamic = 'force-dynamic'
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
 }
 
 export default function LocalizedNotFound({ params }: Props) {
-  const locale = (params.locale as string || 'zh-cn') as (typeof locales)[number]
+  // 安全地获取locale参数，提供默认值
+  const locale = (params?.locale || 'zh-cn') as Locale
   
-  const translations = {
+  // 确保键类型安全的翻译对象
+  const translations: Record<Locale, {
+    notFound: string
+    sorry: string
+    backHome: string
+  }> = {
     'zh-cn': {
       notFound: '页面未找到',
       sorry: '抱歉，我们找不到您要访问的页面。',

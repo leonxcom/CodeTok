@@ -166,7 +166,7 @@ export function SideNav() {
                 size="sm"
                 onClick={() => setTheme("system")}
                 className={cn(
-                  "h-9 w-full flex items-center justify-center gap-1",
+                  "h-9 w-full flex items-center justify-center",
                   theme === "system" 
                     ? "bg-gray-700 text-white border-gray-600" 
                     : theme === "dark" 
@@ -174,10 +174,6 @@ export function SideNav() {
                       : "border-gray-300 hover:bg-gray-100"
                 )}
               >
-                <div className="flex items-center justify-center relative w-4 h-4">
-                  <Moon className="h-4 w-4 absolute" style={{ clipPath: 'inset(0 50% 0 0)' }}/>
-                  <Sun className="h-4 w-4 absolute" style={{ clipPath: 'inset(0 0 0 50%)' }}/>
-                </div>
                 <span className="text-xs">{locale === "zh-cn" ? "系统" : "System"}</span>
               </Button>
               

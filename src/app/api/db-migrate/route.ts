@@ -7,9 +7,13 @@ export async function GET() {
   try {
     console.log('开始数据库迁移...');
 
-    // 1. 创建 projects 表
+    // 1. 删除旧表（如果存在）
+    await sql`DROP TABLE IF EXISTS projects;`;
+    console.log('旧表已删除');
+
+    // 2. 创建 projects 表
     await sql`
-      CREATE TABLE IF NOT EXISTS projects (
+      CREATE TABLE projects (
         project_id VARCHAR(255) PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
         description TEXT,
@@ -26,7 +30,7 @@ export async function GET() {
     `;
     console.log('projects 表创建成功');
 
-    // 2. 插入示例项目
+    // 3. 插入示例项目
     const exampleProject = {
       project_id: 'CAbUiIo=',
       title: '示例项目',
@@ -59,7 +63,7 @@ export async function GET() {
     `;
     console.log('示例项目创建成功');
 
-    // 3. 验证迁移
+    // 4. 验证迁移
     const projectCount = await sql`SELECT COUNT(*) FROM projects;`;
     const exampleProjectCheck = await sql`
       SELECT * FROM projects WHERE project_id = ${exampleProject.project_id};

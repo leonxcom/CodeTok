@@ -10,60 +10,60 @@ export async function GET(
 ) {
   try {
     // 获取项目ID
-    const id = params.id;
-    console.log('获取项目详情，ID:', id);
+    const id = params.id
+    console.log('获取项目详情，ID:', id)
     
     // 使用SQL查询获取项目
     const projectResult = await sql`
       SELECT * FROM projects WHERE id = ${id}
-    `;
+    `
     
     // 如果没有找到项目
     if (projectResult.rows.length === 0) {
-      console.log('未找到项目:', id);
+      console.log('未找到项目:', id)
       return NextResponse.json({ 
         error: 'Project not found' 
-      }, { status: 404 });
+      }, { status: 404 })
     }
 
     // 获取项目数据
-    const project = projectResult.rows[0];
-    console.log('成功获取项目:', project.title);
+    const project = projectResult.rows[0]
+    console.log('成功获取项目:', project.title)
     
     // 更新访问量
     try {
       await sql`
         UPDATE projects SET views = ${(project.views || 0) + 1} WHERE id = ${id}
-      `;
+      `
     } catch (updateError) {
-      console.error('更新访问量失败:', updateError);
+      console.error('更新访问量失败:', updateError)
       // 继续处理，不影响响应
     }
     
     // 处理文件内容
-    let files: string[] = [];
-    let mainFileContent: string | null = null;
-    let hasTsxFiles = false;
+    let files: string[] = []
+    let mainFileContent: string | null = null
+    let hasTsxFiles = false
     
     if (project.files) {
-      const projectFiles = project.files as ProjectFile[];
-      files = projectFiles.map((file: ProjectFile) => file.pathname);
+      const projectFiles = project.files as ProjectFile[]
+      files = projectFiles.map((file: ProjectFile) => file.pathname)
       
       // 检测是否包含TSX文件
-      hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'));
+      hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'))
       
       // 获取主文件内容
-      const mainFile = projectFiles.find(file => file.pathname === project.main_file);
+      const mainFile = projectFiles.find(file => file.pathname === project.main_file)
       
       if (mainFile) {
         try {
-          const response = await fetch(mainFile.url);
+          const response = await fetch(mainFile.url)
           if (response.ok) {
-            mainFileContent = await response.text();
+            mainFileContent = await response.text()
           }
         } catch (error) {
-          console.error(`获取主文件内容失败 ${mainFile.pathname}:`, error);
-          mainFileContent = `// Error loading content: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          console.error(`获取主文件内容失败 ${mainFile.pathname}:`, error)
+          mainFileContent = `// Error loading content: ${error instanceof Error ? error.message : 'Unknown error'}`
         }
       }
     }
@@ -85,15 +85,14 @@ export async function GET(
       hasTsxFiles,
       views: project.views,
       createdAt: project.created_at
-    };
+    }
     
-    return NextResponse.json(responseData);
-    
+    return NextResponse.json(responseData)
   } catch (error) {
-    console.error('获取项目失败:', error);
+    console.error('获取项目失败:', error)
     return NextResponse.json(
       { error: 'Failed to fetch project', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
-    );
+    )
   }
 } 

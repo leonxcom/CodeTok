@@ -1,95 +1,46 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@vercel/postgres';
-import { generateProjectId } from '@/lib/storage';
+import { NextResponse } from 'next/server';
 
-/**
- * 测试@vercel/postgres插入数据
- */
-export async function POST(request: NextRequest) {
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
   try {
-    // 生成随机项目ID
-    const projectId = generateProjectId();
-    
-    // 获取请求数据
-    const { url, title, description, author } = await request.json();
-    
-    console.log('添加测试项目:', { url, title, author });
-    
-    if (!url) {
-      return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+    // 1. 测试连接
+    const testResult = await sql`SELECT version();`;
+    console.log('数据库连接成功:', testResult.rows[0].version);
+
+    // 2. 检查 projects 表是否存在
+    const tableExists = await sql`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'projects'
+      );
+    `;
+    console.log('projects 表是否存在:', tableExists.rows[0].exists);
+
+    // 3. 如果表存在，获取项目数量
+    let projectCount = 0;
+    if (tableExists.rows[0].exists) {
+      const countResult = await sql`SELECT COUNT(*) FROM projects;`;
+      projectCount = parseInt(countResult.rows[0].count);
+      console.log('项目数量:', projectCount);
     }
-    
-    // 确保URL是正确格式
-    let cleanUrl = url.trim();
-    if (!cleanUrl.startsWith('http')) {
-      cleanUrl = 'https://' + cleanUrl;
-    }
-    
-    // 移除尾部斜杠以保持一致性
-    if (cleanUrl.endsWith('/')) {
-      cleanUrl = cleanUrl.slice(0, -1);
-    }
-    
-    // 当前时间
-    const now = new Date().toISOString();
-    
-    // 构建文件数据
-    const files = JSON.stringify([
-      {
-        filename: 'index.html',
-        pathname: 'index.html',
-        url: cleanUrl,
-        isEntryPoint: true,
-        type: 'text/html',
-        size: 0
-      }
-    ]);
-    
-    // 使用@vercel/postgres直接插入数据
-    try {
-      const result = await sql`
-        INSERT INTO projects (
-          id, title, description, files, main_file, is_public, 
-          external_url, external_embed, external_author, type
-        ) 
-        VALUES (
-          ${projectId}, 
-          ${title || 'Test Project'}, 
-          ${description || 'Test project description'}, 
-          ${files}::jsonb, 
-          ${'index.html'}, 
-          ${true},
-          ${cleanUrl},
-          ${true},
-          ${author || 'Unknown'},
-          ${'external'}
-        )
-        RETURNING id, title, description
-      `;
-      
-      console.log('项目已保存到数据库:', result);
-      
-      // 查询验证
-      const verifyResult = await sql`SELECT * FROM projects WHERE id = ${projectId}`;
-      console.log('验证查询结果:', verifyResult.rows[0]);
-      
-      return NextResponse.json({ 
-        success: true, 
-        projectId,
-        inserted: result.rows[0],
-        verified: verifyResult.rows[0]
-      });
-    } catch (dbError: any) {
-      console.error('数据库插入错误:', dbError);
-      return NextResponse.json({ 
-        error: 'Database insertion failed', 
-        details: dbError.message 
-      }, { status: 500 });
-    }
-  } catch (error: any) {
-    console.error('Error in test-postgres API:', error);
+
+    return NextResponse.json({
+      status: 'connected',
+      postgres_version: testResult.rows[0].version,
+      projects_table_exists: tableExists.rows[0].exists,
+      project_count: projectCount
+    });
+
+  } catch (error) {
+    console.error('PostgreSQL test error:', error);
     return NextResponse.json(
-      { error: 'Test failed', details: error.message }, 
+      { 
+        status: 'error',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }

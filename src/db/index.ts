@@ -2,7 +2,11 @@ import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { sql } from '@vercel/postgres';
 import * as schema from './schema';
 
-// 获取数据库连接URL
+// 获取当前环境
+const environment = process.env.NODE_ENV || 'development';
+console.log(`当前环境: ${environment}`);
+
+// 获取数据库连接URL - 根据环境选择合适的连接字符串
 const connectionString = process.env.DATABASE_URL || 
                       process.env.POSTGRES_URL || 
                       process.env.VERCEL_POSTGRES_URL;
@@ -11,19 +15,21 @@ const connectionString = process.env.DATABASE_URL ||
 function createDbConnection() {
   try {    
     if (!connectionString) {
-      console.warn('数据库连接URL未定义。使用模拟数据库进行开发/构建。');
+      console.warn(`${environment} 环境: 数据库连接URL未定义。使用模拟数据库进行开发/构建。`);
       return null;
     }
     
+    console.log(`${environment} 环境: 创建数据库连接`);
     return drizzle(sql);
   } catch (error) {
-    console.error('数据库连接初始化失败:', error);
+    console.error(`${environment} 环境: 数据库连接初始化失败:`, error);
     return null;
   }
 }
 
-// 创建drizzle ORM实例或使用模拟数据库
-export const db = createDbConnection();
+// 导出数据库连接
+const db = createDbConnection();
+export default db;
 
 // 直接导出sql客户端
 export { sql };

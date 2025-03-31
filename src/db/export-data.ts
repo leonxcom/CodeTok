@@ -3,12 +3,27 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import dotenv from 'dotenv';
 
-// 加载开发环境变量
-dotenv.config({ path: '.env.local' });
+// 加载环境变量
+function loadEnv() {
+  const environment = process.env.NODE_ENV || 'development';
+  console.log(`当前环境: ${environment}`);
+  
+  if (environment === 'production') {
+    dotenv.config({ path: path.resolve(process.cwd(), '.env.production') });
+    console.log('已加载生产环境配置');
+  } else {
+    dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+    console.log('已加载开发环境配置');
+  }
+}
+
+// 执行前加载环境变量
+loadEnv();
 
 async function exportData() {
   try {
-    console.log('开始导出开发环境数据...');
+    const environment = process.env.NODE_ENV || 'development';
+    console.log(`开始导出${environment}环境数据...`);
 
     // 查询所有项目
     const projects = await sql`
@@ -20,7 +35,7 @@ async function exportData() {
     const exportPath = path.join(process.cwd(), 'src/db/data');
     await fs.mkdir(exportPath, { recursive: true });
     
-    const exportFile = path.join(exportPath, 'projects.json');
+    const exportFile = path.join(exportPath, `projects-${environment}.json`);
     await fs.writeFile(
       exportFile,
       JSON.stringify(projects.rows, null, 2),

@@ -91,7 +91,7 @@ export async function GET() {
     console.log('示例项目创建成功');
 
     // 6. 验证迁移
-    const projectCount = await sql`SELECT COUNT(*) FROM projects;`;
+    const projectCount = await sql`SELECT COUNT(*) FROM projects`;
     const exampleProjectCheck = await sql`
       SELECT * FROM projects WHERE id = ${exampleProject.id};
     `;

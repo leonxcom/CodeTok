@@ -1,20 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateProjectId, uploadFile, uploadCode, MAX_FILE_SIZE } from '@/lib/storage'
 import { eq } from 'drizzle-orm'
-import { db, safeQuery, projects } from '@/db'
+import db, { safeQuery, projects } from '@/db'
 import { ProjectFile } from '@/db/schema'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // 从数据库获取所有公开项目
+    // 获取查询参数
+    const searchParams = request.nextUrl.searchParams;
+    const type = searchParams.get('type');
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit') as string) : 10;
+    
+    // 从数据库获取项目
     const allProjects = await safeQuery(async () => {
       if (!db) return []
       
-      // 查询所有公开项目
-      const results = await db.select().from(projects)
-        .where(eq(projects.isPublic, true))
-        
-      return results
+      // 根据参数查询项目
+      let query = db.select().from(projects);
+      
+      // 如果类型不是 'all'，只返回公开项目
+      if (type !== 'all') {
+        query = query.where(eq(projects.isPublic, true));
+      }
+      
+      // 限制返回数量并按创建时间倒序排列
+      const results = await query.limit(limit).orderBy(projects.createdAt, 'desc');
+      return results;
     }, [])
     
     return NextResponse.json(allProjects)

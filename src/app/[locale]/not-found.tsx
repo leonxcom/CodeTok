@@ -1,11 +1,13 @@
-'use client'
-
 import { buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
 import { locales } from '../../../i18n/config'
 
 interface Props {
   params: { locale: string }
+}
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
 }
 
 export default function LocalizedNotFound({ params }: Props) {

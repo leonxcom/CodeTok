@@ -30,6 +30,10 @@ export const projects = pgTable('projects', {
   isPublic: boolean('is_public').default(true),
   views: integer('views').default(0),
   likes: integer('likes').default(0),
+  externalUrl: text('external_url'),
+  externalEmbed: boolean('external_embed').default(false),
+  externalAuthor: text('external_author'),
+  type: text('type'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

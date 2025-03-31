@@ -63,7 +63,7 @@ export async function GET(
           if (response.ok) {
             mainFileContent = await response.text()
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error(`Error fetching main file ${mainFile.pathname}:`, error)
           mainFileContent = `// Error loading content: ${error}`
         }
@@ -74,6 +74,10 @@ export async function GET(
         projectId: project.id,
         title: project.title,
         description: project.description,
+        externalUrl: project.externalUrl,
+        externalEmbed: project.externalEmbed,
+        externalAuthor: project.externalAuthor,
+        type: project.type,
         files,
         mainFile: project.mainFile,
         fileContents: mainFileContent 
@@ -93,6 +97,10 @@ export async function GET(
       projectId: project.id,
       title: project.title,
       description: project.description,
+      externalUrl: project.externalUrl,
+      externalEmbed: project.externalEmbed,
+      externalAuthor: project.externalAuthor,
+      type: project.type,
       files: [],
       mainFile: project.mainFile || '',
       fileContents: {},
@@ -100,7 +108,7 @@ export async function GET(
       views: project.views,
       createdAt: project.createdAt
     })
-  } catch (error) {
+  } catch (error: any) {
     // 在错误处理中也使用await处理params
     const resolvedParams = await params;
     console.error(`Error fetching project ${resolvedParams.id}:`, error)

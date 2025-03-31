@@ -25,7 +25,7 @@ export async function uploadFile(file: FileWithName, projectId: string, path: st
       size: file.size, 
       type: file.type || getMimeType(filename)
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload file error:', error);
     throw new Error('Failed to upload file');
   }
@@ -48,7 +48,7 @@ export async function uploadCode(code: string, projectId: string, filename: stri
       size: blob.size, 
       type: getMimeType(filename)
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload code error:', error);
     throw new Error('Failed to upload code');
   }
@@ -74,7 +74,7 @@ export async function listProjectFiles(projectId: string): Promise<BlobItem[]> {
       size: blob.size,
       uploadedAt: blob.uploadedAt
     }));
-  } catch (error) {
+  } catch (error: any) {
     console.error('List project files error:', error);
     throw new Error('Failed to list project files');
   }
@@ -92,7 +92,7 @@ export async function deleteProject(projectId: string): Promise<boolean> {
     }
     
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Delete project error:', error);
     throw new Error('Failed to delete project');
   }

@@ -4,6 +4,29 @@ import { eq } from 'drizzle-orm'
 import { db, safeQuery, projects } from '@/db'
 import { ProjectFile } from '@/db/schema'
 
+export async function GET() {
+  try {
+    // 从数据库获取所有公开项目
+    const allProjects = await safeQuery(async () => {
+      if (!db) return []
+      
+      // 查询所有公开项目
+      const results = await db.select().from(projects)
+        .where(eq(projects.isPublic, true))
+        
+      return results
+    }, [])
+    
+    return NextResponse.json(allProjects)
+  } catch (error: any) {
+    console.error('Error fetching projects:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch projects' }, 
+      { status: 500 }
+    )
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // 生成随机项目ID
@@ -126,7 +149,7 @@ export async function POST(request: NextRequest) {
       mainFile,
       files
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error saving project:', error)
     return NextResponse.json(
       { error: 'Failed to process upload' }, 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Locale } from '../../../../../i18n/config'
 
 interface ExternalEmbedProps {
@@ -11,22 +11,31 @@ interface ExternalEmbedProps {
 export default function ExternalEmbed({ url, locale }: ExternalEmbedProps) {
   const [iframeLoaded, setIframeLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showLoadSuccess, setShowLoadSuccess] = useState(false)
   
   const handleIframeLoad = () => {
     console.log('iframe加载成功:', url)
     setIframeLoaded(true)
+    setShowLoadSuccess(true)
     setError(null)
+    
+    // 2秒后隐藏成功提示
+    setTimeout(() => {
+      setShowLoadSuccess(false)
+    }, 2000)
   }
   
   const handleIframeError = () => {
     console.log('iframe加载失败:', url)
     setError(locale === 'zh-cn' ? '无法加载iframe内容' : 'Failed to load iframe content')
     setIframeLoaded(false)
+    setShowLoadSuccess(false)
   }
   
   const refreshIframe = () => {
     setIframeLoaded(false)
     setError(null)
+    setShowLoadSuccess(false)
     setTimeout(() => {
       const iframe = document.getElementById('external-iframe') as HTMLIFrameElement
       if (iframe) {
@@ -59,7 +68,7 @@ export default function ExternalEmbed({ url, locale }: ExternalEmbedProps) {
       {/* 状态指示区 */}
       <div className="absolute top-2 right-2 z-30">
         <div className="flex gap-2">
-          {iframeLoaded ? (
+          {showLoadSuccess ? (
             <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
               {locale === 'zh-cn' ? '加载成功' : 'Loaded Successfully'}
             </span>
@@ -81,7 +90,7 @@ export default function ExternalEmbed({ url, locale }: ExternalEmbedProps) {
                 {locale === 'zh-cn' ? '在新窗口打开' : 'Open in new window'}
               </button>
             </div>
-          ) : (
+          ) : !iframeLoaded && (
             <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
               {locale === 'zh-cn' ? '加载中...' : 'Loading...'}
             </span>

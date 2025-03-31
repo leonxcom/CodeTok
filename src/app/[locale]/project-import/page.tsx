@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { Locale } from '../../../../i18n/config'
 import Link from 'next/link'
 
 export default function ProjectImportPage() {
-  const params = useParams()
-  const locale = params.locale as Locale
+  // 添加默认的locale以避免服务器端渲染问题
+  const [locale, setLocale] = useState<Locale>('zh-cn')
   
   const [url, setUrl] = useState('https://character-sample-project.netlify.app/')
   const [projectName, setProjectName] = useState('Character Controller Sample')
@@ -18,6 +18,14 @@ export default function ProjectImportPage() {
   const [importSuccess, setImportSuccess] = useState(false)
   const [importedProjectId, setImportedProjectId] = useState('')
   const [error, setError] = useState<string | null>(null)
+  
+  // 在客户端加载后再获取params
+  useEffect(() => {
+    const params = useParams()
+    if (params && params.locale) {
+      setLocale(params.locale as Locale)
+    }
+  }, [])
   
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value)

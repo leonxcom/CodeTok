@@ -1,16 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { Locale } from '../../../../i18n/config'
 
 export default function IframeTestPage() {
-  const params = useParams()
-  const locale = params.locale as Locale
+  // 添加默认的locale以避免服务器端渲染问题
+  const [locale, setLocale] = useState<Locale>('zh-cn')
   
   const [url, setUrl] = useState('https://character-sample-project.netlify.app/')
   const [iframeLoaded, setIframeLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // 在客户端加载后再获取params
+  useEffect(() => {
+    const params = useParams()
+    if (params && params.locale) {
+      setLocale(params.locale as Locale)
+    }
+  }, [])
   
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value)

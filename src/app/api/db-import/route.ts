@@ -8,7 +8,14 @@ export async function POST(request: Request) {
     console.log('开始导入数据...');
 
     // 从请求体获取数据
-    const projectsData = await request.json();
+    const body = await request.text();
+    console.log('接收到的请求体:', body);
+
+    if (!body) {
+      throw new Error('请求体为空');
+    }
+
+    const projectsData = JSON.parse(body);
     console.log(`接收到 ${projectsData.length} 个项目数据`);
 
     // 导入每个项目

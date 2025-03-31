@@ -139,8 +139,9 @@ export function SideNav() {
         )}></div>
         
         {/* 设置区域 */}
-        <div className="flex flex-col gap-2 px-4">
-          <div className="flex items-center justify-between text-sm py-2">
+        <div className="flex flex-col gap-4 px-4">
+          {/* 主题切换 */}
+          <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               {theme === "dark" ? (
                 <Moon className="h-5 w-5" />
@@ -158,47 +159,64 @@ export function SideNav() {
                   : `Theme: ${theme === "dark" ? "Dark" : theme === "light" ? "Light" : "System"}`}
               </span>
             </div>
-            <div className="flex gap-1">
+            
+            <div className="grid grid-cols-3 gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setTheme("system")}
                 className={cn(
-                  "h-8 px-2",
-                  theme === "system" ? "bg-gray-700 text-white" : "",
-                  theme === "dark" ? "border-gray-700" : "border-gray-300"
+                  "h-9 w-full flex items-center justify-center gap-1",
+                  theme === "system" 
+                    ? "bg-gray-700 text-white border-gray-600" 
+                    : theme === "dark" 
+                      ? "border-gray-700 hover:bg-gray-800" 
+                      : "border-gray-300 hover:bg-gray-100"
                 )}
               >
+                <div className="w-4 h-4 flex items-center justify-center">
+                  <Moon className="h-3 w-3 absolute" style={{ clipPath: 'inset(0 50% 0 0)' }}/>
+                  <Sun className="h-3 w-3 absolute" style={{ clipPath: 'inset(0 0 0 50%)' }}/>
+                </div>
                 <span className="text-xs">{locale === "zh-cn" ? "系统" : "System"}</span>
               </Button>
+              
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setTheme("light")}
                 className={cn(
-                  "h-8 px-2",
-                  theme === "light" ? "bg-gray-200 text-gray-900" : "",
-                  theme === "dark" ? "border-gray-700" : "border-gray-300"
+                  "h-9 w-full flex items-center justify-center gap-1",
+                  theme === "light" 
+                    ? "bg-gray-200 text-gray-900 border-gray-300" 
+                    : theme === "dark" 
+                      ? "border-gray-700 hover:bg-gray-800" 
+                      : "border-gray-300 hover:bg-gray-100"
                 )}
               >
                 <Sun className="h-4 w-4" />
+                <span className="text-xs">{locale === "zh-cn" ? "亮色" : "Light"}</span>
               </Button>
+              
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setTheme("dark")}
                 className={cn(
-                  "h-8 px-2",
-                  theme === "dark" ? "bg-gray-800 text-white" : "",
-                  theme === "dark" ? "border-gray-700" : "border-gray-300"
+                  "h-9 w-full flex items-center justify-center gap-1",
+                  theme === "dark" 
+                    ? "bg-gray-800 text-white border-gray-700" 
+                    : "border-gray-300 hover:bg-gray-100"
                 )}
               >
                 <Moon className="h-4 w-4" />
+                <span className="text-xs">{locale === "zh-cn" ? "暗色" : "Dark"}</span>
               </Button>
             </div>
           </div>
           
-          <div className="flex items-center justify-between text-sm py-2">
+          {/* 语言切换 */}
+          <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-2">
               <Languages className="h-5 w-5" />
               <span>{locale === "zh-cn" ? "语言切换" : "Language"}</span>

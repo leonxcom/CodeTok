@@ -1,19 +1,15 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function POST(request: Request) {
   try {
     console.log('开始导入数据...');
 
-    // 读取导出的数据
-    const dataPath = join(process.cwd(), 'src/db/data/projects.json');
-    const projectsData = JSON.parse(readFileSync(dataPath, 'utf-8'));
-
-    console.log(`读取到 ${projectsData.length} 个项目数据`);
+    // 从请求体获取数据
+    const projectsData = await request.json();
+    console.log(`接收到 ${projectsData.length} 个项目数据`);
 
     // 导入每个项目
     for (const project of projectsData) {

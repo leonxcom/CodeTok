@@ -35,19 +35,13 @@ interface NavItemProps {
   href: string;
   icon: React.ReactNode;
   label: string;
-  theme?: string;
 }
 
-function NavItem({ href, icon, label, theme }: NavItemProps) {
+function NavItem({ href, icon, label }: NavItemProps) {
   return (
     <Link 
       href={href}
-      className={cn(
-        "flex items-center gap-2 px-4 py-2 rounded-md transition-colors",
-        theme === "dark" 
-          ? "hover:bg-gray-800" 
-          : "hover:bg-gray-100 text-gray-900"
-      )}
+      className="flex items-center gap-2 px-4 py-2 rounded-md transition-colors hover:bg-accent text-foreground"
     >
       {icon}
       <span>{label}</span>
@@ -101,22 +95,17 @@ export function SideNav() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className={theme === "dark" ? "text-white" : "text-gray-900"}>
+        <Button variant="ghost" size="icon" className="text-foreground">
           <Menu className="h-5 w-5" />
           <span className="sr-only">导航</span>
         </Button>
       </SheetTrigger>
       <SheetContent 
         side="left" 
-        className={cn(
-          "border-r", 
-          theme === "dark" 
-            ? "bg-black text-white border-gray-800" 
-            : "bg-white text-gray-900 border-gray-200"
-        )}
+        className="border-r bg-background text-foreground border-border"
       >
         <SheetHeader>
-          <SheetTitle className={theme === "dark" ? "text-white" : "text-gray-900"}>
+          <SheetTitle className="text-foreground">
             {locale === "zh-cn" ? "导航" : "Navigation"}
           </SheetTitle>
         </SheetHeader>
@@ -127,98 +116,61 @@ export function SideNav() {
               href={item.href}
               icon={item.icon}
               label={item.label}
-              theme={theme}
             />
           ))}
         </div>
         
         {/* 分割线 */}
-        <div className={cn(
-          "border-t my-4",
-          theme === "dark" ? "border-gray-800" : "border-gray-200"
-        )}></div>
+        <div className="border-t my-4 border-border"></div>
         
         {/* 设置区域 */}
-        <div className="flex flex-col gap-4 px-4">
-          {/* 主题切换 */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              {theme === "dark" ? (
-                <Moon className="h-5 w-5" />
-              ) : theme === "light" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <div className="h-5 w-5 flex items-center justify-center">
-                  <Moon className="h-4 w-4 absolute" style={{ clipPath: 'inset(0 50% 0 0)' }}/>
-                  <Sun className="h-4 w-4 absolute" style={{ clipPath: 'inset(0 0 0 50%)' }}/>
-                </div>
-              )}
-              <span>
-                {locale === "zh-cn" 
-                  ? `主题：${theme === "dark" ? "暗色" : theme === "light" ? "亮色" : "跟随系统"}` 
-                  : `Theme: ${theme === "dark" ? "Dark" : theme === "light" ? "Light" : "System"}`}
-              </span>
-            </div>
-            
-            <div className="grid grid-cols-3 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTheme("system")}
-                className={cn(
-                  "h-9 w-full flex items-center justify-center",
-                  theme === "system" 
-                    ? "bg-gray-700 text-white border-gray-600" 
-                    : theme === "dark" 
-                      ? "border-gray-700 hover:bg-gray-800" 
-                      : "border-gray-300 hover:bg-gray-100"
-                )}
-              >
-                <span className="text-xs">{locale === "zh-cn" ? "系统" : "System"}</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTheme("light")}
-                className={cn(
-                  "h-9 w-full flex items-center justify-center gap-1",
-                  theme === "light" 
-                    ? "bg-gray-200 text-gray-900 border-gray-300" 
-                    : theme === "dark" 
-                      ? "border-gray-700 hover:bg-gray-800" 
-                      : "border-gray-300 hover:bg-gray-100"
-                )}
-              >
-                <Sun className="h-4 w-4" />
-                <span className="text-xs">{locale === "zh-cn" ? "亮色" : "Light"}</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTheme("dark")}
-                className={cn(
-                  "h-9 w-full flex items-center justify-center gap-1",
-                  theme === "dark" 
-                    ? "bg-gray-800 text-white border-gray-700" 
-                    : "border-gray-300 hover:bg-gray-100"
-                )}
-              >
-                <Moon className="h-4 w-4" />
-                <span className="text-xs">{locale === "zh-cn" ? "暗色" : "Dark"}</span>
-              </Button>
-            </div>
-          </div>
+        <div className="px-4 mb-2">
+          <h3 className="text-sm font-medium mb-2 text-foreground">
+            {locale === "zh-cn" ? "主题: 跟随系统" : "Theme: Follow System"}
+          </h3>
           
-          {/* 语言切换 */}
-          <div className="flex items-center justify-between py-2">
-            <div className="flex items-center gap-2">
-              <Languages className="h-5 w-5" />
-              <span>{locale === "zh-cn" ? "语言切换" : "Language"}</span>
-            </div>
-            <LanguageToggle locale={locale} />
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setTheme("system")}
+              className="h-9 w-full flex items-center justify-center"
+              data-state={theme === "system" ? "active" : "inactive"}
+            >
+              <span className="text-xs">{locale === "zh-cn" ? "系统" : "System"}</span>
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setTheme("light")}
+              className="h-9 w-full flex items-center justify-center gap-1"
+              data-state={theme === "light" ? "active" : "inactive"}
+            >
+              <Sun className="h-4 w-4" />
+              <span className="text-xs">{locale === "zh-cn" ? "亮色" : "Light"}</span>
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setTheme("dark")}
+              className="h-9 w-full flex items-center justify-center gap-1"
+              data-state={theme === "dark" ? "active" : "inactive"}
+            >
+              <Moon className="h-4 w-4" />
+              <span className="text-xs">{locale === "zh-cn" ? "暗色" : "Dark"}</span>
+            </Button>
           </div>
+        </div>
+        
+        {/* 语言切换 */}
+        <div className="flex items-center justify-between py-2">
+          <div className="flex items-center gap-2">
+            <Languages className="h-5 w-5" />
+            <span>{locale === "zh-cn" ? "语言切换" : "Language"}</span>
+          </div>
+          <LanguageToggle locale={locale} />
         </div>
       </SheetContent>
     </Sheet>

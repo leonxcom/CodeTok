@@ -7,51 +7,81 @@ import { Locale } from '../../../i18n/config'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { sql } from '@vercel/postgres'
-import { safeQuery } from '@/db'
-
-type IndexPageProps = {
-  params: {
-    locale: string
-  }
-}
-
-// 定义项目查询结果类型，使其与sql查询结果兼容
-interface ProjectQueryResult {
-  rows: any[];
-  rowCount: number;
-}
 
 export const dynamic = 'force-dynamic'
 
 export default async function IndexPage({
-  params: { locale }
+  params
 }: {
   params: { locale: Locale }
 }) {
+  // 正确处理params对象
+  const resolvedParams = await params;
+  const locale = resolvedParams.locale;
   console.log('首页重定向 - 开始执行，区域设置:', locale)
 
   try {
-    // 尝试获取最新的公开项目
-    const latestProject = await sql`
+    // 获取所有公开项目
+    const allProjects = await sql`
       SELECT id FROM projects
       WHERE is_public = true
       ORDER BY created_at DESC
-      LIMIT 1
-    `
+    `;
 
-    if (latestProject.rows.length > 0) {
-      // 如果有公开项目，重定向到最新的项目
-      const redirectUrl = `/${locale}/project/${latestProject.rows[0].id}`
-      console.log('重定向到最新项目:', redirectUrl)
-      redirect(redirectUrl)
+    if (allProjects.rows.length > 0) {
+      // 随机选择一个项目
+      const randomIndex = Math.floor(Math.random() * allProjects.rows.length);
+      const randomProjectId = allProjects.rows[randomIndex].id;
+      
+      // 重定向到随机项目
+      const redirectUrl = `/${locale}/project/${randomProjectId}`;
+      console.log('随机重定向到项目:', redirectUrl);
+      
+      redirect(redirectUrl);
+    } else {
+      // 如果没有项目，则创建一个固定的示例项目
+      console.log('数据库中无项目，创建示例项目');
+      
+      // 插入示例项目
+      const exampleProject = await sql`
+        INSERT INTO projects (
+          id, title, description, files, main_file, is_public, 
+          external_url, external_embed, external_author, type
+        )
+        VALUES (
+          'example-project', 
+          'Example Project', 
+          'A demonstration project for VibeTok',
+          '[{"pathname":"index.html","url":"https://example.com/demo.html"}]'::jsonb, 
+          'index.html', 
+          true, 
+          'https://example.com', 
+          true, 
+          'VibeTok Demo', 
+          'demo'
+        )
+        ON CONFLICT (id) DO NOTHING
+        RETURNING id
+      `;
+      
+      // 重定向到示例项目或第一个可用项目
+      const projectId = exampleProject.rows.length > 0 
+        ? exampleProject.rows[0].id 
+        : 'example-project';
+        
+      const redirectUrl = `/${locale}/project/${projectId}`;
+      console.log('重定向到示例项目:', redirectUrl);
+      
+      redirect(redirectUrl);
     }
-
-    // 如果没有任何项目，重定向到上传页面
-    console.log('没有可用项目，重定向到上传页面')
-    redirect(`/${locale}/upload`)
   } catch (error) {
-    console.error('数据库查询错误:', error)
-    // 发生错误时重定向到上传页面
-    redirect(`/${locale}/upload`)
+    console.error('数据库查询错误:', error);
+    
+    // 即使出错也重定向到一个固定ID的项目
+    // 注意：这个ID应该存在于数据库中，否则会导致404
+    const fallbackProjectId = 'CAbUiIo=';
+    console.log('出错，重定向到备用项目:', fallbackProjectId);
+    
+    redirect(`/${locale}/project/${fallbackProjectId}`);
   }
 }

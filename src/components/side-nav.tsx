@@ -126,18 +126,28 @@ export function SideNav() {
               ) : (
                 <Sun className="h-5 w-5" />
               )}
-              <span>{locale === "zh-cn" ? "主题切换" : "Theme"}</span>
+              <span>
+                {locale === "zh-cn" 
+                  ? `主题：${theme === "dark" ? "暗色" : "亮色"}` 
+                  : `Theme: ${theme === "dark" ? "Dark" : "Light"}`}
+              </span>
             </div>
             <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              className="h-8 w-8"
+              variant="outline"
+              size="sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="h-8 border-gray-700 flex items-center gap-2"
             >
               {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
+                <>
+                  <Sun className="h-4 w-4" />
+                  <span className="text-xs">{locale === "zh-cn" ? "切换亮色" : "Light"}</span>
+                </>
               ) : (
-                <Moon className="h-4 w-4" />
+                <>
+                  <Moon className="h-4 w-4" />
+                  <span className="text-xs">{locale === "zh-cn" ? "切换暗色" : "Dark"}</span>
+                </>
               )}
             </Button>
           </div>

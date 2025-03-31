@@ -33,7 +33,7 @@ export default async function IndexPage({
   try {
     // 尝试获取最新的公开项目
     const latestProject = await sql`
-      SELECT project_id FROM projects
+      SELECT id FROM projects
       WHERE is_public = true
       ORDER BY created_at DESC
       LIMIT 1
@@ -41,7 +41,7 @@ export default async function IndexPage({
 
     if (latestProject.rows.length > 0) {
       // 如果有公开项目，重定向到最新的项目
-      const redirectUrl = `/${locale}/project/${latestProject.rows[0].project_id}`
+      const redirectUrl = `/${locale}/project/${latestProject.rows[0].id}`
       console.log('重定向到最新项目:', redirectUrl)
       redirect(redirectUrl)
     }

@@ -1,51 +1,66 @@
-import { NextResponse } from 'next/server'
-import { db, safeQuery, projects } from '@/db'
-import { sql } from 'drizzle-orm'
+import { sql } from '@vercel/postgres';
+import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    // 检查数据库连接
-    const isConnected = !!db
+    // 1. 检查数据库连接
+    const testConnection = await sql`SELECT version();`;
+    const dbVersion = testConnection.rows[0].version;
     
-    // 尝试执行一个简单的查询
-    let queryResult = false
+    // 2. 列出所有表
+    const tables = await sql`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public';
+    `;
     
-    if (isConnected && db) {
-      try {
-        // 尝试执行一个简单的SQL查询
-        const result = await db.execute(sql`SELECT 1 as test`)
-        // 安全地检查结果
-        queryResult = Array.isArray(result) && 
-                     result.length > 0 && 
-                     typeof result[0] === 'object' && 
-                     result[0] !== null &&
-                     'test' in result[0] &&
-                     result[0].test === 1
-      } catch (error: any) {
-        console.error('数据库查询测试失败:', error)
-      }
-    }
+    // 3. 检查 projects 表结构
+    const columns = await sql`
+      SELECT column_name, data_type 
+      FROM information_schema.columns 
+      WHERE table_name = 'projects';
+    `;
     
-    // 获取环境变量（不显示敏感信息）
-    const envStatus = {
-      DATABASE_URL: !!process.env.DATABASE_URL,
-      POSTGRES_URL: !!process.env.POSTGRES_URL,
-      VERCEL_POSTGRES_URL: !!process.env.VERCEL_POSTGRES_URL,
-      NODE_ENV: process.env.NODE_ENV
-    }
+    // 4. 统计项目数量
+    const projectCount = await sql`
+      SELECT COUNT(*) as count FROM projects;
+    `;
     
-    // 返回状态信息
+    // 5. 列出所有项目
+    const projects = await sql`
+      SELECT id, title, created_at, is_public 
+      FROM projects 
+      ORDER BY created_at DESC;
+    `;
+    
+    // 检查 projects 表中的数据
+    const projectsData = await sql`
+      SELECT id, title, created_at, is_public
+      FROM projects
+      LIMIT 5;
+    `;
+    
     return NextResponse.json({
-      isConnected,
-      querySuccess: queryResult,
-      environment: envStatus,
-      timestamp: new Date().toISOString()
-    })
-  } catch (error: any) {
-    console.error('Error checking database status:', error)
+      status: 'connected',
+      version: dbVersion,
+      tables: tables.rows,
+      projectsTable: {
+        columns: columns.rows,
+        totalProjects: projectCount.rows[0].count,
+        projects: projects.rows
+      }
+    });
+    
+  } catch (error) {
+    console.error('Database check error:', error);
     return NextResponse.json(
-      { error: 'Failed to check database status', details: error.message }, 
+      { 
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
-    )
+    );
   }
 } 

@@ -45,10 +45,10 @@ CREATE TABLE IF NOT EXISTS users (
 
 const createFavoritesTable = `
 CREATE TABLE IF NOT EXISTS favorites (
-  user_id INTEGER NOT NULL REFERENCES users(id),
-  project_id TEXT NOT NULL REFERENCES projects(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY (user_id, project_id)
+  user_id TEXT NOT NULL REFERENCES users(id),
+  id TEXT NOT NULL REFERENCES projects(id),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, id)
 );
 `;
 

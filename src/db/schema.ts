@@ -47,14 +47,10 @@ export const users = pgTable('users', {
 });
 
 // 收藏表 (待实现)
-export const favorites = pgTable(
-  'favorites',
-  {
-    userId: integer('user_id').notNull().references(() => users.id),
-    projectId: text('project_id').notNull().references(() => projects.id),
-    createdAt: timestamp('created_at').defaultNow(),
-  },
-  (t) => ({
-    pk: primaryKey({ columns: [t.userId, t.projectId] }),
-  })
-); 
+export const favorites = pgTable('favorites', {
+  userId: text('user_id').notNull().references(() => users.id),
+  projectId: text('id').notNull().references(() => projects.id),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.userId, table.projectId] }),
+})); 

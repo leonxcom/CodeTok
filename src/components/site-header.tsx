@@ -19,15 +19,26 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
     <header className="sticky top-0 z-40 w-full border-b border-gray-800 bg-black">
       <div className="container flex h-16 items-center justify-center">
         <MainNav items={siteConfig.mainNav} locale={locale} />
-        <div className="absolute right-4 flex items-center space-x-1">
+        <div className="absolute right-4 flex items-center space-x-3">
           {/* 暂时隐藏多语言切换图标 */}
           {/* <LanguageToggle locale={locale} /> */}
-          <Link 
-            href={`/${locale}/upload`} 
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          <Button
+            className="bg-blue-600 hover:bg-blue-700"
+            asChild
           >
-            {locale === 'zh-cn' ? '上传' : 'Upload'}
-          </Link>
+            <Link href={`/${locale}/upload`}>
+              {locale === 'zh-cn' ? '上传' : 'Upload'}
+            </Link>
+          </Button>
+          <Button
+            variant="outline"
+            className="border-gray-600 text-black hover:bg-gray-700 hover:text-white"
+            asChild
+          >
+            <Link href={`/${locale}/login`}>
+              {locale === 'zh-cn' ? '登录/注册' : 'Login/Register'}
+            </Link>
+          </Button>
         </div>
       </div>
     </header>

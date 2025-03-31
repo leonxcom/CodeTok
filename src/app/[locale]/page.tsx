@@ -21,18 +21,51 @@ interface ProjectQueryResult {
   rowCount: number;
 }
 
-// 主页组件 - 服务器端重定向
-export default function IndexPage({ params }: IndexPageProps) {
-  // 获取区域设置
-  const locale = params.locale;
-  
-  console.log('首页重定向 - 开始执行，区域设置:', locale);
-  
-  // 使用角色样本项目ID (CAbUiIo=) 重定向
-  const projectId = 'CAbUiIo=';
-  const redirectUrl = `/${locale}/project/${projectId}`;
-  console.log('使用角色样本项目ID:', projectId, '重定向到:', redirectUrl);
-  
-  // 重定向到项目页面
-  redirect(redirectUrl);
+export const dynamic = 'force-dynamic'
+
+export default async function IndexPage({
+  params: { locale }
+}: {
+  params: { locale: Locale }
+}) {
+  console.log('首页重定向 - 开始执行，区域设置:', locale)
+
+  try {
+    // 首先尝试获取示例项目
+    const projectId = 'CAbUiIo='
+    const result = await sql`
+      SELECT project_id FROM projects 
+      WHERE project_id = ${projectId}
+    `
+
+    if (result.rows.length > 0) {
+      // 如果示例项目存在，重定向到该项目
+      const redirectUrl = `/${locale}/project/${projectId}`
+      console.log('示例项目存在，重定向到:', redirectUrl)
+      redirect(redirectUrl)
+    }
+
+    // 如果示例项目不存在，尝试获取最新的公开项目
+    const latestProject = await sql`
+      SELECT project_id FROM projects
+      WHERE is_public = true
+      ORDER BY created_at DESC
+      LIMIT 1
+    `
+
+    if (latestProject.rows.length > 0) {
+      // 如果有公开项目，重定向到最新的项目
+      const redirectUrl = `/${locale}/project/${latestProject.rows[0].project_id}`
+      console.log('重定向到最新项目:', redirectUrl)
+      redirect(redirectUrl)
+    }
+
+    // 如果没有任何项目，重定向到上传页面
+    console.log('没有可用项目，重定向到上传页面')
+    redirect(`/${locale}/upload`)
+  } catch (error) {
+    console.error('数据库查询错误:', error)
+    // 发生错误时重定向到上传页面
+    redirect(`/${locale}/upload`)
+  }
 }

@@ -9,8 +9,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // 获取项目ID
-    const id = params.id
+    // 获取项目ID - 先await params对象
+    const resolvedParams = await params
+    const id = resolvedParams.id
     console.log('获取项目详情，ID:', id)
     
     // 使用SQL查询获取项目
@@ -92,6 +93,43 @@ export async function GET(
     console.error('获取项目失败:', error)
     return NextResponse.json(
       { error: 'Failed to fetch project', details: error instanceof Error ? error.message : 'Unknown error' }, 
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const resolvedParams = await params
+    const id = resolvedParams.id
+    console.log('删除项目，ID:', id)
+    
+    // 使用SQL删除项目
+    const result = await sql`
+      DELETE FROM projects WHERE id = ${id}
+      RETURNING id
+    `
+    
+    // 如果没有找到项目
+    if (result.rowCount === 0) {
+      console.log('未找到项目:', id)
+      return NextResponse.json({ 
+        error: 'Project not found' 
+      }, { status: 404 })
+    }
+    
+    console.log('成功删除项目:', id)
+    return NextResponse.json({ 
+      success: true,
+      message: 'Project deleted successfully'
+    })
+  } catch (error) {
+    console.error('删除项目失败:', error)
+    return NextResponse.json(
+      { error: 'Failed to delete project', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
     )
   }

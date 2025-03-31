@@ -1,6 +1,5 @@
-import { drizzle } from 'drizzle-orm/vercel-postgres';
 import { sql } from '@vercel/postgres';
-import * as schema from './schema';
+import { Project, User, Favorite } from './schema';
 
 // 获取当前环境
 const environment = process.env.NODE_ENV || 'development';
@@ -11,52 +10,15 @@ const connectionString = process.env.DATABASE_URL ||
                       process.env.POSTGRES_URL || 
                       process.env.VERCEL_POSTGRES_URL;
 
-// 数据库连接函数
-function createDbConnection() {
-  try {    
-    if (!connectionString) {
-      console.warn(`${environment} 环境: 数据库连接URL未定义。使用模拟数据库进行开发/构建。`);
-      return null;
-    }
-    
-    console.log(`${environment} 环境: 创建数据库连接`);
-    return drizzle(sql);
-  } catch (error) {
-    console.error(`${environment} 环境: 数据库连接初始化失败:`, error);
-    return null;
-  }
-}
-
-// 导出数据库连接
-export const db = createDbConnection();
-
 // 直接导出sql客户端
 export { sql };
-
-// 直接导出表模式
-export { projects, users, favorites } from './schema';
 
 // 包装每个数据库调用，如果数据库未连接，使用模拟数据作为后备方案
 let isConnected = false;
 
 // 项目记录类型定义
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  files: any[];
-  mainFile: string;
-  isPublic: boolean;
-  views: number;
-  likes: number;
-  createdAt: Date;
-  updatedAt: Date;
-  // 可选字段
-  externalUrl?: string;
-  externalEmbed?: boolean;
-  externalAuthor?: string;
-  type?: string;
-}
+export type { Project, User, Favorite } from './schema';
+export type { ProjectFile } from './schema';
 
 // 用于vercel/postgres查询的结果类型
 export interface QueryResult<T> {
@@ -80,12 +42,12 @@ const mockProjects = [
         isEntryPoint: true
       }
     ],
-    mainFile: 'index.html',
-    isPublic: true,
+    main_file: 'index.html',
+    is_public: true,
     views: 0,
     likes: 0,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    created_at: new Date(),
+    updated_at: new Date()
   },
   {
     id: 'character-sample',
@@ -101,15 +63,15 @@ const mockProjects = [
         isEntryPoint: true
       }
     ],
-    mainFile: 'index.html',
-    isPublic: true,
+    main_file: 'index.html',
+    is_public: true,
     views: 0,
     likes: 0,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    externalUrl: 'https://character-sample-project.netlify.app/',
-    externalEmbed: true,
-    externalAuthor: 'VibeTok Sample',
+    created_at: new Date(),
+    updated_at: new Date(),
+    external_url: 'https://character-sample-project.netlify.app/',
+    external_embed: true,
+    external_author: 'VibeTok Sample',
     type: 'external'
   }
 ];

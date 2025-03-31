@@ -1,40 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateProjectId, uploadFile, uploadCode, MAX_FILE_SIZE } from '@/lib/storage'
-import { eq } from 'drizzle-orm'
-import db, { safeQuery, projects } from '@/db'
+import { sql } from '@vercel/postgres'
 import { ProjectFile } from '@/db/schema'
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
     // 获取查询参数
-    const searchParams = request.nextUrl.searchParams;
-    const type = searchParams.get('type');
-    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit') as string) : 10;
+    const { searchParams } = new URL(request.url);
+    const typeParam = searchParams.get('type') || 'public';
+    const limitParam = parseInt(searchParams.get('limit') || '20', 10);
+
+    // 根据类型参数构建SQL查询
+    let query;
+    if (typeParam === 'all') {
+      // 获取所有项目
+      query = sql`
+        SELECT * FROM projects 
+        ORDER BY created_at DESC 
+        LIMIT ${limitParam}
+      `;
+    } else {
+      // 默认只获取公开项目
+      query = sql`
+        SELECT * FROM projects 
+        WHERE is_public = true 
+        ORDER BY created_at DESC 
+        LIMIT ${limitParam}
+      `;
+    }
     
-    // 从数据库获取项目
-    const allProjects = await safeQuery(async () => {
-      if (!db) return []
-      
-      // 根据参数查询项目
-      let query = db.select().from(projects);
-      
-      // 如果类型不是 'all'，只返回公开项目
-      if (type !== 'all') {
-        query = query.where(eq(projects.isPublic, true));
-      }
-      
-      // 限制返回数量并按创建时间倒序排列
-      const results = await query.limit(limit).orderBy(projects.createdAt, 'desc');
-      return results;
-    }, [])
+    // 执行查询
+    const result = await query;
     
-    return NextResponse.json(allProjects)
-  } catch (error: any) {
-    console.error('Error fetching projects:', error)
+    return NextResponse.json(result.rows);
+  } catch (error) {
+    console.error('获取项目列表失败:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch projects' }, 
+      { error: 'Failed to fetch projects', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
-    )
+    );
   }
 }
 
@@ -140,19 +146,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unsupported content type' }, { status: 400 })
     }
     
-    // 将项目元数据保存到数据库
-    await safeQuery(async () => {
-      if (db) {
-        await db.insert(projects).values({
-          id: projectId,
-          files,
-          mainFile,
-          isPublic: true,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
-      }
-    }, null)
+    // 将项目元数据保存到数据库 - 使用SQL直接插入
+    await sql`
+      INSERT INTO projects (
+        id, 
+        files, 
+        main_file, 
+        is_public, 
+        created_at, 
+        updated_at
+      ) 
+      VALUES (
+        ${projectId}, 
+        ${JSON.stringify(files)}::jsonb, 
+        ${mainFile}, 
+        true, 
+        CURRENT_TIMESTAMP, 
+        CURRENT_TIMESTAMP
+      )
+    `;
     
     return NextResponse.json({ 
       success: true, 
@@ -160,10 +172,10 @@ export async function POST(request: NextRequest) {
       mainFile,
       files
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error saving project:', error)
     return NextResponse.json(
-      { error: 'Failed to process upload' }, 
+      { error: 'Failed to process upload', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
     )
   }

@@ -19,12 +19,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 })
     }
     
-    if (!url.includes('netlify.app') && !url.includes('github.io') && !url.includes('vercel.app')) {
-      return NextResponse.json({ 
-        error: 'Only netlify.app, github.io, and vercel.app domains are supported' 
-      }, { status: 400 })
-    }
-    
     // 确保URL是正确格式
     let cleanUrl = url.trim();
     if (!cleanUrl.startsWith('http')) {

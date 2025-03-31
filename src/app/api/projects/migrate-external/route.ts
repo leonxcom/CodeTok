@@ -1,79 +1,69 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db, safeQuery, projects } from '@/db'
-import { eq } from 'drizzle-orm'
+import { sql } from '@vercel/postgres'
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { migrateAll = false } = body
 
-    // 确保数据库已连接
-    if (!db) {
-      return NextResponse.json({
-        error: 'Database not connected'
-      }, { status: 500 })
-    }
-
     // 获取所有项目
-    const allProjects = await safeQuery(async () => {
-      if (!db) return []
-      const results = await db.select().from(projects)
-      return results
-    }, [])
+    const result = await sql`SELECT * FROM projects`;
+    const allProjects = result.rows;
 
-    // 筛选外部项目（根据是否有externalUrl字段判断）
+    // 筛选外部项目（根据是否有external_url字段判断）
     const externalProjects = allProjects.filter(project => 
-      project.externalUrl && !project.externalEmbed
-    )
+      project.external_url && !project.external_embed
+    );
 
     if (externalProjects.length === 0) {
       return NextResponse.json({
         message: 'No external projects found to migrate'
-      })
+      });
     }
 
     // 更新项目记录
     const updateResults = await Promise.all(
       externalProjects.map(async (project) => {
         try {
-          if (!db) throw new Error('Database not connected')
-          
-          await db.update(projects)
-            .set({
-              externalEmbed: true,
-              type: 'external',
-              externalAuthor: project.externalAuthor || 'External Author'
-            })
-            .where(eq(projects.id, project.id))
+          await sql`
+            UPDATE projects
+            SET 
+              external_embed = true,
+              type = 'external',
+              external_author = ${project.external_author || 'External Author'}
+            WHERE id = ${project.id}
+          `;
           
           return {
             id: project.id,
             success: true
-          }
-        } catch (error: any) {
-          console.error(`Failed to update project ${project.id}:`, error)
+          };
+        } catch (error) {
+          console.error(`Failed to update project ${project.id}:`, error);
           return {
             id: project.id,
             success: false,
-            error: error.message
-          }
+            error: error instanceof Error ? error.message : 'Unknown error'
+          };
         }
       })
-    )
+    );
 
-    const successCount = updateResults.filter(r => r.success).length
+    const successCount = updateResults.filter(r => r.success).length;
     
     return NextResponse.json({
       success: true,
       migrated: successCount,
       total: externalProjects.length,
       details: updateResults
-    })
-  } catch (error: any) {
-    console.error('Error migrating external projects:', error)
+    });
+  } catch (error) {
+    console.error('Error migrating external projects:', error);
     return NextResponse.json(
-      { error: 'Failed to migrate external projects', details: error.message }, 
+      { error: 'Failed to migrate external projects', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
-    )
+    );
   }
 } 

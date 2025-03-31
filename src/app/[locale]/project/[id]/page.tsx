@@ -302,12 +302,12 @@ export default function ProjectPage() {
     }
     
     const handleSwipeGesture = () => {
-      // 上滑超过50像素，加载下一个项目
-      if (touchendY < touchstartY - 50) {
+      // 左滑超过50像素，加载下一个项目
+      if (touchendX < touchstartX - 50) {
         handleNextProject()
       }
-      // 下滑超过50像素，也加载一个随机项目
-      else if (touchendY > touchstartY + 50) {
+      // 右滑超过50像素，加载上一个项目
+      else if (touchendX > touchstartX + 50) {
         handleRandomProject()
       }
     }
@@ -495,27 +495,27 @@ ${content}
       <div className="flex flex-1 overflow-hidden">
         {/* 左侧主内容区 (80%) - 保持白色背景 */}
         <div className="w-4/5 flex flex-col relative overflow-hidden bg-white">
-          {/* 上下滑动按钮 - TikTok风格 */}
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
-            {/* 上滑按钮 */}
+          {/* 左右导航按钮 - TikTok风格 */}
+          <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between z-20 px-4 pointer-events-none">
+            {/* 左侧按钮 */}
             <button 
-              className="w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+              className="w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm pointer-events-auto"
               aria-label={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
               onClick={handleRandomProject}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="18 15 12 9 6 15"></polyline>
+                <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
             </button>
             
-            {/* 下滑按钮 */}
+            {/* 右侧按钮 */}
             <button 
-              className="w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+              className="w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm pointer-events-auto"
               aria-label={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
               onClick={handleNextProject}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
+                <polyline points="9 6 15 12 9 18"></polyline>
               </svg>
             </button>
           </div>
@@ -689,19 +689,9 @@ ${content}
             </div>
           )}
           
-          {/* 主要功能按钮 */}
+          {/* 主要功能按钮区域 - 清空内容，不显示随机项目和访问源站按钮 */}
           <div className="p-4 border-b border-gray-800">
             <div className="flex flex-col gap-3">
-              {/* 随机项目按钮 */}
-              <button
-                onClick={handleRandomProject}
-                className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-sm font-medium transition-colors text-white"
-                disabled={isLoading}
-              >
-                <span className={`text-xl ${isLoading ? '' : 'group-hover:animate-spin'}`}>🎲</span>
-                <span>{locale === 'zh-cn' ? '随机项目' : 'Random Project'}</span>
-              </button>
-              
               {/* 切换代码/预览按钮 - 只在非外部项目时显示 */}
               {!isExternalProject && (
                 <button
@@ -727,23 +717,6 @@ ${content}
                     </>
                   )}
                 </button>
-              )}
-
-              {/* 外部项目时，显示访问源站按钮 */}
-              {isExternalProject && (
-                <a
-                  href={projectData?.externalUrl || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-md py-2 px-3 text-sm font-medium transition-colors text-white"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <line x1="10" y1="14" x2="21" y2="3"></line>
-                  </svg>
-                  <span>{locale === 'zh-cn' ? '访问源站' : 'Visit Source'}</span>
-                </a>
               )}
             </div>
           </div>

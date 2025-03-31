@@ -55,12 +55,57 @@ export async function GET() {
     `;
     console.log('projects 表创建成功');
 
-    // 5. 验证迁移
+    // 5. 插入示例项目
+    await sql`
+      INSERT INTO projects (
+        id, title, description, files, main_file, is_public, 
+        external_url, external_embed, external_author, type
+      )
+      VALUES (
+        'BgCJR1nu', 
+        'First-Person Shooter Game Demo', 
+        'A basic first-person shooter game demo with movement and shooting mechanics',
+        '[{"pathname":"index.html","url":"https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FJavaScriptSplash%2F4w27Zlllhu.html?alt=media&token=0ff1b855-644c-4a8b-b749-65e944ddb19a"}]'::jsonb, 
+        'index.html', 
+        true, 
+        'https://threejs-fps.vercel.app/', 
+        true, 
+        'ThreeJS Demo', 
+        'game'
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `;
+
+    // 插入第二个示例项目
+    await sql`
+      INSERT INTO projects (
+        id, title, description, files, main_file, is_public, 
+        external_url, external_embed, external_author, type
+      )
+      VALUES (
+        'CAbUiIo=', 
+        '3D Character Simulator', 
+        'Interactive 3D character with customizable appearance and animations',
+        '[{"pathname":"index.html","url":"https://firebasestorage.googleapis.com/v0/b/firescript-577a2.appspot.com/o/imgs%2Fapp%2FJavaScriptSplash%2FMwh_2_8CPc.html?alt=media&token=93e91cee-fcec-4e26-824c-f61fd9ddc0c1"}]'::jsonb, 
+        'index.html', 
+        true, 
+        'https://threejs-metaverse.vercel.app/', 
+        true, 
+        'Meta Character', 
+        'character'
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `;
+    console.log('示例项目已添加');
+
+    // 6. 验证迁移
     const projectCount = await sql`SELECT COUNT(*) FROM projects`;
 
-    // 6. 确保没有任何数据
-    await sql`TRUNCATE TABLE projects;`;
-    console.log('清除所有数据');
+    console.log(`当前有 ${projectCount.rows[0].count} 个项目`);
+
+    // 获取插入的项目
+    const project = await sql`SELECT * FROM projects WHERE id = 'BgCJR1nu'`;
+    console.log('示例项目:', project.rows.length > 0 ? '已存在' : '不存在');
 
     return NextResponse.json({
       status: 'success',

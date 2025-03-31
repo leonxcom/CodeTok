@@ -1,120 +1,99 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db, safeQuery, projects } from '@/db'
-import { eq } from 'drizzle-orm'
+import { sql } from '@vercel/postgres'
 import { ProjectFile } from '@/db/schema'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // 先使用await处理params对象
-    const resolvedParams = await params;
-    const id = resolvedParams.id;
+    // 获取项目ID
+    const id = params.id;
+    console.log('获取项目详情，ID:', id);
     
-    // 从数据库获取项目
-    const project = await safeQuery(async () => {
-      if (!db) return null
-      
-      // 查询项目
-      const results = await db.select().from(projects)
-        .where(eq(projects.id, id))
-        .limit(1)
-        
-      return results[0] || null
-    }, null)
+    // 使用SQL查询获取项目
+    const projectResult = await sql`
+      SELECT * FROM projects WHERE id = ${id}
+    `;
     
     // 如果没有找到项目
-    if (!project) {
+    if (projectResult.rows.length === 0) {
+      console.log('未找到项目:', id);
       return NextResponse.json({ 
         error: 'Project not found' 
-      }, { status: 404 })
+      }, { status: 404 });
+    }
+
+    // 获取项目数据
+    const project = projectResult.rows[0];
+    console.log('成功获取项目:', project.title);
+    
+    // 更新访问量
+    try {
+      await sql`
+        UPDATE projects SET views = ${(project.views || 0) + 1} WHERE id = ${id}
+      `;
+    } catch (updateError) {
+      console.error('更新访问量失败:', updateError);
+      // 继续处理，不影响响应
     }
     
-    // 异步更新访问量，不阻塞响应
-    void (async () => {
-      await safeQuery(async () => {
-        if (db) {
-          await db.update(projects)
-            .set({ views: (project.views || 0) + 1 })
-            .where(eq(projects.id, id))
-        }
-      }, null)
-    })()
-    
-    // 获取文件列表
-    let files: string[] = []
-    let mainFileContent: string | null = null
-    let hasTsxFiles = false
+    // 处理文件内容
+    let files: string[] = [];
+    let mainFileContent: string | null = null;
+    let hasTsxFiles = false;
     
     if (project.files) {
-      const projectFiles = project.files as ProjectFile[]
-      files = projectFiles.map((file: ProjectFile) => file.pathname)
+      const projectFiles = project.files as ProjectFile[];
+      files = projectFiles.map((file: ProjectFile) => file.pathname);
       
       // 检测是否包含TSX文件
-      hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'))
+      hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'));
       
-      // 先返回基本项目信息和主文件内容
-      const mainFile = projectFiles.find(file => file.pathname === project.mainFile)
+      // 获取主文件内容
+      const mainFile = projectFiles.find(file => file.pathname === project.main_file);
       
       if (mainFile) {
         try {
-          const response = await fetch(mainFile.url)
+          const response = await fetch(mainFile.url);
           if (response.ok) {
-            mainFileContent = await response.text()
+            mainFileContent = await response.text();
           }
-        } catch (error: any) {
-          console.error(`Error fetching main file ${mainFile.pathname}:`, error)
-          mainFileContent = `// Error loading content: ${error}`
+        } catch (error) {
+          console.error(`获取主文件内容失败 ${mainFile.pathname}:`, error);
+          mainFileContent = `// Error loading content: ${error instanceof Error ? error.message : 'Unknown error'}`;
         }
       }
-      
-      // 构建初始响应对象
-      const initialResponse = {
-        projectId: project.id,
-        title: project.title,
-        description: project.description,
-        externalUrl: project.externalUrl,
-        externalEmbed: project.externalEmbed,
-        externalAuthor: project.externalAuthor,
-        type: project.type,
-        files,
-        mainFile: project.mainFile,
-        fileContents: mainFileContent 
-          ? { [project.mainFile as string]: mainFileContent } 
-          : {},
-        hasTsxFiles,
-        views: project.views,
-        createdAt: project.createdAt
-      }
-      
-      // 先返回基本信息和主文件内容
-      return NextResponse.json(initialResponse)
     }
     
-    // 如果没有文件，则返回基本项目信息
-    return NextResponse.json({
+    // 构建响应对象
+    const responseData = {
       projectId: project.id,
       title: project.title,
       description: project.description,
-      externalUrl: project.externalUrl,
-      externalEmbed: project.externalEmbed,
-      externalAuthor: project.externalAuthor,
+      externalUrl: project.external_url,
+      externalEmbed: project.external_embed,
+      externalAuthor: project.external_author,
       type: project.type,
-      files: [],
-      mainFile: project.mainFile || '',
-      fileContents: {},
-      hasTsxFiles: false,
+      files,
+      mainFile: project.main_file,
+      fileContents: mainFileContent 
+        ? { [project.main_file]: mainFileContent } 
+        : {},
+      hasTsxFiles,
       views: project.views,
-      createdAt: project.createdAt
-    })
-  } catch (error: any) {
-    // 在错误处理中也使用await处理params
-    const resolvedParams = await params;
-    console.error(`Error fetching project ${resolvedParams.id}:`, error)
+      createdAt: project.created_at
+    };
+    
+    return NextResponse.json(responseData);
+    
+  } catch (error) {
+    console.error('获取项目失败:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch project' }, 
+      { error: 'Failed to fetch project', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
-    )
+    );
   }
 } 

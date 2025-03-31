@@ -116,7 +116,7 @@ export default function ProjectPage() {
         if (!isMounted) return
         
         if (response.status === 404) {
-          document.location.href = `/${locale}/not-found`;
+          notFound();
           return;
         }
         

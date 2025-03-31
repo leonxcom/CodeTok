@@ -16,6 +16,7 @@ export default function IframeTestPage() {
   const [url, setUrl] = useState('https://character-sample-project.netlify.app/')
   const [iframeLoaded, setIframeLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showLoadSuccess, setShowLoadSuccess] = useState(false)
   
   // 使用useEffect以确保在客户端运行时安全地访问params
   useEffect(() => {
@@ -27,17 +28,25 @@ export default function IframeTestPage() {
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value)
     setIframeLoaded(false)
+    setShowLoadSuccess(false)
     setError(null)
   }
   
   const handleIframeLoad = () => {
     setIframeLoaded(true)
+    setShowLoadSuccess(true)
     setError(null)
+    
+    // 2秒后隐藏成功提示
+    setTimeout(() => {
+      setShowLoadSuccess(false)
+    }, 2000)
   }
   
   const handleIframeError = () => {
     setError(locale === 'zh-cn' ? '无法加载iframe内容' : 'Failed to load iframe content')
     setIframeLoaded(false)
+    setShowLoadSuccess(false)
   }
   
   return (
@@ -61,6 +70,7 @@ export default function IframeTestPage() {
           <button 
             onClick={() => {
               setIframeLoaded(false)
+              setShowLoadSuccess(false)
               setError(null)
               setTimeout(() => {
                 const iframe = document.getElementById('test-iframe') as HTMLIFrameElement
@@ -82,7 +92,7 @@ export default function IframeTestPage() {
             {locale === 'zh-cn' ? 'iframe 嵌入结果:' : 'iframe Embedding Result:'}
           </h2>
           <div>
-            {iframeLoaded ? (
+            {showLoadSuccess ? (
               <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
                 {locale === 'zh-cn' ? '加载成功' : 'Loaded Successfully'}
               </span>
@@ -90,7 +100,7 @@ export default function IframeTestPage() {
               <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
                 {error}
               </span>
-            ) : (
+            ) : !iframeLoaded && (
               <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
                 {locale === 'zh-cn' ? '加载中...' : 'Loading...'}
               </span>

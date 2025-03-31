@@ -31,21 +31,7 @@ export default async function IndexPage({
   console.log('首页重定向 - 开始执行，区域设置:', locale)
 
   try {
-    // 首先尝试获取示例项目
-    const projectId = 'CAbUiIo='
-    const result = await sql`
-      SELECT project_id FROM projects 
-      WHERE project_id = ${projectId}
-    `
-
-    if (result.rows.length > 0) {
-      // 如果示例项目存在，重定向到该项目
-      const redirectUrl = `/${locale}/project/${projectId}`
-      console.log('示例项目存在，重定向到:', redirectUrl)
-      redirect(redirectUrl)
-    }
-
-    // 如果示例项目不存在，尝试获取最新的公开项目
+    // 尝试获取最新的公开项目
     const latestProject = await sql`
       SELECT project_id FROM projects
       WHERE is_public = true

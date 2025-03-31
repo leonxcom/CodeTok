@@ -20,9 +20,20 @@ type ProjectResponse = {
   createdAt?: Date | string;
 }
 
+// Simple in-memory cache for project IDs
+// This significantly reduces database load by avoiding repeated project ID queries
+const projectIdsCache = {
+  ids: [] as string[],
+  lastFetched: 0,
+  ttl: 10000, // Cache time-to-live in ms (10 seconds)
+  hits: 0,
+  misses: 0,
+  maxSize: 100 // Maximum number of IDs to cache
+};
+
 /**
  * GET handler for random project API endpoint
- * Enhanced with improved error handling, fallbacks, and performance logging
+ * Enhanced with improved error handling, fallbacks, caching, and performance logging
  */
 export async function GET() {
   // Performance measurement
@@ -30,28 +41,39 @@ export async function GET() {
   console.log(`[RandomAPI] Request received`);
   
   try {
-    // Primary attempt: Get a random public project with optimized query
-    console.log(`[RandomAPI] Executing primary query`);
-    const randomProject = await sql`
-      SELECT * FROM projects
-      WHERE is_public = true
-      ORDER BY RANDOM()
-      LIMIT 1
+    // Get a random project ID, preferably from cache
+    const projectId = await getRandomProjectId();
+    
+    if (!projectId) {
+      console.log(`[RandomAPI] No projects found in database, returning 404`);
+      return NextResponse.json({ 
+        error: 'No projects found',
+        message: 'No projects are currently available in the database'
+      }, { 
+        status: 404,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0'
+        }
+      });
+    }
+    
+    // Fetch only the specific project by ID (much faster than random ordering)
+    const projectResult = await sql`
+      SELECT * FROM projects WHERE id = ${projectId} LIMIT 1
     `;
     
-    // If no projects found, try a fallback approach
-    if (randomProject.rowCount === 0) {
-      console.log(`[RandomAPI] No public projects found, attempting fallback`);
+    if (projectResult.rowCount === 0) {
+      // ID from cache is no longer valid, refresh cache and try again next time
+      projectIdsCache.lastFetched = 0;
+      console.log(`[RandomAPI] Project ID ${projectId} not found, cache invalidated`);
       
-      // Fallback attempt: Get any project regardless of public status
+      // Fallback to any project
       const fallbackProject = await sql`
-        SELECT * FROM projects
-        ORDER BY RANDOM()
-        LIMIT 1
+        SELECT * FROM projects LIMIT 1
       `;
       
       if (fallbackProject.rowCount === 0) {
-        console.log(`[RandomAPI] No projects found in database, returning 404`);
+        console.log(`[RandomAPI] No projects found in fallback, returning 404`);
         return NextResponse.json({ 
           error: 'No projects found',
           message: 'No projects are currently available in the database'
@@ -63,41 +85,43 @@ export async function GET() {
         });
       }
       
-      // Use the fallback project if found
-      console.log(`[RandomAPI] Using fallback project`);
       const project = fallbackProject.rows[0];
-      
-      // Prepare response with fallback project
       const response = prepareProjectResponse(project);
       
       // Log performance metrics
       const duration = Date.now() - startTime;
       console.log(`[RandomAPI] Fallback response prepared in ${duration}ms`);
       
+      // Update views in background (don't await this)
+      updateViewCount(project.id, project.views || 0)
+        .catch(err => console.error(`[RandomAPI] View update error (silent):`, err));
+      
       return NextResponse.json(response, {
         headers: {
-          'Cache-Control': 'no-store, max-age=0'
+          'Cache-Control': 'private, max-age=10'
         }
       });
     }
     
-    // Use the primary project found
-    const project = randomProject.rows[0];
+    // Process the found project
+    const project = projectResult.rows[0];
     
-    // Asynchronously update view count without blocking response
-    void updateViewCount(project.id, project.views || 0);
+    // Update views in background (don't await this - fire and forget)
+    updateViewCount(project.id, project.views || 0)
+      .catch(err => console.error(`[RandomAPI] View update error (silent):`, err));
     
-    // Prepare response with project data
+    // Prepare response with project data (minimal processing)
     const response = prepareProjectResponse(project);
     
     // Log performance metrics
     const duration = Date.now() - startTime;
-    console.log(`[RandomAPI] Primary response prepared in ${duration}ms`);
+    console.log(`[RandomAPI] Response prepared in ${duration}ms (cache ${projectIdsCache.hits}/${projectIdsCache.hits + projectIdsCache.misses})`);
     
-    // Return the response with no-cache headers
+    // Return the response with short cache time to improve performance
     return NextResponse.json(response, {
       headers: {
-        'Cache-Control': 'no-store, max-age=0'
+        // Allow browser caching for 10 seconds
+        'Cache-Control': 'private, max-age=10'
       }
     });
   } catch (error: any) {
@@ -125,7 +149,52 @@ export async function GET() {
 }
 
 /**
+ * Get a random project ID, using cache when possible
+ */
+async function getRandomProjectId(): Promise<string | null> {
+  const now = Date.now();
+  
+  // Check if cache is valid
+  if (projectIdsCache.ids.length > 0 && now - projectIdsCache.lastFetched < projectIdsCache.ttl) {
+    projectIdsCache.hits++;
+    // Return a random ID from cache
+    const randomIndex = Math.floor(Math.random() * projectIdsCache.ids.length);
+    return projectIdsCache.ids[randomIndex];
+  }
+  
+  // Cache miss - need to refresh
+  projectIdsCache.misses++;
+  console.log(`[RandomAPI] Cache miss, fetching project IDs`);
+  
+  try {
+    // Get only public project IDs for better performance
+    const result = await sql`
+      SELECT id FROM projects 
+      WHERE is_public = true 
+      LIMIT ${projectIdsCache.maxSize}
+    `;
+    
+    if (result.rowCount === 0) {
+      // No projects found
+      return null;
+    }
+    
+    // Update cache
+    projectIdsCache.ids = result.rows.map(project => project.id);
+    projectIdsCache.lastFetched = now;
+    
+    // Return a random ID
+    const randomIndex = Math.floor(Math.random() * projectIdsCache.ids.length);
+    return projectIdsCache.ids[randomIndex];
+  } catch (error) {
+    console.error(`[RandomAPI] Error fetching project IDs:`, error);
+    return null;
+  }
+}
+
+/**
  * Helper function to update view count asynchronously
+ * This runs in the background and doesn't block the response
  */
 async function updateViewCount(projectId: string, currentViews: number): Promise<void> {
   try {
@@ -141,7 +210,7 @@ async function updateViewCount(projectId: string, currentViews: number): Promise
 }
 
 /**
- * Helper function to prepare project response
+ * Helper function to prepare project response with minimal processing
  */
 function prepareProjectResponse(project: any): ProjectResponse {
   return {

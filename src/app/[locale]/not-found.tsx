@@ -1,12 +1,14 @@
-'use client'
+'use server'
 
 import { buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 import { Locale } from '../../../i18n/config'
 
-export default function LocalizedNotFound() {
-  const params = useParams()
+interface Props {
+  params: { locale: string }
+}
+
+export default function LocalizedNotFound({ params }: Props) {
   const locale = (params.locale as string || 'zh-cn') as keyof typeof translations
   
   const translations = {
@@ -52,4 +54,4 @@ export default function LocalizedNotFound() {
       </div>
     </main>
   )
-} 
+}

@@ -1,10 +1,9 @@
-// 运行数据库迁移的脚本
 import { sql } from '@vercel/postgres';
-import dotenv from 'dotenv';
+import { NextResponse } from 'next/server';
 
-dotenv.config();
+export const dynamic = 'force-dynamic';
 
-async function migrate() {
+export async function GET() {
   try {
     console.log('开始数据库迁移...');
 
@@ -62,18 +61,25 @@ async function migrate() {
 
     // 3. 验证迁移
     const projectCount = await sql`SELECT COUNT(*) FROM projects;`;
-    console.log('当前项目数量:', projectCount.rows[0].count);
-
     const exampleProjectCheck = await sql`
       SELECT * FROM projects WHERE project_id = ${exampleProject.project_id};
     `;
-    console.log('示例项目:', exampleProjectCheck.rows[0]);
+
+    return NextResponse.json({
+      status: 'success',
+      message: '数据库迁移完成',
+      projectCount: projectCount.rows[0].count,
+      exampleProject: exampleProjectCheck.rows[0]
+    });
 
   } catch (error) {
     console.error('迁移失败:', error);
-    process.exit(1);
+    return NextResponse.json(
+      { 
+        status: 'error',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      },
+      { status: 500 }
+    );
   }
-}
-
-// 运行迁移
-migrate(); 
+} 

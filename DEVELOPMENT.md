@@ -4,6 +4,79 @@
 
 Vibetok is an innovative AI project and code application sharing platform. It is built with Next.js, uses TypeScript as the development language, and integrates multiple UI component libraries to provide a rich user interface experience.
 
+## MVP Development Priorities
+
+Below are the prioritized development areas for the Minimum Viable Product (MVP) version of Vibetok, arranged by importance:
+
+### 1. Core Functionality Completion & Stability (High Priority)
+
+1. **Project Browsing and Display System**
+   - Enhance reliability testing for random project redirection
+   - Optimize performance for project display pages, especially for external embedded projects
+   - Implement project filtering and categorization features to allow users to browse projects by type/tags
+
+2. **User Authentication System**
+   - Implement basic user registration/login functionality
+   - Integrate third-party authentication (GitHub, Google) to simplify user registration
+   - Set up user permissions and role management
+
+3. **Database Stability**
+   - Optimize database queries and connections to ensure production environment stability
+   - Improve data migration scripts and backup/restore mechanisms
+   - Ensure database connection pool configuration is suitable for production environment loads
+
+### 2. User Interaction Features (Medium Priority)
+
+1. **Project Interaction Functionality**
+   - Implement like, favorite, and share features
+   - Add project comment system
+   - Project view counting and trending projects display
+
+2. **Upload and Create Projects**
+   - Optimize project upload process, supporting multiple file formats
+   - Add more templates and example projects
+   - Implement basic online code editing functionality
+
+3. **User Profiles**
+   - User profile pages and settings
+   - User project favorites list
+   - User contribution history
+
+### 3. Extended Features (Low Priority, Post-MVP)
+
+1. **Community Features**
+   - User follow system
+   - Activity streams and notifications
+   - Project collaboration features
+
+2. **Content Management**
+   - Admin control panel
+   - Content moderation tools
+   - Reporting and content policy enforcement
+
+3. **Advanced Features**
+   - AI-assisted code generation
+   - Project statistics and analytics
+   - Integrated testing and CI/CD support
+
+### Implementation Suggestions
+
+When implementing the MVP, focus on:
+
+1. **Completing the User Authentication System**
+   - This is the most crucial missing core functionality, essential for user interaction and content management
+   - Implement basic registration/login functionality, integrate Better Auth
+
+2. **Improving Project Browsing Experience**
+   - Add categories, tags, and search functionality
+   - Implement a project list page, providing more browsing options beyond random redirects
+   - Optimize project page loading performance, particularly for externally embedded projects
+
+3. **Adding Basic Interaction Features**
+   - Implement like and favorite functionality
+   - Add a simple comment system
+   - Implement project sharing and social media integration
+
 ## Technology Stack
 
 - **Framework**:

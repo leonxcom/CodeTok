@@ -13,7 +13,8 @@
     "migrate": "drizzle-kit push",
     "drop": "drizzle-kit drop",
     "studio": "drizzle-kit studio",
-    "db:migrate": "tsx src/db/run-migrate.ts"
+    "db:migrate": "tsx src/db/run-migrate.ts",
+    "db:export": "tsx src/db/export-data.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.1",

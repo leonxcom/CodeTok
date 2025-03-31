@@ -28,8 +28,7 @@ function createDbConnection() {
 }
 
 // 导出数据库连接
-const db = createDbConnection();
-export default db;
+export const db = createDbConnection();
 
 // 直接导出sql客户端
 export { sql };

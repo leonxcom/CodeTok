@@ -74,3 +74,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Theme Button Styles */
+button[data-state="active"] {
+  @apply bg-primary text-primary-foreground;
+}

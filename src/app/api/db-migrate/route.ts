@@ -58,6 +58,10 @@ export async function GET() {
     // 5. 验证迁移
     const projectCount = await sql`SELECT COUNT(*) FROM projects`;
 
+    // 6. 确保没有任何数据
+    await sql`TRUNCATE TABLE projects;`;
+    console.log('清除所有数据');
+
     return NextResponse.json({
       status: 'success',
       message: '数据库迁移完成',

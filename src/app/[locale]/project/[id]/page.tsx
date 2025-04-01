@@ -8,6 +8,7 @@ import { Locale } from '../../../../../i18n/config'
 import { renderTSX } from '@/lib/tsx-compiler'
 import ExternalEmbed from './external-embed'
 import { toast } from '@/components/ui/use-toast'
+import Image from 'next/image'
 
 interface ProjectData {
   projectId: string
@@ -593,50 +594,171 @@ ${content}
   if (isLoading && !basicInfoLoaded) {
     return (
       <div className="flex flex-col h-screen">
-        {/* 主体内容 - 左右8:2布局 */}
+        {/* 主体内容 - 左右7:3布局 */}
         <div className="flex flex-1 overflow-hidden">
-          {/* 左侧主内容区 (80%) - 保持白色背景 */}
-          <div className="w-4/5 flex flex-col relative overflow-hidden bg-white">
-            <div className="flex h-screen items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
-                <p>{locale === 'zh-cn' ? '加载中...' : 'Loading...'}</p>
-              </div>
+          {/* 左侧主内容区 (70%) */}
+          <div className="w-[70%] flex flex-col relative overflow-hidden bg-background">
+            {/* 上下滑动按钮 - TikTok风格 */}
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
+              <button
+                className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+                onClick={handlePreviousProject}
+                title={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+                <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  {locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
+                </span>
+              </button>
+              
+              <button
+                className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+                onClick={handleNextProject}
+                title={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+                <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  {locale === 'zh-cn' ? '下一个项目' : 'Next project'}
+                </span>
+              </button>
+            </div>
+
+            {/* 主要内容区域 */}
+            <div className="flex-1 relative">
+              {isLoading ? (
+                <div className="flex h-screen items-center justify-center">
+                  <div className="text-center">
+                    <div className="mb-8">
+                      <Image 
+                        src="/favicon.png" 
+                        alt="VibeTok Logo" 
+                        width={96} 
+                        height={96}
+                      />
+                    </div>
+                    <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                    <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground">
+                      {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}
+                    </p>
+                  </div>
+                </div>
+              ) : error ? (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <div className="mb-8">
+                    <Image 
+                      src="/favicon.png" 
+                      alt="VibeTok Logo" 
+                      width={96} 
+                      height={96}
+                      className="mx-auto grayscale opacity-50"
+                    />
+                  </div>
+                  <div className="text-red-500 mb-4">{error}</div>
+                  <Button onClick={() => fetchProjectData()}>
+                    {locale === 'zh-cn' ? '重试' : 'Retry'}
+                  </Button>
+                </div>
+              ) : (
+                <div className="h-full">
+                  {projectData?.externalEmbed && projectData?.externalUrl ? (
+                    <div className="relative h-full">
+                      {shouldLoadIframe && (
+                        <iframe
+                          id="external-project-iframe"
+                          src={projectData.externalUrl}
+                          className="w-full h-full border-none"
+                          onLoad={handleIframeLoad}
+                          onError={handleIframeError}
+                        />
+                      )}
+                      {!iframeLoaded && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-background">
+                          <div className="text-center">
+                            <div className="mb-8">
+                              <Image 
+                                src="/favicon.png" 
+                                alt="VibeTok Logo" 
+                                width={96} 
+                                height={96}
+                                className="mx-auto"
+                              />
+                            </div>
+                            <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                            <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
+                            <p className="mt-4 text-muted-foreground">
+                              {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {iframeError && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-background">
+                          <div className="mb-8">
+                            <Image 
+                              src="/favicon.png" 
+                              alt="VibeTok Logo" 
+                              width={96} 
+                              height={96}
+                              className="mx-auto grayscale opacity-50"
+                            />
+                          </div>
+                          <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                          <div className="text-red-500 mb-4">{iframeError}</div>
+                          <div className="flex gap-4">
+                            <Button onClick={refreshIframe}>
+                              {locale === 'zh-cn' ? '重试' : 'Retry'}
+                            </Button>
+                            <Button onClick={openDirectLink}>
+                              {locale === 'zh-cn' ? '在新窗口打开' : 'Open in New Window'}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="h-full">
+                      {/* 其他项目类型的渲染逻辑保持不变 */}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
-          
-          {/* 右侧交互区 (20%) - 在加载阶段也显示框架 */}
-          <div className="w-1/5 border-l border-gray-800 bg-black flex flex-col">
+
+          {/* 右侧工具栏 (30%) */}
+          <div className="w-[30%] border-l border-border bg-card">
             {/* 项目信息区 */}
-            <div className="p-4 border-b border-gray-800">
-              <div className="h-6 bg-gray-800 rounded w-3/4 mb-3"></div>
-              <div className="h-4 bg-gray-800 rounded w-full mb-2"></div>
-              <div className="h-4 bg-gray-800 rounded w-4/5 mb-2"></div>
-              <div className="h-4 bg-gray-800 rounded w-5/6 mb-3"></div>
-              <div className="flex items-center text-xs mb-2">
-                <div className="bg-gray-800 px-2 py-1 rounded w-16 h-5 mr-1"></div>
-                <div className="bg-gray-800 w-24 h-5 rounded ml-1"></div>
-              </div>
-              <div className="h-3 bg-gray-800 rounded w-1/3 mt-2"></div>
+            <div className="p-4 border-b border-border">
+              <h1 className="text-xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
+              <p className="text-sm text-muted-foreground mb-2">{projectData?.description}</p>
+              {projectData?.createdAt && (
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(projectData.createdAt)}
+                </p>
+              )}
+              {projectData?.externalUrl && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {locale === 'zh-cn' ? '来源：' : 'Source: '}
+                  <a 
+                    href={projectData.externalUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    {getHostname(projectData.externalUrl)}
+                  </a>
+                </p>
+              )}
             </div>
-            
-            {/* 文件选择区 */}
-            <div className="p-4 border-b border-gray-800">
-              <div className="h-4 bg-gray-800 rounded w-1/3 mb-2"></div>
-              <div className="w-full bg-gray-800 border border-gray-700 rounded-md h-8"></div>
-            </div>
-            
-            {/* 主要功能按钮区域 - 清空内容，只保留分割线 */}
-            <div className="border-b border-gray-800">
-            </div>
-            
-            {/* 交互按钮区 */}
-            <div className="p-4 flex flex-col gap-3">
-              {/* 随机项目按钮 */}
-              <div className="h-10 bg-gray-800 border border-gray-700 rounded-md"></div>
-              
-              {/* 切换代码/预览按钮 */}
-              <div className="h-10 bg-gray-800 border border-gray-700 rounded-md"></div>
+
+            {/* 工具栏按钮 */}
+            <div className="p-4">
+              {renderToolbarButtons()}
             </div>
           </div>
         </div>
@@ -647,7 +769,16 @@ ${content}
   if (error || !projectData) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="text-center max-w-md p-6 bg-white rounded-lg shadow-lg">
+        <div className="text-center max-w-md p-6 bg-white">
+          <div className="mb-8">
+            <Image 
+              src="/favicon.png" 
+              alt="VibeTok Logo" 
+              width={96} 
+              height={96}
+              className="mx-auto grayscale opacity-50"
+            />
+          </div>
           <h1 className="text-2xl font-bold text-red-500 mb-4">
             {locale === 'zh-cn' ? '错误' : 'Error'}
           </h1>
@@ -663,119 +794,173 @@ ${content}
   }
   
   return (
-    <div className="flex h-full">
-      {/* 左侧主要内容区域 */}
-      <div className="flex-grow h-full overflow-hidden relative">
-        {/* 上下切换按钮 */}
-        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
-          <button
-            className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
-            onClick={handlePreviousProject}
-            title={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="18 15 12 9 6 15"></polyline>
-            </svg>
-            <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              {locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-            </span>
-          </button>
-          
-          <button
-            className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
-            onClick={handleNextProject}
-            title={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-            <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              {locale === 'zh-cn' ? '下一个项目' : 'Next project'}
-            </span>
-          </button>
-        </div>
+    <div className="flex flex-col h-screen">
+      {/* 主体内容 - 左右7:3布局 */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* 左侧主内容区 (70%) */}
+        <div className="w-[70%] flex flex-col relative overflow-hidden bg-background">
+          {/* 上下滑动按钮 - TikTok风格 */}
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
+            <button
+              className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+              onClick={handlePreviousProject}
+              title={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+              </svg>
+              <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
+              </span>
+            </button>
+            
+            <button
+              className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+              onClick={handleNextProject}
+              title={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+              <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {locale === 'zh-cn' ? '下一个项目' : 'Next project'}
+              </span>
+            </button>
+          </div>
 
-        {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-          </div>
-        ) : error ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <div className="text-red-500 mb-4">{error}</div>
-            <Button onClick={() => fetchProjectData()}>
-              {locale === 'zh-cn' ? '重试' : 'Retry'}
-            </Button>
-          </div>
-        ) : (
-          <div className="h-full">
-            {projectData?.externalEmbed && projectData?.externalUrl ? (
-              <div className="relative h-full">
-                {shouldLoadIframe && (
-                  <iframe
-                    id="external-project-iframe"
-                    src={projectData.externalUrl}
-                    className="w-full h-full border-none"
-                    onLoad={handleIframeLoad}
-                    onError={handleIframeError}
+          {/* 主要内容区域 */}
+          <div className="flex-1 relative">
+            {isLoading ? (
+              <div className="flex h-screen items-center justify-center">
+                <div className="text-center">
+                  <div className="mb-8">
+                    <Image 
+                      src="/favicon.png" 
+                      alt="VibeTok Logo" 
+                      width={96} 
+                      height={96}
+                    />
+                  </div>
+                  <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                  <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
+                  <p className="mt-4 text-muted-foreground">
+                    {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}
+                  </p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="mb-8">
+                  <Image 
+                    src="/favicon.png" 
+                    alt="VibeTok Logo" 
+                    width={96} 
+                    height={96}
+                    className="mx-auto grayscale opacity-50"
                   />
-                )}
-                {!iframeLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-background">
-                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-                  </div>
-                )}
-                {iframeError && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background">
-                    <div className="text-red-500 mb-4">{iframeError}</div>
-                    <div className="flex gap-4">
-                      <Button onClick={refreshIframe}>
-                        {locale === 'zh-cn' ? '重试' : 'Retry'}
-                      </Button>
-                      <Button onClick={openDirectLink}>
-                        {locale === 'zh-cn' ? '在新窗口打开' : 'Open in New Window'}
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                </div>
+                <div className="text-red-500 mb-4">{error}</div>
+                <Button onClick={() => fetchProjectData()}>
+                  {locale === 'zh-cn' ? '重试' : 'Retry'}
+                </Button>
               </div>
             ) : (
               <div className="h-full">
-                {/* 其他项目类型的渲染逻辑保持不变 */}
+                {projectData?.externalEmbed && projectData?.externalUrl ? (
+                  <div className="relative h-full">
+                    {shouldLoadIframe && (
+                      <iframe
+                        id="external-project-iframe"
+                        src={projectData.externalUrl}
+                        className="w-full h-full border-none"
+                        onLoad={handleIframeLoad}
+                        onError={handleIframeError}
+                      />
+                    )}
+                    {!iframeLoaded && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-background">
+                        <div className="text-center">
+                          <div className="mb-8">
+                            <Image 
+                              src="/favicon.png" 
+                              alt="VibeTok Logo" 
+                              width={96} 
+                              height={96}
+                              className="mx-auto"
+                            />
+                          </div>
+                          <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                          <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
+                          <p className="mt-4 text-muted-foreground">
+                            {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {iframeError && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background">
+                        <div className="mb-8">
+                          <Image 
+                            src="/favicon.png" 
+                            alt="VibeTok Logo" 
+                            width={96} 
+                            height={96}
+                            className="mx-auto grayscale opacity-50"
+                          />
+                        </div>
+                        <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                        <div className="text-red-500 mb-4">{iframeError}</div>
+                        <div className="flex gap-4">
+                          <Button onClick={refreshIframe}>
+                            {locale === 'zh-cn' ? '重试' : 'Retry'}
+                          </Button>
+                          <Button onClick={openDirectLink}>
+                            {locale === 'zh-cn' ? '在新窗口打开' : 'Open in New Window'}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="h-full">
+                    {/* 其他项目类型的渲染逻辑保持不变 */}
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
-      </div>
-
-      {/* 右侧工具栏 */}
-      <div className="w-[30%] max-w-md border-l border-border bg-card">
-        {/* 项目信息区 */}
-        <div className="p-4 border-b border-border">
-          <h1 className="text-xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
-          <p className="text-sm text-muted-foreground mb-2">{projectData?.description}</p>
-          {projectData?.createdAt && (
-            <p className="text-sm text-muted-foreground">
-              {formatDate(projectData.createdAt)}
-            </p>
-          )}
-          {projectData?.externalUrl && (
-            <p className="text-sm text-muted-foreground mt-2">
-              {locale === 'zh-cn' ? '来源：' : 'Source: '}
-              <a 
-                href={projectData.externalUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="hover:underline"
-              >
-                {getHostname(projectData.externalUrl)}
-              </a>
-            </p>
-          )}
         </div>
 
-        {/* 工具栏按钮 */}
-        <div className="p-4">
-          {renderToolbarButtons()}
+        {/* 右侧工具栏 (30%) */}
+        <div className="w-[30%] border-l border-border bg-card">
+          {/* 项目信息区 */}
+          <div className="p-4 border-b border-border">
+            <h1 className="text-xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
+            <p className="text-sm text-muted-foreground mb-2">{projectData?.description}</p>
+            {projectData?.createdAt && (
+              <p className="text-sm text-muted-foreground">
+                {formatDate(projectData.createdAt)}
+              </p>
+            )}
+            {projectData?.externalUrl && (
+              <p className="text-sm text-muted-foreground mt-2">
+                {locale === 'zh-cn' ? '来源：' : 'Source: '}
+                <a 
+                  href={projectData.externalUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  {getHostname(projectData.externalUrl)}
+                </a>
+              </p>
+            )}
+          </div>
+
+          {/* 工具栏按钮 */}
+          <div className="p-4">
+            {renderToolbarButtons()}
+          </div>
         </div>
       </div>
     </div>

@@ -731,34 +731,62 @@ ${content}
           </div>
 
           {/* 右侧工具栏 (30%) */}
-          <div className="w-[30%] border-l border-border bg-card">
+          <div className="w-[30%] border-l border-border bg-black text-white">
             {/* 项目信息区 */}
-            <div className="p-4 border-b border-border">
-              <h1 className="text-xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
-              <p className="text-sm text-muted-foreground mb-2">{projectData?.description}</p>
+            <div className="p-6">
+              <h1 className="text-2xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
+              <p className="text-gray-300 mb-4">{projectData?.description}</p>
+              <div className="flex items-center gap-2 text-gray-400">
+                <span>全屏打开</span>
+                <a 
+                  href={projectData?.externalUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:underline overflow-hidden text-ellipsis"
+                >
+                  {projectData?.externalUrl && getHostname(projectData.externalUrl)}
+                </a>
+              </div>
               {projectData?.createdAt && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-gray-400 mt-2">
                   {formatDate(projectData.createdAt)}
-                </p>
-              )}
-              {projectData?.externalUrl && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  {locale === 'zh-cn' ? '来源：' : 'Source: '}
-                  <a 
-                    href={projectData.externalUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    {getHostname(projectData.externalUrl)}
-                  </a>
                 </p>
               )}
             </div>
 
-            {/* 工具栏按钮 */}
-            <div className="p-4">
-              {renderToolbarButtons()}
+            {/* 交互按钮区 */}
+            <div className="p-6 flex flex-col gap-6">
+              <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+                <span>{locale === 'zh-cn' ? '点赞' : 'Like'}</span>
+              </button>
+              
+              <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>{locale === 'zh-cn' ? '评论' : 'Comment'}</span>
+              </button>
+              
+              <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>{locale === 'zh-cn' ? '收藏' : 'Bookmark'}</span>
+              </button>
+              
+              <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                <span>{locale === 'zh-cn' ? '分享' : 'Share'}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -932,34 +960,62 @@ ${content}
         </div>
 
         {/* 右侧工具栏 (30%) */}
-        <div className="w-[30%] border-l border-border bg-card">
+        <div className="w-[30%] border-l border-border bg-black text-white">
           {/* 项目信息区 */}
-          <div className="p-4 border-b border-border">
-            <h1 className="text-xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
-            <p className="text-sm text-muted-foreground mb-2">{projectData?.description}</p>
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
+            <p className="text-gray-300 mb-4">{projectData?.description}</p>
+            <div className="flex items-center gap-2 text-gray-400">
+              <span>全屏打开</span>
+              <a 
+                href={projectData?.externalUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:underline overflow-hidden text-ellipsis"
+              >
+                {projectData?.externalUrl && getHostname(projectData.externalUrl)}
+              </a>
+            </div>
             {projectData?.createdAt && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-gray-400 mt-2">
                 {formatDate(projectData.createdAt)}
-              </p>
-            )}
-            {projectData?.externalUrl && (
-              <p className="text-sm text-muted-foreground mt-2">
-                {locale === 'zh-cn' ? '来源：' : 'Source: '}
-                <a 
-                  href={projectData.externalUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:underline"
-                >
-                  {getHostname(projectData.externalUrl)}
-                </a>
               </p>
             )}
           </div>
 
-          {/* 工具栏按钮 */}
-          <div className="p-4">
-            {renderToolbarButtons()}
+          {/* 交互按钮区 */}
+          <div className="p-6 flex flex-col gap-6">
+            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              <span>{locale === 'zh-cn' ? '点赞' : 'Like'}</span>
+            </button>
+            
+            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>{locale === 'zh-cn' ? '评论' : 'Comment'}</span>
+            </button>
+            
+            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>{locale === 'zh-cn' ? '收藏' : 'Bookmark'}</span>
+            </button>
+            
+            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              <span>{locale === 'zh-cn' ? '分享' : 'Share'}</span>
+            </button>
           </div>
         </div>
       </div>

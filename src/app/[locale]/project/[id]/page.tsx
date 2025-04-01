@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useParams, notFound } from 'next/navigation'
+import { useParams, notFound, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Locale } from '../../../../../i18n/config'
 import { renderTSX } from '@/lib/tsx-compiler'
 import ExternalEmbed from './external-embed'
+import { toast } from '@/components/ui/use-toast'
 
 interface ProjectData {
   projectId: string
@@ -27,6 +28,7 @@ export default function ProjectPage() {
   const params = useParams()
   const locale = params.locale as Locale
   const projectId = params.id as string
+  const router = useRouter()
   
   const [projectData, setProjectData] = useState<ProjectData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -51,6 +53,50 @@ export default function ProjectPage() {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState<string | null>(null);
   const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+  
+  // 添加浏览历史管理
+  const [viewHistory, setViewHistory] = useState<string[]>([]);
+  const [historyPosition, setHistoryPosition] = useState(-1);
+  
+  // 初始化历史记录
+  useEffect(() => {
+    // 从 sessionStorage 恢复历史记录，如果有的话
+    try {
+      const savedHistory = sessionStorage.getItem('projectHistory');
+      const savedPosition = sessionStorage.getItem('historyPosition');
+      
+      if (savedHistory) {
+        const parsedHistory = JSON.parse(savedHistory);
+        setViewHistory(parsedHistory);
+        
+        // 找到当前项目在历史中的位置
+        const positionInHistory = parsedHistory.indexOf(projectId);
+        
+        if (positionInHistory >= 0) {
+          // 如果当前项目在历史中，设置位置
+          setHistoryPosition(positionInHistory);
+        } else {
+          // 如果当前项目不在历史中，添加到历史末尾
+          const newHistory = [...parsedHistory, projectId];
+          setViewHistory(newHistory);
+          setHistoryPosition(newHistory.length - 1);
+          sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
+        }
+      } else {
+        // 没有历史记录，初始化为只包含当前项目的数组
+        setViewHistory([projectId]);
+        setHistoryPosition(0);
+        sessionStorage.setItem('projectHistory', JSON.stringify([projectId]));
+      }
+      
+      // 历史位置可能存在但不适用于新的历史数组，这里忽略
+    } catch (e) {
+      console.error('Error initializing project history:', e);
+      // 出错时使用默认值
+      setViewHistory([projectId]);
+      setHistoryPosition(0);
+    }
+  }, [projectId]);
   
   // 处理iframe加载事件 - 与iframe-test完全一致
   const handleIframeLoad = () => {
@@ -156,7 +202,7 @@ export default function ProjectPage() {
           }, 500) // 延迟500ms让UI先渲染完成
         }
         
-        // 预加载下一个随机项目数据
+        // 预加载下一个推荐项目的数据
         prefetchNextProject()
         
       } catch (error) {
@@ -182,11 +228,11 @@ export default function ProjectPage() {
     }
   }, [projectId, locale])
   
-  // 预加载下一个随机项目的数据
+  // 预加载下一个推荐项目的数据
   const prefetchNextProject = async () => {
     try {
       // 使用 fetchPriority 降低此请求的优先级，不干扰当前页面加载
-      const response = await fetch('/api/projects/random', {
+      const response = await fetch(`/api/projects/recommend?currentId=${projectId}`, {
         priority: 'low',
       } as RequestInit) // 使用类型断言
       
@@ -236,91 +282,205 @@ export default function ProjectPage() {
   const handleRandomProject = async () => {
     try {
       // 先显示加载状态，同时保留当前页面
-      setIsLoading(true)
+      setIsLoading(true);
       
-      const response = await fetch('/api/projects/random')
+      const response = await fetch('/api/projects/random');
       
       if (!response.ok) {
         throw new Error(
           locale === 'zh-cn' 
             ? '无法加载随机项目'
             : 'Failed to load random project'
-        )
+        );
       }
       
-      const data = await response.json()
+      const data = await response.json();
       
       // 使用history.pushState替代整页刷新，保持已加载的资源
-      const nextUrl = `/${locale}/project/${data.projectId}`
-      window.history.pushState({}, '', nextUrl)
+      const nextUrl = `/${locale}/project/${data.projectId}`;
+      window.history.pushState({}, '', nextUrl);
+      
+      // 更新浏览历史
+      if (historyPosition === viewHistory.length - 1) {
+        // 在历史末尾，添加新记录
+        const newHistory = [...viewHistory, data.projectId];
+        setViewHistory(newHistory);
+        setHistoryPosition(newHistory.length - 1);
+        // 保存到sessionStorage
+        sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
+        sessionStorage.setItem('historyPosition', (newHistory.length - 1).toString());
+      } else {
+        // 不在历史末尾，截断历史并添加新记录
+        const newHistory = viewHistory.slice(0, historyPosition + 1);
+        newHistory.push(data.projectId);
+        setViewHistory(newHistory);
+        setHistoryPosition(newHistory.length - 1);
+        // 保存到sessionStorage
+        sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
+        sessionStorage.setItem('historyPosition', (newHistory.length - 1).toString());
+      }
       
       // 重新加载项目数据
-      setProjectData(data)
-      setSelectedFile(data.mainFile)
-      setBasicInfoLoaded(true)
+      setProjectData(data);
+      setSelectedFile(data.mainFile);
+      setBasicInfoLoaded(true);
       
       // 如果文件列表加载完成，标记加载状态为完成
       if (data.fileContents && Object.keys(data.fileContents).length > 0) {
-        setFilesLoaded(true)
-        setIsLoading(false)
+        setFilesLoaded(true);
+        setIsLoading(false);
       } else {
-        setFilesLoaded(false)
+        setFilesLoaded(false);
       }
     } catch (error) {
-      console.error('Error loading random project:', error)
-      setIsLoading(false)
+      console.error('Error loading random project:', error);
+      setIsLoading(false);
       alert(
         locale === 'zh-cn' 
           ? '加载随机项目失败，请稍后再试'
           : 'Failed to load random project, please try again later'
-      )
+      );
     }
-  }
-
-  // 跳转到下一个随机项目 - 使用相同的优化逻辑
-  const handleNextProject = async () => {
-    // 重用优化后的随机项目导航逻辑
-    handleRandomProject()
-  }
+  };
   
-  // 滑动手势初始化
+  // 更新的上滑/上箭头函数 - 返回到历史项目
+  const handlePreviousProject = async () => {
+    try {
+      // 检查是否有历史可以回退
+      if (historyPosition > 0) {
+        // 有历史可回退
+        const previousPosition = historyPosition - 1;
+        const previousProjectId = viewHistory[previousPosition];
+        
+        // 更新位置指针
+        setHistoryPosition(previousPosition);
+        sessionStorage.setItem('historyPosition', previousPosition.toString());
+        
+        // 使用router导航至历史项目
+        router.push(`/${locale}/project/${previousProjectId}`);
+      } else {
+        // 无历史可回退，提示用户
+        toast({
+          title: locale === 'zh-cn' ? '已经是第一个项目' : 'This is the first project',
+          description: locale === 'zh-cn' ? '当前已是浏览历史的第一项' : 'You are at the beginning of your browsing history',
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      console.error('Error navigating to previous project:', error);
+      // 显示错误提示
+      alert(
+        locale === 'zh-cn' 
+          ? '返回上一个项目失败，请稍后再试'
+          : 'Failed to go back to previous project, please try again later'
+      );
+    }
+  };
+
+  // 更新的下滑/下箭头函数 - 获取推荐的下一个项目
+  const handleNextProject = async () => {
+    try {
+      // 先显示加载状态，同时保留当前页面
+      setIsLoading(true);
+      
+      // 调用推荐API
+      const response = await fetch(`/api/projects/recommend?currentId=${projectId}`);
+      
+      if (!response.ok) {
+        throw new Error(
+          locale === 'zh-cn' 
+            ? '无法加载推荐项目'
+            : 'Failed to load recommended project'
+        );
+      }
+      
+      const data = await response.json();
+      
+      // 使用history.pushState替代整页刷新，保持已加载的资源
+      const nextUrl = `/${locale}/project/${data.projectId}`;
+      window.history.pushState({}, '', nextUrl);
+      
+      // 更新历史记录
+      if (historyPosition === viewHistory.length - 1) {
+        // 在历史末尾，添加新记录
+        const newHistory = [...viewHistory, data.projectId];
+        setViewHistory(newHistory);
+        setHistoryPosition(newHistory.length - 1);
+        // 保存到sessionStorage
+        sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
+        sessionStorage.setItem('historyPosition', (newHistory.length - 1).toString());
+      } else {
+        // 不在历史末尾，截断历史并添加新记录
+        const newHistory = viewHistory.slice(0, historyPosition + 1);
+        newHistory.push(data.projectId);
+        setViewHistory(newHistory);
+        setHistoryPosition(newHistory.length - 1);
+        // 保存到sessionStorage
+        sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
+        sessionStorage.setItem('historyPosition', (newHistory.length - 1).toString());
+      }
+      
+      // 重新加载项目数据
+      setProjectData(data);
+      setSelectedFile(data.mainFile);
+      setBasicInfoLoaded(true);
+      
+      // 如果文件列表加载完成，标记加载状态为完成
+      if (data.fileContents && Object.keys(data.fileContents).length > 0) {
+        setFilesLoaded(true);
+        setIsLoading(false);
+      } else {
+        setFilesLoaded(false);
+      }
+    } catch (error) {
+      console.error('Error loading next project:', error);
+      setIsLoading(false);
+      alert(
+        locale === 'zh-cn' 
+          ? '加载下一个项目失败，请稍后再试'
+          : 'Failed to load next project, please try again later'
+      );
+    }
+  };
+
+  // 更新滑动手势处理
   useEffect(() => {
-    let touchstartX = 0
-    let touchendX = 0
-    let touchstartY = 0
-    let touchendY = 0
+    let touchstartX = 0;
+    let touchendX = 0;
+    let touchstartY = 0;
+    let touchendY = 0;
     
     const handleTouchStart = (e: TouchEvent) => {
-      touchstartX = e.changedTouches[0].screenX
-      touchstartY = e.changedTouches[0].screenY
-    }
+      touchstartX = e.changedTouches[0].screenX;
+      touchstartY = e.changedTouches[0].screenY;
+    };
     
     const handleTouchEnd = (e: TouchEvent) => {
-      touchendX = e.changedTouches[0].screenX
-      touchendY = e.changedTouches[0].screenY
-      handleSwipeGesture()
-    }
+      touchendX = e.changedTouches[0].screenX;
+      touchendY = e.changedTouches[0].screenY;
+      handleSwipeGesture();
+    };
     
     const handleSwipeGesture = () => {
-      // 上滑超过50像素，加载下一个项目
-      if (touchendY < touchstartY - 50) {
-        handleNextProject()
+      // 下滑超过50像素，加载下一个推荐项目
+      if (touchendY > touchstartY + 50) {
+        handleNextProject();
       }
-      // 下滑超过50像素，也加载一个随机项目
-      else if (touchendY > touchstartY + 50) {
-        handleRandomProject()
+      // 上滑超过50像素，返回到历史项目
+      else if (touchendY < touchstartY - 50) {
+        handlePreviousProject();
       }
-    }
+    };
     
     // 添加滑动手势事件监听
-    document.addEventListener('touchstart', handleTouchStart)
-    document.addEventListener('touchend', handleTouchEnd)
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchend', handleTouchEnd);
     
     return () => {
-      document.removeEventListener('touchstart', handleTouchStart)
-      document.removeEventListener('touchend', handleTouchEnd)
-    }
-  }, [])
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [projectId, historyPosition, viewHistory]);
   
   const toggleFrame = () => {
     setShowingFrame(!showingFrame)
@@ -501,7 +661,7 @@ ${content}
             <button 
               className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
               aria-label={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-              onClick={handleRandomProject}
+              onClick={handlePreviousProject}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="18 15 12 9 6 15"></polyline>

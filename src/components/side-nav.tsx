@@ -95,11 +95,6 @@ export function SideNav() {
       label: locale === "zh-cn" ? "直播" : "LIVE"
     },
     {
-      href: `/${locale}/community`,
-      icon: <Users className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "社区" : "Community"
-    },
-    {
       href: `/${locale}/learn`,
       icon: <GraduationCap className="h-4 w-4" />,
       label: locale === "zh-cn" ? "学习" : "Learn"

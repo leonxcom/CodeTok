@@ -31,6 +31,7 @@ CodeTok is an innovative platform for sharing AI projects and code applications.
   - Tailwind CSS 3.4.4
 - **Component Libraries**: 
   - Shadcn UI
+  - MagicUI Design
   - Radix UI (Primitives)
 - **Build Tools**:
   - Vite 5.2.13

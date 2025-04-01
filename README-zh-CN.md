@@ -31,6 +31,7 @@ CodeTok 是一个创新的 AI项目 和代码应用的分享平台。它基于 N
   - Tailwind CSS 3.4.4
 - **组件库**: 
   - Shadcn UI
+  - MagicUI Design
   - Radix UI (Primitives)
 - **构建工具**:
   - Vite 5.2.13

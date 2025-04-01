@@ -72,7 +72,7 @@ export default function LoginPage() {
               <>
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold mb-1">
-                    {locale === 'zh-cn' ? '登录到VibeTok' : 'Login to VibeTok'}
+                    {locale === 'zh-cn' ? '登录到CodeTok' : 'Login to CodeTok'}
                   </h2>
                   <p className="text-gray-600 text-sm">
                     {locale === 'zh-cn' 

@@ -79,8 +79,8 @@ export default function ProjectImportPage() {
           </h2>
           <p className="mb-6 text-green-600">
             {locale === 'zh-cn' 
-              ? '项目已成功添加到VibeTok平台'
-              : 'The project has been added to the VibeTok platform'}
+              ? '项目已成功添加到CodeTok平台'
+              : 'The project has been added to the CodeTok platform'}
           </p>
           <div className="flex justify-center gap-4">
             <Link 
@@ -179,7 +179,7 @@ export default function ProjectImportPage() {
                       {locale === 'zh-cn' ? '导入中...' : 'Importing...'}
                     </span>
                   ) : (
-                    locale === 'zh-cn' ? '导入到VibeTok' : 'Import to VibeTok'
+                    locale === 'zh-cn' ? '导入到CodeTok' : 'Import to CodeTok'
                   )}
                 </button>
               </div>
@@ -240,8 +240,8 @@ export default function ProjectImportPage() {
               </div>
               <p>
                 {locale === 'zh-cn'
-                  ? '只有公开可访问且允许嵌入的网站才能被导入。某些功能可能在VibeTok平台上受限。'
-                  : 'Only publicly accessible websites that allow embedding can be imported. Some features may be limited on the VibeTok platform.'}
+                  ? '只有公开可访问且允许嵌入的网站才能被导入。某些功能可能在CodeTok平台上受限。'
+                  : 'Only publicly accessible websites that allow embedding can be imported. Some features may be limited on the CodeTok platform.'}
               </p>
             </div>
           </div>

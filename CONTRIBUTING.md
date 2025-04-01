@@ -1,8 +1,8 @@
-# Contributing to Vibetok
+# Contributing to CodeTok
 
 [简体中文](./CONTRIBUTING-zh-CN.md) | English
 
-Thank you for your interest in contributing to Vibetok, an innovative AI project and code application sharing platform! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to CodeTok, an innovative AI project and code application sharing platform! This document provides guidelines and instructions for contributing to the project.
 
 ## 📋 Table of Contents
 
@@ -23,12 +23,12 @@ Please read and follow our [Code of Conduct](./CODE_OF_CONDUCT.md). We expect al
 1. Fork the repository on GitHub
 2. Clone your fork locally
    ```bash
-   git clone https://github.com/YOUR-USERNAME/Vibetok.git
-   cd Vibetok
+   git clone https://github.com/YOUR-USERNAME/CodeTok.git
+   cd CodeTok
    ```
 3. Add the upstream repository as a remote
    ```bash
-   git remote add upstream https://github.com/Vibetok-ai/Vibetok.git
+   git remote add upstream https://github.com/CodeTok-ai/CodeTok.git
    ```
 4. Keep your fork in sync with the upstream repository
    ```bash
@@ -137,7 +137,7 @@ We follow a branch-based development workflow:
 
 If you find a bug or have a feature request:
 
-1. Check if the issue already exists in the [Issues](https://github.com/Vibetok-ai/Vibetok/issues) section
+1. Check if the issue already exists in the [Issues](https://github.com/CodeTok-ai/CodeTok/issues) section
 2. If not, create a new issue using the appropriate template
 3. Provide detailed information:
    - For bugs: steps to reproduce, expected behavior, actual behavior, screenshots
@@ -145,4 +145,4 @@ If you find a bug or have a feature request:
 
 ---
 
-Thank you for contributing to Vibetok! Your help makes this project better for everyone.
+Thank you for contributing to CodeTok! Your help makes this project better for everyone.

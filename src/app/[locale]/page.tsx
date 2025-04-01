@@ -49,13 +49,15 @@ export default function IndexPage() {
       <div className="mb-8">
         <Image 
           src="/favicon.png" 
-          alt="VibeTok Logo" 
+          alt="CodeTok Logo" 
           width={96}
           height={96}
           className="mx-auto"
         />
       </div>
-      <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+      <h1 className="text-3xl font-bold mb-4">
+        CodeTok
+      </h1>
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       <p className="mt-4 text-muted-foreground">
         {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}

@@ -32,8 +32,8 @@ export async function generateMetadata({
   
   // Set different title formats based on locale
   const pageTitle = locale === 'zh-cn' 
-    ? 'VibeTok - 分享AI项目，连接美好世界' 
-    : 'VibeTok - Sharing AI Projects To Connect A Better World';
+    ? 'CodeTok - 分享AI作品，连接美好世界' 
+    : 'CodeTok - Sharing AI Projects To Connect A Better World';
   
   return {
     title: {

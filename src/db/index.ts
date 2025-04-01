@@ -71,7 +71,7 @@ const mockProjects = [
     updated_at: new Date(),
     external_url: 'https://character-sample-project.netlify.app/',
     external_embed: true,
-    external_author: 'VibeTok Sample',
+    external_author: 'CodeTok Sample',
     type: 'external'
   }
 ];

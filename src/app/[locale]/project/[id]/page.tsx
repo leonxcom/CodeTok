@@ -635,12 +635,14 @@ ${content}
                     <div className="mb-8">
                       <Image 
                         src="/favicon.png" 
-                        alt="VibeTok Logo" 
+                        alt="CodeTok Logo" 
                         width={96} 
                         height={96}
                       />
                     </div>
-                    <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                    <h1 className="text-3xl font-bold mb-4">
+                      CodeTok
+                    </h1>
                     <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
                     <p className="mt-4 text-muted-foreground">
                       {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}
@@ -652,7 +654,7 @@ ${content}
                   <div className="mb-8">
                     <Image 
                       src="/favicon.png" 
-                      alt="VibeTok Logo" 
+                      alt="CodeTok Logo" 
                       width={96} 
                       height={96}
                       className="mx-auto grayscale opacity-50"
@@ -682,13 +684,15 @@ ${content}
                             <div className="mb-8">
                               <Image 
                                 src="/favicon.png" 
-                                alt="VibeTok Logo" 
+                                alt="CodeTok Logo" 
                                 width={96} 
                                 height={96}
                                 className="mx-auto"
                               />
                             </div>
-                            <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                            <h1 className="text-3xl font-bold mb-4">
+                              CodeTok
+                            </h1>
                             <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
                             <p className="mt-4 text-muted-foreground">
                               {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
@@ -701,13 +705,15 @@ ${content}
                           <div className="mb-8">
                             <Image 
                               src="/favicon.png" 
-                              alt="VibeTok Logo" 
+                              alt="CodeTok Logo" 
                               width={96} 
                               height={96}
                               className="mx-auto grayscale opacity-50"
                             />
                           </div>
-                          <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                          <h1 className="text-3xl font-bold mb-4">
+                            CodeTok
+                          </h1>
                           <div className="text-red-500 mb-4">{iframeError}</div>
                           <div className="flex gap-4">
                             <Button onClick={refreshIframe}>
@@ -801,7 +807,7 @@ ${content}
           <div className="mb-8">
             <Image 
               src="/favicon.png" 
-              alt="VibeTok Logo" 
+              alt="CodeTok Logo" 
               width={96} 
               height={96}
               className="mx-auto grayscale opacity-50"
@@ -864,12 +870,14 @@ ${content}
                   <div className="mb-8">
                     <Image 
                       src="/favicon.png" 
-                      alt="VibeTok Logo" 
+                      alt="CodeTok Logo" 
                       width={96} 
                       height={96}
                     />
                   </div>
-                  <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                  <h1 className="text-3xl font-bold mb-4">
+                    CodeTok
+                  </h1>
                   <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
                   <p className="mt-4 text-muted-foreground">
                     {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}
@@ -881,7 +889,7 @@ ${content}
                 <div className="mb-8">
                   <Image 
                     src="/favicon.png" 
-                    alt="VibeTok Logo" 
+                    alt="CodeTok Logo" 
                     width={96} 
                     height={96}
                     className="mx-auto grayscale opacity-50"
@@ -911,13 +919,15 @@ ${content}
                           <div className="mb-8">
                             <Image 
                               src="/favicon.png" 
-                              alt="VibeTok Logo" 
+                              alt="CodeTok Logo" 
                               width={96} 
                               height={96}
                               className="mx-auto"
                             />
                           </div>
-                          <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                          <h1 className="text-3xl font-bold mb-4">
+                            CodeTok
+                          </h1>
                           <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
                           <p className="mt-4 text-muted-foreground">
                             {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
@@ -930,13 +940,15 @@ ${content}
                         <div className="mb-8">
                           <Image 
                             src="/favicon.png" 
-                            alt="VibeTok Logo" 
+                            alt="CodeTok Logo" 
                             width={96} 
                             height={96}
                             className="mx-auto grayscale opacity-50"
                           />
                         </div>
-                        <h1 className="text-3xl font-bold mb-4">VibeTok</h1>
+                        <h1 className="text-3xl font-bold mb-4">
+                          CodeTok
+                        </h1>
                         <div className="text-red-500 mb-4">{iframeError}</div>
                         <div className="flex gap-4">
                           <Button onClick={refreshIframe}>

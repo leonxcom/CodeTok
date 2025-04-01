@@ -1,12 +1,12 @@
-# Vibetok 开发指南
+# CodeTok 开发指南
 
 ## 项目概述
 
-Vibetok 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
+CodeTok 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
 
 ## MVP 开发优先级
 
-以下是 Vibetok 最小可行产品(MVP)版本的优先开发领域，按重要性排序：
+以下是 CodeTok 最小可行产品(MVP)版本的优先开发领域，按重要性排序：
 
 ### 1. 核心功能完善与稳定 (高优先级)
 
@@ -154,7 +154,7 @@ Vibetok 是一个创新的 AI项目 和代码应用的分享平台。它基于 N
 ## 目录结构
 
 ```
-Vibetok/
+CodeTok/
 ├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # 国际化路由
 │   ├── api/                 # API路由

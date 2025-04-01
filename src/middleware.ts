@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
     // Check if using a subdomain for code sharing
     const subdomain = hostname.split('.')[0]
     
-    if (hostname !== 'vibetok.app' && hostname.endsWith('vibetok.app')) {
+    if (hostname !== 'codetok.app' && hostname.endsWith('codetok.app')) {
       // Rewrite the URL to the project page
       url.pathname = `/project/${subdomain}`
       console.log('[Middleware] Subdomain detected, rewriting to:', url.pathname);

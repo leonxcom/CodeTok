@@ -67,7 +67,7 @@ async function createNewProject() {
     likes: 0,
     externalUrl: targetUrl,
     externalEmbed: true,  // 设置为true，允许嵌入
-    externalAuthor: 'VibeTok Sample',
+    externalAuthor: 'CodeTok Sample',
     createdAt: currentDate,
     updatedAt: currentDate
   };

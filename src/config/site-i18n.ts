@@ -13,32 +13,32 @@ type SiteConfig = {
 
 const siteConfigBase: Record<Locale, SiteConfig> = {
   en: {
-    name: "VibeTok",
-    description: "Vibetok is an innovative platform for sharing AI projects and code applications, integrating Next.js, Tailwind CSS, ShadcnUI, designed for efficient, customizable, and multilingual project development.",
+    name: "CodeTok",
+    description: "CodeTok is an innovative platform for sharing AI projects and code applications, integrating Next.js, Tailwind CSS, ShadcnUI, designed for efficient, customizable, and multilingual project development.",
     mainNav: [],
     links: {
       twitter: "https://twitter.com/leonzeng2024",
-      github: "https://github.com/leohuangbest/vibetok",
+      github: "https://github.com/leohuangbest/codetok",
       docs: "/docs",
     },
   },
   "zh-cn": {
-    name: "VibeTok",
-    description: "Vibetok 是一个创新的AI项目和代码应用分享平台，集成了Next.js、Tailwind CSS和ShadcnUI，旨在高效开发可定制的多语言项目。",
+    name: "CodeTok",
+    description: "CodeTok 是一个创新的AI项目和代码应用分享平台，集成了Next.js、Tailwind CSS和ShadcnUI，旨在高效开发可定制的多语言项目。",
     mainNav: [],
     links: {
       twitter: "https://twitter.com/leonzeng2024",
-      github: "https://github.com/leohuangbest/vibetok",
+      github: "https://github.com/leohuangbest/codetok",
       docs: "/docs",
     },
   },
   fr: {
-    name: "VibeTok",
-    description: "Vibetok est une plateforme innovante pour le partage de projets d'IA et d'applications de code, intégrant Next.js, Tailwind CSS et ShadcnUI, conçue pour un développement efficace de projets personnalisables et multilingues.",
+    name: "CodeTok",
+    description: "CodeTok est une plateforme innovante pour le partage de projets d'IA et d'applications de code, intégrant Next.js, Tailwind CSS et ShadcnUI, conçue pour un développement efficace de projets personnalisables et multilingues.",
     mainNav: [],
     links: {
       twitter: "https://twitter.com/leonzeng2024",
-      github: "https://github.com/leohuangbest/vibetok",
+      github: "https://github.com/leohuangbest/codetok",
       docs: "/docs",
     },
   },

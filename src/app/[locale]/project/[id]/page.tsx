@@ -499,24 +499,30 @@ ${content}
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
             {/* 上滑按钮 */}
             <button 
-              className="w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+              className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
               aria-label={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
               onClick={handleRandomProject}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="18 15 12 9 6 15"></polyline>
               </svg>
+              <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
+              </span>
             </button>
             
             {/* 下滑按钮 */}
             <button 
-              className="w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
+              className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
               aria-label={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
               onClick={handleNextProject}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
+              <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                {locale === 'zh-cn' ? '下一个项目' : 'Next project'}
+              </span>
             </button>
           </div>
           

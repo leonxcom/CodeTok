@@ -126,7 +126,7 @@ export function SideNav() {
       </SheetTrigger>
       <SheetContent 
         side="left" 
-        className="border-r bg-background text-foreground border-border w-64"
+        className="border-r bg-background text-foreground border-border w-64 flex flex-col"
       >
         <SheetTitle className="sr-only">
           {locale === "zh-cn" ? "导航菜单" : "Navigation Menu"}
@@ -172,11 +172,14 @@ export function SideNav() {
           ))}
         </div>
         
+        {/* 填充空间 */}
+        <div className="flex-grow"></div>
+        
         {/* 分割线 */}
-        <div className="border-t my-2 border-border"></div>
+        <div className="border-t border-border mt-2"></div>
         
         {/* 设置区域 */}
-        <div className="px-3 mb-2">
+        <div className="px-3 mt-2">
           <h3 className="text-xs font-medium mb-1.5 text-foreground">
             {locale === "zh-cn" ? "主题: 跟随系统" : "Theme: Follow System"}
           </h3>
@@ -217,7 +220,7 @@ export function SideNav() {
         </div>
         
         {/* 语言切换 */}
-        <div className="flex items-center justify-between py-1.5 px-3">
+        <div className="flex items-center justify-between py-1.5 px-3 mb-2">
           <div className="flex items-center gap-1.5">
             <Languages className="h-4 w-4" />
             <span className="text-sm">{locale === "zh-cn" ? "语言切换" : "Language"}</span>

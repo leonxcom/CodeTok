@@ -14,6 +14,15 @@ Below are the prioritized development areas for the Minimum Viable Product (MVP)
    - Enhance reliability testing for random project redirection
    - Optimize performance for project display pages, especially for external embedded projects
    - Implement project filtering and categorization features to allow users to browse projects by type/tags
+   - **TikTok-style browsing experience** with up/down navigation and intelligent recommendations
+     - Down button/swipe: Show next recommended project based on current project attributes
+     - Up button/swipe: Navigate back to previously viewed projects using browsing history
+     - Client-side history tracking with sessionStorage for persistence
+     - Server-side recommendation API that considers project type, similarity, and popularity
+   - **Enhanced home page loading experience** with client-side redirection
+     - Visual loading indicator showing brand elements
+     - Improved error handling and fallback mechanism
+     - Elimination of NEXT_REDIRECT errors in development console
 
 2. **User Authentication System**
    - Implement basic user registration/login functionality

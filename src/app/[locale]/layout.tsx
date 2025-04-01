@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import { SiteHeader } from '@/components/site-header'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -31,8 +32,8 @@ export async function generateMetadata({
   
   // Set different title formats based on locale
   const pageTitle = locale === 'zh-cn' 
-    ? 'VibeTok - 分享AI项目，连接美好世界！' 
-    : 'VibeTok - Sharing AI projects to connect a better world!';
+    ? 'VibeTok - 分享AI项目，连接美好世界' 
+    : 'VibeTok - Sharing AI Projects To Connect A Better World';
   
   return {
     title: {
@@ -84,6 +85,7 @@ export default async function RootLayout({
               <div className="flex-1">{children}</div>
             </div>
             <TailwindIndicator />
+            <Toaster />
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

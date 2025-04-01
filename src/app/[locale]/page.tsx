@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { Locale } from '../../../i18n/config';
+import Image from 'next/image';
 
 /**
  * Homepage component - Always redirects to a random project
@@ -46,10 +47,12 @@ export default function IndexPage() {
   return (
     <div className="flex items-center justify-center min-h-screen flex-col">
       <div className="mb-8">
-        <img 
+        <Image 
           src="/favicon.png" 
           alt="VibeTok Logo" 
-          className="w-24 h-24 rounded-lg shadow-lg" 
+          width={96}
+          height={96}
+          className="mx-auto"
         />
       </div>
       <h1 className="text-3xl font-bold mb-4">VibeTok</h1>

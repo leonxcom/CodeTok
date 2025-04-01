@@ -25,7 +25,7 @@ export default function ProjectError({
   
   return (
     <div className="flex h-screen items-center justify-center p-4">
-      <div className="text-center max-w-md p-6 bg-white rounded-lg shadow-lg">
+      <div className="text-center max-w-md p-6 bg-white">
         <h1 className="text-2xl font-bold text-red-500 mb-4">
           {isZhCN ? '加载项目时出错' : 'Error Loading Project'}
         </h1>

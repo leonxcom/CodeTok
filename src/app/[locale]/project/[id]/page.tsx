@@ -407,10 +407,10 @@ ${content}
   if (isLoading && !basicInfoLoaded) {
     return (
       <div className="flex flex-col h-screen">
-        {/* 主体内容 - 左右7:3布局 */}
+        {/* 主体内容 - 左右8:2布局 */}
         <div className="flex flex-1 overflow-hidden">
-          {/* 左侧主内容区 (70%) - 保持白色背景 */}
-          <div className="w-[70%] flex flex-col relative overflow-hidden bg-white">
+          {/* 左侧主内容区 (80%) - 保持白色背景 */}
+          <div className="w-4/5 flex flex-col relative overflow-hidden bg-white">
             <div className="flex h-screen items-center justify-center">
               <div className="text-center">
                 <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
@@ -419,8 +419,8 @@ ${content}
             </div>
           </div>
           
-          {/* 右侧交互区 (30%) - 在加载阶段也显示框架 */}
-          <div className="w-[30%] border-l border-gray-800 bg-black flex flex-col">
+          {/* 右侧交互区 (20%) - 在加载阶段也显示框架 */}
+          <div className="w-1/5 border-l border-gray-800 bg-black flex flex-col">
             {/* 项目信息区 */}
             <div className="p-4 border-b border-gray-800">
               <div className="h-6 bg-gray-800 rounded w-3/4 mb-3"></div>
@@ -440,8 +440,15 @@ ${content}
               <div className="w-full bg-gray-800 border border-gray-700 rounded-md h-8"></div>
             </div>
             
-            {/* 主要功能按钮区域 - 清空内容，只保留分割线 */}
-            <div className="border-b border-gray-800">
+            {/* 主要功能按钮区 */}
+            <div className="p-4 border-b border-gray-800">
+              <div className="flex flex-col gap-3">
+                {/* 随机项目按钮 */}
+                <div className="h-10 bg-gray-800 border border-gray-700 rounded-md"></div>
+                
+                {/* 切换代码/预览按钮 */}
+                <div className="h-10 bg-gray-800 border border-gray-700 rounded-md"></div>
+              </div>
             </div>
             
             {/* 交互按钮区 */}
@@ -484,10 +491,10 @@ ${content}
   
   return (
     <div className="flex flex-col h-screen">
-      {/* 主体内容 - 左右7:3布局 */}
+      {/* 主体内容 - 左右8:2布局 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* 左侧主内容区 (70%) - 保持白色背景 */}
-        <div className="w-[70%] flex flex-col relative overflow-hidden bg-white">
+        {/* 左侧主内容区 (80%) - 保持白色背景 */}
+        <div className="w-4/5 flex flex-col relative overflow-hidden bg-white">
           {/* 上下滑动按钮 - TikTok风格 */}
           <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3 items-center">
             {/* 上滑按钮 */}
@@ -643,8 +650,8 @@ ${content}
           )}
         </div>
         
-        {/* 右侧交互区 (30%) - 保持深色背景，一旦有基本数据就显示 */}
-        <div className="w-[30%] border-l border-gray-800 bg-black flex flex-col">
+        {/* 右侧交互区 (20%) - 保持深色背景，一旦有基本数据就显示 */}
+        <div className="w-1/5 border-l border-gray-800 bg-black flex flex-col">
           {/* 项目信息区 */}
           <div className="p-4 border-b border-gray-800">
             {projectData?.title && (

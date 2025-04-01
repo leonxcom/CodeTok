@@ -231,27 +231,68 @@ export default function ProjectPage() {
   // 预加载下一个推荐项目的数据
   const prefetchNextProject = async () => {
     try {
-      // 使用 fetchPriority 降低此请求的优先级，不干扰当前页面加载
-      const response = await fetch(`/api/projects/recommend?currentId=${projectId}`, {
-        priority: 'low',
-      } as RequestInit) // 使用类型断言
-      
-      // 只预取数据但不会处理，以便将其缓存在浏览器中
-      if (response.ok) {
-        const data = await response.json()
-        
-        // 预加载项目页面
-        const nextPageUrl = `/${locale}/project/${data.projectId}`
-        const link = document.createElement('link')
-        link.rel = 'prefetch'
-        link.href = nextPageUrl
-        document.head.appendChild(link)
+      // 只有当没有正在加载时才预载
+      if (!isLoading) {
+        const response = await fetch(`/api/projects/recommend?currentId=${projectId}`);
+        if (response.ok) {
+          // 预载成功，但不设置到状态
+          console.log('预载下一个项目成功');
+        }
       }
-    } catch (error) {
-      // 静默失败，这只是优化
-      console.warn('Error prefetching next project:', error)
+    } catch (e) {
+      // 静默失败，这只是预载
+      console.log('预载失败，但这不会影响用户体验');
     }
   }
+  
+  // 添加iframe加载超时处理
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+    
+    if (shouldLoadIframe && !iframeLoaded && !iframeError) {
+      // 设置10秒超时
+      timeoutId = setTimeout(() => {
+        if (!iframeLoaded) {
+          setIframeError(locale === 'zh-cn' ? '加载超时，请点击重试' : 'Loading timeout, please retry');
+          setIsLoading(false);
+        }
+      }, 10000);
+    }
+    
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [shouldLoadIframe, iframeLoaded, iframeError, locale]);
+  
+  // 添加全局加载超时保护
+  useEffect(() => {
+    let globalTimeoutId: NodeJS.Timeout | null = null;
+    
+    if (isLoading) {
+      // 设置15秒全局加载超时
+      globalTimeoutId = setTimeout(() => {
+        if (isLoading) {
+          setIsLoading(false);
+          console.error('项目加载超时');
+          
+          // 如果没有任何错误信息，添加一个
+          if (!error) {
+            setError(locale === 'zh-cn' 
+              ? '加载超时，请刷新页面或尝试访问其他项目' 
+              : 'Loading timeout, please refresh or try another project');
+          }
+        }
+      }, 15000);
+    }
+    
+    return () => {
+      if (globalTimeoutId) {
+        clearTimeout(globalTimeoutId);
+      }
+    };
+  }, [isLoading, locale, error]);
   
   // 渲染加载状态的骨架屏
   const renderSkeleton = () => {
@@ -346,6 +387,11 @@ export default function ProjectPage() {
   // 更新的上滑/上箭头函数 - 返回到历史项目
   const handlePreviousProject = async () => {
     try {
+      // 重置iframe状态
+      setIframeLoaded(false);
+      setIframeError(null);
+      setShouldLoadIframe(false);
+      
       // 检查是否有历史可以回退
       if (historyPosition > 0) {
         // 有历史可回退
@@ -382,6 +428,11 @@ export default function ProjectPage() {
     try {
       // 先显示加载状态，同时保留当前页面
       setIsLoading(true);
+      
+      // 重置iframe状态
+      setIframeLoaded(false);
+      setIframeError(null);
+      setShouldLoadIframe(false);
       
       // 调用推荐API
       const response = await fetch(`/api/projects/recommend?currentId=${projectId}`);
@@ -706,22 +757,48 @@ ${content}
           </div>
           
           {isExternalProject ? (
-            <div className="w-full h-full relative">
-              {/* 显示加载占位符 */}
-              {!shouldLoadIframe && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                  <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p>{locale === 'zh-cn' ? '加载中...' : 'Loading...'}</p>
+            <div className="w-full h-full relative flex items-center justify-center">
+              {/* 显示加载状态 */}
+              {(!shouldLoadIframe || (!iframeLoaded && !iframeError)) && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                  <div className="text-sm text-gray-600">
+                    {locale === 'zh-cn' ? '加载中...' : 'Loading...'}
                   </div>
                 </div>
               )}
               
-              {/* 延迟加载ExternalEmbed组件 */}
+              {/* 显示错误状态 */}
+              {iframeError && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
+                  <div className="text-red-500 mb-2">{iframeError}</div>
+                  <div className="flex space-x-4">
+                    <button 
+                      onClick={refreshIframe}
+                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                    >
+                      {locale === 'zh-cn' ? '重试' : 'Retry'}
+                    </button>
+                    <button 
+                      onClick={() => window.open(projectData?.externalUrl || '', '_blank')}
+                      className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                    >
+                      {locale === 'zh-cn' ? '在新窗口打开' : 'Open in new window'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* 延迟加载iframe */}
               {shouldLoadIframe && (
-                <ExternalEmbed 
-                  url={projectData?.externalUrl || ''} 
-                  locale={locale} 
+                <iframe
+                  id="external-project-iframe"
+                  src={previewUrl}
+                  className="w-full h-full border-0"
+                  title="Code Preview"
+                  onLoad={handleIframeLoad}
+                  onError={handleIframeError}
+                  sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
                 />
               )}
             </div>
@@ -748,23 +825,47 @@ ${content}
               
               {showingFrame && projectData?.mainFile?.endsWith('.html') ? (
                 // 普通HTML项目预览
-                <div className="w-full h-full relative">
-                  {/* 显示加载占位符 */}
-                  {!shouldLoadIframe && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                      <div className="text-center">
-                        <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
-                        <p>{locale === 'zh-cn' ? '加载中...' : 'Loading...'}</p>
+                <div className="w-full h-full relative flex items-center justify-center">
+                  {/* 显示加载状态 */}
+                  {(!shouldLoadIframe || (!iframeLoaded && !iframeError)) && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                      <div className="text-sm text-gray-600">
+                        {locale === 'zh-cn' ? '加载中...' : 'Loading...'}
                       </div>
                     </div>
                   )}
                   
+                  {/* 显示错误状态 */}
+                  {iframeError && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
+                      <div className="text-red-500 mb-2">{iframeError}</div>
+                      <div className="flex space-x-4">
+                        <button 
+                          onClick={refreshIframe}
+                          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                        >
+                          {locale === 'zh-cn' ? '重试' : 'Retry'}
+                        </button>
+                        <button 
+                          onClick={() => window.open(projectData?.externalUrl || '', '_blank')}
+                          className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                        >
+                          {locale === 'zh-cn' ? '在新窗口打开' : 'Open in new window'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* 延迟加载iframe */}
                   {shouldLoadIframe && (
                     <iframe
+                      id="external-project-iframe"
                       src={previewUrl}
                       className="w-full h-full border-0"
                       title="Code Preview"
+                      onLoad={handleIframeLoad}
+                      onError={handleIframeError}
                       sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-pointer-lock"
                     />
                   )}

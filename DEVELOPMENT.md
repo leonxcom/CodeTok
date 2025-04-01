@@ -4,6 +4,62 @@
 
 CodeTok is an innovative AI project and code application sharing platform. It is built with Next.js, uses TypeScript as the development language, and integrates multiple UI component libraries to provide a rich user interface experience.
 
+## Project Architecture
+
+CodeTok follows a modular architecture design, which separates different functional aspects into distinct modules. This approach enhances maintainability, scalability, and collaboration among developers.
+
+### Core Functional Modules
+
+1. **Core Framework Module**
+   - Next.js 15 App Router architecture
+   - UI component system (Shadcn UI + Tailwind CSS)
+   - Theme system (dark/light mode)
+   - Global error handling and layouts
+
+2. **Internationalization & Localization Module**
+   - Multi-language routing system ([locale] dynamic routes)
+   - Translation resource management
+   - Language detection and switching
+   - Localized content configuration
+
+3. **User Authentication & Account System**
+   - Login/Registration functionality
+   - OAuth integration (GitHub, Google)
+   - User profile management
+   - Session and permission control
+
+4. **Content Discovery & Social Interaction Module**
+   - Recommendation system (For You)
+   - Content discovery features (Discover)
+   - Following system (Activity)
+   - Comments and interaction features
+
+5. **Project Management & Display Module**
+   - Project detail presentation
+   - Project creation and editing
+   - Code display and execution
+   - External project embedding
+
+6. **One-Click Deployment Module**
+   - Multi-platform deployment integration (Vercel, Netlify, GitHub Pages)
+   - Deployment template system
+   - Environment variable management
+   - Deployment status tracking
+
+7. **Data Storage & API Module**
+   - Database integration and model definitions
+   - RESTful API design
+   - Data migration and backup tools
+   - Query and filtering system
+
+8. **Developer Tools Module**
+   - Code editor
+   - GitHub import tools
+   - File upload system
+   - Environment configuration tools
+
+This modular architecture allows CodeTok to function both as a content platform and a developer tool platform, with modules working together while maintaining independence for maintainability and extensibility.
+
 ## MVP Development Priorities
 
 Below are the prioritized development areas for the Minimum Viable Product (MVP) version of CodeTok, arranged by importance:

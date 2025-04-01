@@ -1,8 +1,8 @@
-# Vibetok - 一个创新的AI项目和代码应用的分享平台
+# CodeTok - 一个创新的AI项目和代码应用的分享平台
 
 简体中文 | [English](./README.md)
 
-Vibetok 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
+CodeTok 是一个创新的 AI项目 和代码应用的分享平台。它基于 Next.js 构建，采用了 TypeScript 作为开发语言，并集成了多个 UI 组件库来提供丰富的用户界面体验。
 
 ## 📑 目录
 
@@ -79,7 +79,7 @@ Vibetok 是一个创新的 AI项目 和代码应用的分享平台。它基于 N
 ### 系统架构
 
 ```
-Vibetok/
+CodeTok/
 ├── app/                      # Next.js 15 App Router
 │   ├── [locale]/            # 国际化路由
 │   ├── api/                 # API路由
@@ -188,7 +188,7 @@ Vibetok/
 使用 `create-next-app` 基于此模板创建新项目，运行以下命令：
 
 ```bash
-pnpm create next-app -e https://github.com/leohuangbest/vibetok
+pnpm create next-app -e https://github.com/leohuangbest/codetok
 ```
 
 ### 安装依赖

@@ -23,13 +23,13 @@ const getRandomProject = async (): Promise<Project> => {
   // Mock data for demonstration
   return {
     id: 'example-project',
-    title: 'Welcome to Vibetok',
+    title: 'Welcome to CodeTok',
     description: 'A code sharing platform without login requirements',
     codeFiles: [
       {
         id: '1',
         filename: 'index.html',
-        content: '<!DOCTYPE html>\n<html>\n<head>\n  <title>Example</title>\n</head>\n<body>\n  <h1>Welcome to Vibetok</h1>\n  <p>Share your code with the world!</p>\n</body>\n</html>',
+        content: '<!DOCTYPE html>\n<html>\n<head>\n  <title>Example</title>\n</head>\n<body>\n  <h1>Welcome to CodeTok</h1>\n  <p>Share your code with the world!</p>\n</body>\n</html>',
         language: 'html',
         isEntryPoint: true
       }
@@ -74,7 +74,7 @@ export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Vibetok</h1>
+        <h1 className="text-3xl font-bold">CodeTok</h1>
         <div className="flex space-x-4">
           <Link 
             href="/upload" 

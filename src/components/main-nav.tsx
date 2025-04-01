@@ -24,14 +24,19 @@ export function MainNav({ items, locale }: MainNavProps) {
       <Link href="/" className="flex items-center gap-2">
         <Image 
           src="/favicon.png" 
-          alt="VibeTok Logo" 
+          alt="CodeTok Logo" 
           width={36} 
           height={36} 
           className="rounded-sm"
         />
-        <h1 className="text-2xl font-bold text-foreground">
-          {siteConfig.name}
-        </h1>
+        <div className="flex items-center">
+          <h1 className="text-2xl font-bold text-foreground">
+            {siteConfig.name}
+          </h1>
+          <span className="ml-2 text-xs px-1.5 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-md font-medium">
+            Beta
+          </span>
+        </div>
       </Link>
       {items?.length ? (
         <nav className="flex gap-6">

@@ -7,5 +7,5 @@ if [ ! -d "node_modules" ]; then
 fi
 
 # 启动开发服务器
-echo "启动 VibeTok 开发服务器..."
+echo "启动 CodeTok 开发服务器..."
 pnpm dev 

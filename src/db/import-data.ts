@@ -37,7 +37,7 @@ async function importData() {
     // 确定目标URL
     let targetUrl = 'http://localhost:3000/api/db-import';
     if (targetEnv === 'production') {
-      targetUrl = 'https://vibetok.vercel.app/api/db-import';
+      targetUrl = 'https://codetok.vercel.app/api/db-import';
     }
     console.log(`导入数据到: ${targetUrl}`);
 

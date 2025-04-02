@@ -47,24 +47,48 @@ export async function GET(
     let hasTsxFiles = false
     
     if (project.files) {
-      const projectFiles = project.files as ProjectFile[]
-      files = projectFiles.map((file: ProjectFile) => file.pathname)
+      // 解析项目文件数据，确保正确处理各种格式
+      let projectFiles: any[] = [];
       
-      // 检测是否包含TSX文件
-      hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'))
-      
-      // 获取主文件内容
-      const mainFile = projectFiles.find(file => file.pathname === project.main_file)
-      
-      if (mainFile) {
+      if (Array.isArray(project.files)) {
+        // 如果已经是数组，直接使用
+        projectFiles = project.files;
+      } else if (typeof project.files === 'string') {
+        // 如果是JSON字符串，尝试解析
         try {
-          const response = await fetch(mainFile.url)
-          if (response.ok) {
-            mainFileContent = await response.text()
+          const parsedFiles = JSON.parse(project.files);
+          if (Array.isArray(parsedFiles)) {
+            projectFiles = parsedFiles;
+          } else {
+            console.error('项目文件格式错误 (解析后不是数组):', project.files);
           }
         } catch (error) {
-          console.error(`获取主文件内容失败 ${mainFile.pathname}:`, error)
-          mainFileContent = `// Error loading content: ${error instanceof Error ? error.message : 'Unknown error'}`
+          console.error('解析项目文件失败:', error);
+        }
+      } else {
+        console.error('未知的项目文件格式:', typeof project.files);
+      }
+      
+      // 如果成功解析了文件数组，继续处理
+      if (projectFiles.length > 0) {
+        files = projectFiles.map((file: any) => file.pathname);
+        
+        // 检测是否包含TSX文件
+        hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'));
+        
+        // 获取主文件内容
+        const mainFile = projectFiles.find(file => file.pathname === project.main_file);
+        
+        if (mainFile) {
+          try {
+            const response = await fetch(mainFile.url);
+            if (response.ok) {
+              mainFileContent = await response.text();
+            }
+          } catch (error) {
+            console.error(`获取主文件内容失败 ${mainFile.pathname}:`, error);
+            mainFileContent = `// Error loading content: ${error instanceof Error ? error.message : 'Unknown error'}`;
+          }
         }
       }
     }

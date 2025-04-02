@@ -1,6 +1,7 @@
 "use client"
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useTheme } from "next-themes"
 import { getSiteConfig } from '@/config/site-i18n'
 import { Button } from '@/components/ui/button'
@@ -22,7 +23,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
         <div className="flex items-center gap-4">
           <SideNav />
           <Link href={`/${locale}`} className="flex items-center gap-2">
-            <img src="/favicon.png" alt="Logo" className="h-6 w-6" />
+            <Image src="/favicon.png" alt="Logo" width={24} height={24} />
             <span className="font-bold hidden md:inline">CodeTok</span>
           </Link>
         </div>

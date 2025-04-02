@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 
 type Props = {
   error: Error
@@ -8,9 +8,13 @@ type Props = {
 }
 
 export default function Error({ error, reset }: Props) {
-  useEffect(() => {
+  const logError = useCallback(() => {
     console.error(error)
   }, [error])
+
+  useEffect(() => {
+    logError()
+  }, [logError])
 
   return <div>not found</div>
 }

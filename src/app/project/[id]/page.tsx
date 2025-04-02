@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
@@ -54,32 +54,32 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true)
   const [activeFile, setActiveFile] = useState<string | null>(null)
   
-  useEffect(() => {
-    const loadProject = async () => {
-      try {
-        setLoading(true)
-        const data = await fetchProject(params.id)
-        
-        if (!data) {
-          notFound()
-          return
-        }
-        
-        setProject(data)
-        // Set active file to main file or first file
-        setActiveFile(data.mainFile || data.files[0] || null)
-        // Increment view count
-        incrementViewCount(params.id)
-      } catch (error) {
-        console.error('Failed to load project:', error)
+  const loadProject = useCallback(async () => {
+    try {
+      setLoading(true)
+      const data = await fetchProject(params.id)
+      
+      if (!data) {
         notFound()
-      } finally {
-        setLoading(false)
+        return
       }
+      
+      setProject(data)
+      // Set active file to main file or first file
+      setActiveFile(data.mainFile || data.files[0] || null)
+      // Increment view count
+      incrementViewCount(params.id)
+    } catch (error) {
+      console.error('Failed to load project:', error)
+      notFound()
+    } finally {
+      setLoading(false)
     }
-    
+  }, [params.id, setLoading, setProject, setActiveFile])
+  
+  useEffect(() => {
     loadProject()
-  }, [params.id])
+  }, [loadProject])
   
   if (loading) {
     return (

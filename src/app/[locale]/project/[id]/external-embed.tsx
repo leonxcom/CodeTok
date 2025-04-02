@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Locale } from '../../../../../i18n/config'
 
 interface ExternalEmbedProps {
@@ -13,7 +13,7 @@ export default function ExternalEmbed({ url, locale }: ExternalEmbedProps) {
   const [error, setError] = useState<string | null>(null)
   const [showLoadSuccess, setShowLoadSuccess] = useState(false)
   
-  const handleIframeLoad = () => {
+  const handleIframeLoad = useCallback(() => {
     console.log('iframe加载成功:', url)
     setIframeLoaded(true)
     setShowLoadSuccess(true)
@@ -23,16 +23,16 @@ export default function ExternalEmbed({ url, locale }: ExternalEmbedProps) {
     setTimeout(() => {
       setShowLoadSuccess(false)
     }, 2000)
-  }
+  }, [url, setIframeLoaded, setShowLoadSuccess, setError])
   
-  const handleIframeError = () => {
+  const handleIframeError = useCallback(() => {
     console.log('iframe加载失败:', url)
     setError(locale === 'zh-cn' ? '无法加载iframe内容' : 'Failed to load iframe content')
     setIframeLoaded(false)
     setShowLoadSuccess(false)
-  }
+  }, [url, locale, setError, setIframeLoaded, setShowLoadSuccess])
   
-  const refreshIframe = () => {
+  const refreshIframe = useCallback(() => {
     setIframeLoaded(false)
     setError(null)
     setShowLoadSuccess(false)
@@ -42,11 +42,11 @@ export default function ExternalEmbed({ url, locale }: ExternalEmbedProps) {
         iframe.src = iframe.src // 重新加载iframe
       }
     }, 100)
-  }
+  }, [setIframeLoaded, setError, setShowLoadSuccess])
   
-  const openInNewWindow = () => {
+  const openInNewWindow = useCallback(() => {
     window.open(url, '_blank')
-  }
+  }, [url])
   
   return (
     <div className="w-full h-full border rounded bg-white relative">

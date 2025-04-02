@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
@@ -18,23 +18,13 @@ type Project = {
   }[]
 }
 
-// This would be a server action in production
-const getRandomProject = async (): Promise<Project> => {
-  // Mock data for demonstration
-  return {
-    id: 'example-project',
-    title: 'Welcome to CodeTok',
-    description: 'A code sharing platform without login requirements',
-    codeFiles: [
-      {
-        id: '1',
-        filename: 'index.html',
-        content: '<!DOCTYPE html>\n<html>\n<head>\n  <title>Example</title>\n</head>\n<body>\n  <h1>Welcome to CodeTok</h1>\n  <p>Share your code with the world!</p>\n</body>\n</html>',
-        language: 'html',
-        isEntryPoint: true
-      }
-    ]
+// 将 getRandomProject 移到组件外部
+async function getRandomProject() {
+  const response = await fetch('/api/projects/random')
+  if (!response.ok) {
+    throw new Error('Failed to load random project')
   }
+  return await response.json()
 }
 
 export default function Home() {
@@ -42,26 +32,26 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [isHovered, setIsHovered] = useState(false)
   
-  useEffect(() => {
-    const loadRandomProject = async () => {
-      try {
-        setLoading(true)
-        const data = await getRandomProject()
-        setProject(data)
-      } catch (error) {
-        console.error('Failed to load random project:', error)
-      } finally {
-        setLoading(false)
-      }
+  const loadRandomProject = useCallback(async () => {
+    try {
+      setLoading(true)
+      const data = await getRandomProject()
+      setProject(data)
+    } catch (error) {
+      console.error('Failed to load random project:', error)
+    } finally {
+      setLoading(false)
     }
-    
-    loadRandomProject()
-  }, [])
+  }, [setLoading, setProject])
   
-  const handleRandomProject = () => {
+  useEffect(() => {
+    loadRandomProject()
+  }, [loadRandomProject])
+  
+  const handleRandomProject = useCallback(() => {
     setLoading(true)
     window.location.reload()
-  }
+  }, [setLoading])
   
   if (loading) {
     return (

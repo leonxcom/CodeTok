@@ -14,10 +14,6 @@ export type ToasterToast = ToastProps & {
   open: boolean
 }
 
-type ToastActionType = 
-  | { type: 'ADD_TOAST'; toast: ToasterToast }
-  | { type: 'REMOVE_TOAST'; id: string }
-
 // 简单的全局状态管理
 let toasts: ToasterToast[] = []
 let listeners: Array<(toasts: ToasterToast[]) => void> = []
@@ -32,14 +28,14 @@ const generateId = () => {
   return (count++).toString()
 }
 
-// 删除toast
+// 删除 toast
 const removeToast = (id: string) => {
   toasts = toasts.filter(t => t.id !== id)
   notifyListeners()
 }
 
-// 添加toast
-export function toast({ title, description, type = 'default', duration = 5000 }: ToastProps) {
+// 添加 toast
+export const toast = ({ title, description, type = 'default', duration = 5000 }: ToastProps) => {
   const id = generateId()
   
   const newToast: ToasterToast = {

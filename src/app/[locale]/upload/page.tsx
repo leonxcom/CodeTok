@@ -34,86 +34,50 @@ interface UploadPageProps {
 export default function UploadPage() {
   const router = useRouter()
   const params = useParams()
-  const [locale, setLocale] = useState<Locale>('zh-cn')
-  
-  // 安全地处理locale参数
-  useEffect(() => {
-    if (params && typeof params.locale === 'string') {
-      setLocale(params.locale as Locale)
-    }
-  }, [params])
-  
-  const [isDragging, setIsDragging] = useState(false)
-  const [codeInput, setCodeInput] = useState('')
+  const locale = params.locale as Locale
   const [isUploading, setIsUploading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [codeInput, setCodeInput] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
   
-  const onDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }, [])
-  
-  const onDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-  }, [])
-  
-  const onDrop = useCallback(async (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    
-    const items = e.dataTransfer.items
-    if (!items) return
-    
-    setIsUploading(true)
-    setErrorMessage(null)
-    
-    try {
-      const formData = new FormData()
-      
-      // 处理文件或目录
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i]
-        
-        // 如果是文件，直接添加
-        if (item.kind === 'file') {
-          const file = item.getAsFile()
-          if (file) {
-            formData.append('files', file)
-          }
-        }
-      }
-      
-      // 发送到API
-      const response = await fetch('/api/projects', {
-        method: 'POST',
-        body: formData
-      })
-      
-      const result = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Upload failed')
-      }
-      
-      // 导航到项目页面
-      router.push(`/${locale}/project/${result.projectId}`)
-    } catch (error) {
-      console.error('Upload error:', error)
-      setErrorMessage(error instanceof Error ? error.message : String(error))
-    } finally {
-      setIsUploading(false)
+  const handleFilesUpload = useCallback(async (files: File[]) => {
+    const formData = new FormData()
+    files.forEach(file => {
+      formData.append('files', file)
+    })
+
+    const response = await fetch('/api/projects', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!response.ok) {
+      throw new Error('Upload failed')
     }
-  }, [router, locale])
-  
-  const handleFileSelect = useCallback(async () => {
-    fileInputRef.current?.click()
+
+    const result = await response.json()
+    return result
   }, [])
   
-  const handleFolderSelect = useCallback(async () => {
-    folderInputRef.current?.click()
+  const submitCode = useCallback(async (code: string) => {
+    const response = await fetch('/api/projects', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code,
+        filename: 'index.html'
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('Upload failed')
+    }
+
+    const result = await response.json()
+    return result
   }, [])
   
   const handleFileInputChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +90,6 @@ export default function UploadPage() {
     
     try {
       const files = Array.from(e.target.files)
-      // 处理文件上传逻辑
       await handleFilesUpload(files)
     } catch (error) {
       console.error('Upload error:', error)
@@ -134,11 +97,7 @@ export default function UploadPage() {
     } finally {
       setIsUploading(false)
     }
-  }, [])
-  
-  const handleFilesUpload = useCallback(async (files: File[]) => {
-    // 实现文件上传逻辑
-  }, [])
+  }, [handleFilesUpload])
   
   const handleSubmitCode = useCallback(async () => {
     if (!codeInput.trim()) {
@@ -154,7 +113,6 @@ export default function UploadPage() {
     setErrorMessage(null)
     
     try {
-      // 处理代码提交逻辑
       await submitCode(codeInput)
     } catch (error) {
       console.error('Upload error:', error)
@@ -162,11 +120,7 @@ export default function UploadPage() {
     } finally {
       setIsUploading(false)
     }
-  }, [codeInput, locale])
-  
-  const submitCode = useCallback(async (code: string) => {
-    // 实现代码提交逻辑
-  }, [])
+  }, [codeInput, locale, submitCode])
   
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
@@ -200,11 +154,8 @@ export default function UploadPage() {
           <TabsContent value="upload" className="p-6">
             <div 
               className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center h-72 ${
-                isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                isUploading ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
               }`}
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop}
             >
               <div className="text-center">
                 <div className="mb-6">
@@ -228,14 +179,14 @@ export default function UploadPage() {
                 </p>
                 
                 <div className="flex flex-row gap-4 justify-center">
-                  <Button variant="outline" onClick={handleFileSelect} disabled={isUploading}>
+                  <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
                     {t(locale, {
                       zh: '选择文件',
                       en: 'Select File',
                       fr: 'Sélectionner un fichier'
                     })}
                   </Button>
-                  <Button variant="outline" onClick={handleFolderSelect} disabled={isUploading}>
+                  <Button variant="outline" onClick={() => folderInputRef.current?.click()} disabled={isUploading}>
                     {t(locale, {
                       zh: '选择文件夹',
                       en: 'Select Folder',

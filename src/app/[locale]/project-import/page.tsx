@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Locale } from '../../../../i18n/config'
 import Link from 'next/link'
@@ -31,39 +31,59 @@ export default function ProjectImportPage() {
     }
   }, [params])
   
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value)
     setIframeLoaded(false)
     setError(null)
-  }
+  }, [setUrl, setIframeLoaded, setError])
   
-  const handleIframeLoad = () => {
+  const handleIframeLoad = useCallback(() => {
     setIframeLoaded(true)
     setError(null)
-  }
+  }, [setIframeLoaded, setError])
   
-  const handleIframeError = () => {
+  const handleIframeError = useCallback(() => {
     setError(locale === 'zh-cn' ? '无法加载iframe内容' : 'Failed to load iframe content')
     setIframeLoaded(false)
-  }
+  }, [locale, setError, setIframeLoaded])
   
-  const handleImport = async () => {
+  const handleImport = useCallback(async () => {
+    if (!url.trim()) {
+      setError(locale === 'zh-cn' ? '请输入项目URL' : 'Please enter project URL')
+      return
+    }
+
     setIsImporting(true)
     setError(null)
-    
+
     try {
-      // 这里模拟导入过程，实际项目中应该调用API
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // 模拟成功导入
+      const response = await fetch('/api/projects/import', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url,
+          name: projectName,
+          description,
+          author
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Import failed')
+      }
+
+      const result = await response.json()
       setImportSuccess(true)
-      setImportedProjectId('imported-project-' + Math.floor(Math.random() * 1000))
-    } catch (err) {
-      setError(locale === 'zh-cn' ? '导入失败' : 'Import failed')
+      setImportedProjectId(result.projectId)
+    } catch (error) {
+      console.error('Import error:', error)
+      setError(error instanceof Error ? error.message : String(error))
     } finally {
       setIsImporting(false)
     }
-  }
+  }, [url, projectName, description, author, locale, setIsImporting, setError, setImportSuccess, setImportedProjectId])
   
   return (
     <div className="container mx-auto p-4 max-w-5xl">

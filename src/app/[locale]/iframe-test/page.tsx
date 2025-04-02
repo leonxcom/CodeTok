@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Locale } from '../../../../i18n/config'
 
@@ -25,14 +25,14 @@ export default function IframeTestPage() {
     }
   }, [params])
   
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value)
     setIframeLoaded(false)
     setShowLoadSuccess(false)
     setError(null)
-  }
+  }, [setUrl, setIframeLoaded, setShowLoadSuccess, setError])
   
-  const handleIframeLoad = () => {
+  const handleIframeLoad = useCallback(() => {
     setIframeLoaded(true)
     setShowLoadSuccess(true)
     setError(null)
@@ -41,13 +41,13 @@ export default function IframeTestPage() {
     setTimeout(() => {
       setShowLoadSuccess(false)
     }, 2000)
-  }
+  }, [setIframeLoaded, setShowLoadSuccess, setError])
   
-  const handleIframeError = () => {
+  const handleIframeError = useCallback(() => {
     setError(locale === 'zh-cn' ? '无法加载iframe内容' : 'Failed to load iframe content')
     setIframeLoaded(false)
     setShowLoadSuccess(false)
-  }
+  }, [locale, setError, setIframeLoaded, setShowLoadSuccess])
   
   return (
     <div className="container mx-auto p-4">

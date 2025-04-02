@@ -1,29 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sql } from '@vercel/postgres'
-import { ProjectFile } from '@/db/schema'
+import { ProjectFile, ProjectData } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
-interface ProjectData {
-  id: string;
-  title: string;
-  description?: string;
-  external_url?: string;
-  external_embed?: boolean;
-  external_author?: string;
-  type?: string;
-  files: any;
-  main_file?: string;
-  views?: number;
-  created_at?: Date;
-}
-
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  request: Request,
+  context: { params: { id: string } }
 ) {
   try {
-    const id = params.id
+    const { id } = context.params
     console.log('获取项目详情，ID:', id)
     
     const projectResult = await sql<ProjectData>`
@@ -42,10 +28,13 @@ export async function GET(
     
     try {
       await sql`
-        UPDATE projects SET views = ${(project.views || 0) + 1} WHERE id = ${id}
+        UPDATE projects 
+        SET views = COALESCE(views, 0) + 1 
+        WHERE id = ${id}
       `
-    } catch (updateError) {
-      console.error('更新访问量失败:', updateError)
+      console.log('[API] View count updated for project', id)
+    } catch (error) {
+      console.error('更新浏览量失败:', error)
     }
     
     let files: string[] = []
@@ -53,7 +42,7 @@ export async function GET(
     let hasTsxFiles = false
     
     if (project.files) {
-      let projectFiles: any[] = []
+      let projectFiles: ProjectFile[] = []
       
       if (Array.isArray(project.files)) {
         projectFiles = project.files
@@ -62,50 +51,51 @@ export async function GET(
           const parsedFiles = JSON.parse(project.files)
           if (Array.isArray(parsedFiles)) {
             projectFiles = parsedFiles
+          } else if (typeof parsedFiles === 'object') {
+            // 处理对象格式的文件结构
+            projectFiles = Object.entries(parsedFiles).map(([path, fileData]: [string, any]) => {
+              const normalizedPath = path.startsWith('/') ? path.substring(1) : path
+              return {
+                url: '',
+                filename: normalizedPath.split('/').pop() || 'index.html',
+                pathname: normalizedPath,
+                size: fileData.content?.length || 0,
+                type: fileData.type || 'text/plain',
+                content: fileData.content,
+                isEntryPoint: fileData.isEntryPoint || false
+              }
+            })
           } else {
-            console.error('项目文件格式错误 (解析后不是数组):', project.files)
+            console.warn('项目文件格式无效:', parsedFiles)
+            projectFiles = []
           }
         } catch (error) {
           console.error('解析项目文件失败:', error)
+          projectFiles = []
         }
-      } else if (typeof project.files === 'object' && project.files !== null) {
-        try {
-          if (Object.keys(project.files).length > 0) {
-            projectFiles = Object.entries(project.files).map(([path, fileData]: [string, any]) => {
-              const normalizedPath = path.startsWith('/') ? path.substring(1) : path
-              return {
-                pathname: normalizedPath,
-                ...fileData,
-                url: fileData.url || '',
-                filename: fileData.filename || normalizedPath.split('/').pop() || 'index.html',
-                size: fileData.size || 0,
-                type: fileData.type || 'text/html'
-              }
-            })
-            console.log('已将对象格式的文件转换为数组格式', projectFiles.length)
-          }
-        } catch (error) {
-          console.error('转换项目文件对象格式失败:', error)
-        }
-      } else {
-        console.error('未知的项目文件格式:', typeof project.files)
       }
       
       if (projectFiles.length > 0) {
-        files = projectFiles.map((file: any) => file.pathname)
+        files = projectFiles.map(file => file.pathname)
         hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'))
         
-        const mainFile = projectFiles.find(file => file.pathname === project.main_file)
+        // 查找入口文件或使用指定的主文件
+        const mainFile = projectFiles.find(file => 
+          file.pathname === project.main_file || file.isEntryPoint
+        )
         
         if (mainFile) {
-          try {
-            const response = await fetch(mainFile.url)
-            if (response.ok) {
-              mainFileContent = await response.text()
+          mainFileContent = mainFile.content || null
+          if (!mainFileContent && mainFile.url) {
+            try {
+              const response = await fetch(mainFile.url)
+              if (response.ok) {
+                mainFileContent = await response.text()
+              }
+            } catch (error) {
+              console.error(`获取主文件内容失败 ${mainFile.pathname}:`, error)
+              mainFileContent = `// Error loading content: ${error instanceof Error ? error.message : 'Unknown error'}`
             }
-          } catch (error) {
-            console.error(`获取主文件内容失败 ${mainFile.pathname}:`, error)
-            mainFileContent = `// Error loading content: ${error instanceof Error ? error.message : 'Unknown error'}`
           }
         }
       }
@@ -120,7 +110,7 @@ export async function GET(
       externalAuthor: project.external_author,
       type: project.type,
       files,
-      mainFile: project.main_file,
+      mainFile: project.main_file || '',
       fileContents: mainFileContent 
         ? { [project.main_file || '']: mainFileContent } 
         : {},
@@ -141,10 +131,10 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
-    const id = params.id
+    const { id } = context.params
     console.log('删除项目，ID:', id)
     
     const result = await sql`

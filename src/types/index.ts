@@ -1,3 +1,5 @@
+export * from './project'
+
 /**
  * 项目文件类型
  */
@@ -7,6 +9,7 @@ export type ProjectFile = {
   pathname: string;
   size: number;
   type: string;
+  content?: string;
   isEntryPoint?: boolean;
 }
 

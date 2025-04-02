@@ -12,6 +12,7 @@ import { LanguageToggle } from './language-toggle'
 import { Button } from './ui/button'
 import { SideNav } from './side-nav'
 import { cn } from '@/lib/utils'
+import { useSession } from "@/lib/auth-client"
 
 interface SiteHeaderProps {
   locale: Locale
@@ -43,7 +44,7 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
             className="border-border text-foreground hover:bg-muted"
             asChild
           >
-            <Link href={`/${locale}/login`}>
+            <Link href={`/${locale}/auth`}>
               {locale === 'zh-cn' ? '登录/注册' : 'Login/Register'}
             </Link>
           </Button>

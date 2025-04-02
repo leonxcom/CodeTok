@@ -59,6 +59,9 @@ export default function ProjectPage() {
   const [viewHistory, setViewHistory] = useState<string[]>([]);
   const [historyPosition, setHistoryPosition] = useState(-1);
   
+  // 添加导航状态
+  const [isNavigating, setIsNavigating] = useState(false);
+  
   // 初始化历史记录
   useEffect(() => {
     // 从 sessionStorage 恢复历史记录，如果有的话
@@ -156,27 +159,46 @@ export default function ProjectPage() {
       const signal = controller.signal
       
       // 发起请求
-      const response = await fetch(apiUrl, { signal })
+      console.log(`正在加载项目 ${projectId}...`)
+      const response = await fetch(apiUrl, { 
+        signal,
+        // 不使用缓存，确保获取最新数据
+        cache: 'no-store',
+        next: { revalidate: 0 }
+      })
       
       if (response.status === 404) {
+        console.log(`项目 ${projectId} 不存在`)
         notFound()
         return
       }
       
       if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error(`加载项目失败: ${response.status}`, errorData)
         throw new Error(
           locale === 'zh-cn' 
-            ? '无法加载项目，请检查链接是否正确'
-            : 'Failed to load project, please check if the link is correct'
+            ? `无法加载项目: ${errorData.error || response.statusText}`
+            : `Failed to load project: ${errorData.error || response.statusText}`
         )
       }
       
       // 解析JSON数据
       const data = await response.json()
+      console.log(`成功加载项目 ${projectId}`)
+      
+      // 验证项目数据的完整性
+      if (!data || !data.projectId) {
+        throw new Error(
+          locale === 'zh-cn'
+            ? '项目数据无效或不完整'
+            : 'Invalid or incomplete project data'
+        )
+      }
       
       // 设置项目数据
       setProjectData(data)
-      setSelectedFile(data.mainFile)
+      setSelectedFile(data.mainFile || (data.files && data.files.length > 0 ? data.files[0] : ''))
       setBasicInfoLoaded(true)
       setUiFrameworkLoaded(true)
       
@@ -195,10 +217,20 @@ export default function ProjectPage() {
       return data
     } catch (error) {
       console.error('加载项目失败:', error)
-      setError(locale === 'zh-cn' ? '加载项目失败' : 'Failed to load project')
+      setError(
+        locale === 'zh-cn' 
+          ? `加载项目失败: ${error instanceof Error ? error.message : '未知错误'}`
+          : `Failed to load project: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
       setIsLoading(false)
       return null
     }
+  }
+  
+  // 处理项目加载失败的重试
+  const handleRetry = () => {
+    setError(null)
+    fetchProjectData()
   }
   
   // 处理项目切换
@@ -360,70 +392,58 @@ export default function ProjectPage() {
     )
   }
   
-  // 跳转到随机项目 - 优化为使用URL替换而不是整页刷新
+  // 加载随机项目
   const handleRandomProject = async () => {
     try {
-      // 先显示加载状态，同时保留当前页面
-      setIsLoading(true);
+      // 禁用按钮和显示加载状态，防止重复点击
+      setIsNavigating(true)
       
-      const response = await fetch('/api/projects/random');
+      // 显示加载提示
+      toast({
+        title: locale === 'zh-cn' ? '正在加载...' : 'Loading...',
+        description: locale === 'zh-cn' ? '正在为您寻找随机项目' : 'Finding a random project for you',
+      })
+      
+      console.log('正在获取随机项目...')
+      const response = await fetch('/api/projects/random', {
+        cache: 'no-store',
+        next: { revalidate: 0 }
+      })
       
       if (!response.ok) {
-        throw new Error(
-          locale === 'zh-cn' 
-            ? '无法加载随机项目'
-            : 'Failed to load random project'
-        );
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.message || response.statusText)
       }
       
-      const data = await response.json();
+      const data = await response.json()
       
-      // 使用history.pushState替代整页刷新，保持已加载的资源
-      const nextUrl = `/${locale}/project/${data.projectId}`;
-      window.history.pushState({}, '', nextUrl);
-      
-      // 更新浏览历史
-      if (historyPosition === viewHistory.length - 1) {
-        // 在历史末尾，添加新记录
-        const newHistory = [...viewHistory, data.projectId];
-        setViewHistory(newHistory);
-        setHistoryPosition(newHistory.length - 1);
-        // 保存到sessionStorage
-        sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
-        sessionStorage.setItem('historyPosition', (newHistory.length - 1).toString());
-      } else {
-        // 不在历史末尾，截断历史并添加新记录
-        const newHistory = viewHistory.slice(0, historyPosition + 1);
-        newHistory.push(data.projectId);
-        setViewHistory(newHistory);
-        setHistoryPosition(newHistory.length - 1);
-        // 保存到sessionStorage
-        sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
-        sessionStorage.setItem('historyPosition', (newHistory.length - 1).toString());
+      // 验证返回数据是否有效
+      if (!data || !data.projectId) {
+        throw new Error(locale === 'zh-cn' ? '未找到有效项目' : 'No valid project found')
       }
       
-      // 重新加载项目数据
-      setProjectData(data);
-      setSelectedFile(data.mainFile);
-      setBasicInfoLoaded(true);
+      console.log(`找到随机项目: ${data.projectId}`)
       
-      // 如果文件列表加载完成，标记加载状态为完成
-      if (data.fileContents && Object.keys(data.fileContents).length > 0) {
-        setFilesLoaded(true);
-        setIsLoading(false);
-      } else {
-        setFilesLoaded(false);
-      }
+      // 更新历史记录
+      const newHistory = [...viewHistory.slice(0, historyPosition + 1), data.projectId]
+      setViewHistory(newHistory)
+      setHistoryPosition(newHistory.length - 1)
+      sessionStorage.setItem('projectHistory', JSON.stringify(newHistory))
+      
+      // 导航到随机项目
+      router.push(`/${locale}/project/${data.projectId}`)
     } catch (error) {
-      console.error('Error loading random project:', error);
-      setIsLoading(false);
-      alert(
-        locale === 'zh-cn' 
-          ? '加载随机项目失败，请稍后再试'
-          : 'Failed to load random project, please try again later'
-      );
+      console.error('获取随机项目失败:', error)
+      toast({
+        title: locale === 'zh-cn' ? '加载失败' : 'Loading Failed',
+        description: locale === 'zh-cn' 
+          ? `无法获取随机项目: ${error instanceof Error ? error.message : '请稍后重试'}`
+          : `Failed to get random project: ${error instanceof Error ? error.message : 'Please try again later'}`,
+      })
+    } finally {
+      setIsNavigating(false)
     }
-  };
+  }
   
   const toggleFrame = () => {
     setShowingFrame(!showingFrame)
@@ -828,7 +848,7 @@ ${content}
   }
   
   return (
-    <div className="flex flex-col h-screen">
+    <div className="relative min-h-screen flex flex-col">
       {/* 主体内容 - 左右7:3布局 */}
       <div className="flex flex-1 overflow-hidden">
         {/* 左侧主内容区 (70%) */}
@@ -896,9 +916,14 @@ ${content}
                   />
                 </div>
                 <div className="text-red-500 mb-4">{error}</div>
-                <Button onClick={() => fetchProjectData()}>
-                  {locale === 'zh-cn' ? '重试' : 'Retry'}
-                </Button>
+                <div className="flex justify-between">
+                  <Button onClick={handleRetry}>
+                    {locale === 'zh-cn' ? '重试' : 'Retry'}
+                  </Button>
+                  <Button variant="outline" onClick={handleRandomProject}>
+                    {locale === 'zh-cn' ? '浏览其他项目' : 'Browse Other Projects'}
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="h-full">
@@ -1031,6 +1056,23 @@ ${content}
           </div>
         </div>
       </div>
+      
+      {error && (
+        <div className="fixed inset-0 flex items-center justify-center bg-background/80 z-50">
+          <div className="bg-card border border-border p-6 rounded-lg shadow-lg max-w-md">
+            <h3 className="text-xl font-bold mb-2">{locale === 'zh-cn' ? '加载失败' : 'Loading Failed'}</h3>
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <div className="flex justify-between">
+              <Button onClick={handleRetry}>
+                {locale === 'zh-cn' ? '重试' : 'Retry'}
+              </Button>
+              <Button variant="outline" onClick={handleRandomProject}>
+                {locale === 'zh-cn' ? '浏览其他项目' : 'Browse Other Projects'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

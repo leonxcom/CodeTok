@@ -155,18 +155,13 @@ export default function ProjectPage() {
 
   // 获取项目数据
   const fetchProjectData = useCallback(async () => {
+    if (!projectId) return null
+    
     try {
-      const apiUrl = `/api/projects/${projectId}`
-      
-      // 先显示加载状态
       setIsLoading(true)
+      setError(null)
       
-      // 使用AbortController以便在组件卸载时取消请求
-      const controller = new AbortController()
-      const signal = controller.signal
-      
-      // 发起请求
-      const response = await fetch(apiUrl, { signal })
+      const response = await fetch(`/api/projects/${projectId}`)
       
       if (response.status === 404) {
         notFound()
@@ -174,19 +169,28 @@ export default function ProjectPage() {
       }
       
       if (!response.ok) {
+        const errorData = await response.json()
         throw new Error(
           locale === 'zh-cn' 
-            ? '无法加载项目，请检查链接是否正确'
-            : 'Failed to load project, please check if the link is correct'
+            ? errorData.error || '无法加载项目，请检查链接是否正确'
+            : errorData.error || 'Failed to load project, please check if the link is correct'
         )
       }
       
       // 解析JSON数据
       const data = await response.json()
       
+      if (!data || !data.projectId) {
+        throw new Error(
+          locale === 'zh-cn'
+            ? '项目数据格式错误'
+            : 'Invalid project data format'
+        )
+      }
+      
       // 设置项目数据
       setProjectData(data)
-      setSelectedFile(data.mainFile)
+      setSelectedFile(data.mainFile || '')
       setBasicInfoLoaded(true)
       setUiFrameworkLoaded(true)
       
@@ -205,7 +209,11 @@ export default function ProjectPage() {
       return data
     } catch (error) {
       console.error('加载项目失败:', error)
-      setError(locale === 'zh-cn' ? '加载项目失败' : 'Failed to load project')
+      setError(
+        locale === 'zh-cn' 
+          ? error instanceof Error ? error.message : '加载项目失败'
+          : error instanceof Error ? error.message : 'Failed to load project'
+      )
       setIsLoading(false)
       return null
     }
@@ -214,11 +222,18 @@ export default function ProjectPage() {
   // 处理项目切换
   useEffect(() => {
     let isMounted = true
+    let retryCount = 0
+    const maxRetries = 3
     
     const loadProject = async () => {
       resetProjectState()
       if (isMounted) {
-        await fetchProjectData()
+        const result = await fetchProjectData()
+        if (!result && retryCount < maxRetries) {
+          retryCount++
+          console.log(`重试加载项目 (${retryCount}/${maxRetries})...`)
+          setTimeout(loadProject, 1000 * retryCount)
+        }
       }
     }
     

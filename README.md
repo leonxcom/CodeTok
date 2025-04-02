@@ -225,3 +225,5 @@ We welcome contributions of all forms! If you want to participate in project dev
 3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Create a Pull Request
+
+For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).

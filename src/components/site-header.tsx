@@ -9,6 +9,7 @@ import { SideNav } from '@/components/side-nav'
 import { Locale } from '../../i18n/config'
 import { cn } from '@/lib/utils'
 import { t } from '@/utils/language-utils'
+import { LanguageToggle } from '@/components/language-toggle'
 
 interface SiteHeaderProps {
   locale: Locale
@@ -33,15 +34,18 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
             {/* 搜索框 */}
           </div>
 
-          <Button asChild>
-            <Link href={`/${locale}/auth`}>
-              {t(locale, {
-                zh: '登录/注册',
-                en: 'Sign In/Up',
-                fr: 'Connexion/Inscription'
-              })}
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <LanguageToggle locale={locale} />
+            <Button asChild>
+              <Link href={`/${locale}/auth`}>
+                {t(locale, {
+                  zh: '登录/注册',
+                  en: 'Sign In/Up',
+                  fr: 'Connexion/Inscription'
+                })}
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </header>

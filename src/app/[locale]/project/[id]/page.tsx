@@ -9,6 +9,7 @@ import { renderTSX } from '@/lib/tsx-compiler'
 import ExternalEmbed from './external-embed'
 import { toast } from '@/components/ui/use-toast'
 import Image from 'next/image'
+import { t } from '@/utils/language-utils'
 
 interface ProjectData {
   projectId: string
@@ -23,11 +24,12 @@ interface ProjectData {
   externalEmbed?: boolean
   externalUrl?: string
   externalAuthor?: string
+  type?: string
 }
 
 export default function ProjectPage() {
   const params = useParams()
-  const locale = params.locale as Locale
+  const locale = params.locale as Locale || "zh-cn"
   const projectId = params.id as string
   const router = useRouter()
   
@@ -53,7 +55,7 @@ export default function ProjectPage() {
   const isExternalProject = projectData?.externalEmbed && projectData?.externalUrl;
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState<string | null>(null);
-  const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+  const [shouldLoadIframe, setShouldLoadIframe] = useState(true);
   
   // 添加浏览历史管理
   const [viewHistory, setViewHistory] = useState<string[]>([]);
@@ -526,6 +528,12 @@ ${content}
   // 是否显示代码编辑器视图（在带框架模式中非HTML文件也显示为代码）
   const showCodeView = !showingFrame || (showingFrame && !projectData?.mainFile.endsWith('.html') && !projectData?.externalEmbed)
   
+  // 判断是否为外部项目但不嵌入显示的情况
+  const isExternalNonEmbedProject = projectData?.type === 'external' && 
+                                    !projectData?.externalEmbed && 
+                                    projectData?.externalUrl && 
+                                    (!projectData.files?.length || Object.keys(projectData?.fileContents || {}).length === 0);
+  
   // 添加工具栏按钮
   const renderToolbarButtons = () => {
     return (
@@ -535,7 +543,11 @@ ${content}
           size="icon"
           className="rounded-full"
           onClick={() => setIsLiked(!isLiked)}
-          title={locale === 'zh-cn' ? '点赞' : 'Like'}
+          title={t(locale, {
+            zh: '点赞',
+            en: 'Like',
+            fr: 'J\'aime'
+          })}
         >
           {isLiked ? '❤️' : '🤍'}
         </Button>
@@ -545,7 +557,11 @@ ${content}
           size="icon"
           className="rounded-full"
           onClick={() => setIsBookmarked(!isBookmarked)}
-          title={locale === 'zh-cn' ? '收藏' : 'Bookmark'}
+          title={t(locale, {
+            zh: '收藏',
+            en: 'Bookmark',
+            fr: 'Marquer'
+          })}
         >
           {isBookmarked ? '⭐' : '☆'}
         </Button>
@@ -557,7 +573,11 @@ ${content}
               size="icon"
               className="rounded-full"
               onClick={openDirectLink}
-              title={locale === 'zh-cn' ? '访问源站' : 'Visit Source'}
+              title={t(locale, {
+                zh: '访问源站',
+                en: 'Visit Source',
+                fr: 'Visiter le site source'
+              })}
             >
               🔗
             </Button>
@@ -567,7 +587,11 @@ ${content}
               size="icon"
               className="rounded-full"
               onClick={() => window.open(projectData.externalUrl, '_blank')}
-              title={locale === 'zh-cn' ? '全屏打开' : 'Open Fullscreen'}
+              title={t(locale, {
+                zh: '全屏打开',
+                en: 'Open Fullscreen',
+                fr: 'Ouvrir en plein écran'
+              })}
             >
               📺
             </Button>
@@ -579,7 +603,11 @@ ${content}
           size="icon"
           className="rounded-full"
           onClick={() => {/* TODO: 实现分享功能 */}}
-          title={locale === 'zh-cn' ? '分享' : 'Share'}
+          title={t(locale, {
+            zh: '分享',
+            en: 'Share',
+            fr: 'Partager'
+          })}
         >
           📤
         </Button>
@@ -623,26 +651,42 @@ ${content}
               <button
                 className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
                 onClick={handlePreviousProject}
-                title={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
+                title={t(locale, {
+                  zh: '上一个作品',
+                  en: 'Previous work',
+                  fr: 'Œuvre précédente'
+                })}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="18 15 12 9 6 15"></polyline>
                 </svg>
                 <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  {locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
+                  {t(locale, {
+                    zh: '上一个作品',
+                    en: 'Previous work',
+                    fr: 'Œuvre précédente'
+                  })}
                 </span>
               </button>
               
               <button
                 className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
                 onClick={handleNextProject}
-                title={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
+                title={t(locale, {
+                  zh: '下一个作品',
+                  en: 'Next work',
+                  fr: 'Œuvre suivante'
+                })}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
                 <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  {locale === 'zh-cn' ? '下一个项目' : 'Next project'}
+                  {t(locale, {
+                    zh: '下一个作品',
+                    en: 'Next work',
+                    fr: 'Œuvre suivante'
+                  })}
                 </span>
               </button>
             </div>
@@ -665,7 +709,11 @@ ${content}
                     </h1>
                     <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
                     <p className="mt-4 text-muted-foreground">
-                      {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}
+                      {t(locale, {
+                        zh: '正在加载精彩内容...',
+                        en: 'Loading amazing content...',
+                        fr: 'Chargement du contenu incroyable...'
+                      })}
                     </p>
                   </div>
                 </div>
@@ -681,8 +729,49 @@ ${content}
                     />
                   </div>
                   <div className="text-red-500 mb-4">{error}</div>
-                  <Button onClick={() => fetchProjectData()}>
-                    {locale === 'zh-cn' ? '重试' : 'Retry'}
+                  <div className="flex justify-between">
+                    <Button onClick={handleRetry}>
+                      {t(locale, {
+                        zh: '重试',
+                        en: 'Retry',
+                        fr: 'Réessayer'
+                      })}
+                    </Button>
+                    <Button variant="outline" onClick={handleRandomProject}>
+                      {t(locale, {
+                        zh: '浏览其他项目',
+                        en: 'Browse Other Projects',
+                        fr: 'Parcourir les autres projets'
+                      })}
+                    </Button>
+                  </div>
+                </div>
+              ) : isExternalNonEmbedProject ? (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <div className="mb-8">
+                    <Image 
+                      src="/favicon.png" 
+                      alt="CodeTok Logo" 
+                      width={96} 
+                      height={96}
+                    />
+                  </div>
+                  <h2 className="text-2xl font-bold mb-2">
+                    {projectData.title}
+                  </h2>
+                  <p className="text-muted-foreground mb-8 max-w-md text-center">
+                    {projectData.description || t(locale, {
+                      zh: '这是一个外部项目，需要在原网站查看',
+                      en: 'This is an external project that needs to be viewed on the original website',
+                      fr: 'Ce projet externe doit être consulté sur le site d\'origine'
+                    })}
+                  </p>
+                  <Button onClick={openDirectLink} size="lg" className="px-8">
+                    {t(locale, {
+                      zh: '访问原网站',
+                      en: 'Visit Original Website',
+                      fr: 'Visiter le site d\'origine'
+                    })}
                   </Button>
                 </div>
               ) : (
@@ -715,7 +804,11 @@ ${content}
                             </h1>
                             <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
                             <p className="mt-4 text-muted-foreground">
-                              {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
+                              {t(locale, {
+                                zh: '项目加载中...',
+                                en: 'Loading project...',
+                                fr: 'Chargement du projet...'
+                              })}
                             </p>
                           </div>
                         </div>
@@ -737,10 +830,18 @@ ${content}
                           <div className="text-red-500 mb-4">{iframeError}</div>
                           <div className="flex gap-4">
                             <Button onClick={refreshIframe}>
-                              {locale === 'zh-cn' ? '重试' : 'Retry'}
+                              {t(locale, {
+                                zh: '重试',
+                                en: 'Retry',
+                                fr: 'Réessayer'
+                              })}
                             </Button>
                             <Button onClick={openDirectLink}>
-                              {locale === 'zh-cn' ? '在新窗口打开' : 'Open in New Window'}
+                              {t(locale, {
+                                zh: '在新窗口打开',
+                                en: 'Open in New Window',
+                                fr: 'Ouvrir dans une nouvelle fenêtre'
+                              })}
                             </Button>
                           </div>
                         </div>
@@ -786,21 +887,33 @@ ${content}
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
-                <span>{locale === 'zh-cn' ? '点赞' : 'Like'}</span>
+                <span>{t(locale, {
+                  zh: '点赞',
+                  en: 'Like',
+                  fr: 'J\'aime'
+                })}</span>
               </button>
               
               <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                 </svg>
-                <span>{locale === 'zh-cn' ? '评论' : 'Comment'}</span>
+                <span>{t(locale, {
+                  zh: '评论',
+                  en: 'Comment',
+                  fr: 'Commenter'
+                })}</span>
               </button>
               
               <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                 </svg>
-                <span>{locale === 'zh-cn' ? '收藏' : 'Bookmark'}</span>
+                <span>{t(locale, {
+                  zh: '收藏',
+                  en: 'Bookmark',
+                  fr: 'Marquer'
+                })}</span>
               </button>
               
               <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
@@ -811,7 +924,11 @@ ${content}
                   <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
                   <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                 </svg>
-                <span>{locale === 'zh-cn' ? '分享' : 'Share'}</span>
+                <span>{t(locale, {
+                  zh: '分享',
+                  en: 'Share',
+                  fr: 'Partager'
+                })}</span>
               </button>
             </div>
           </div>
@@ -834,12 +951,20 @@ ${content}
             />
           </div>
           <h1 className="text-2xl font-bold text-red-500 mb-4">
-            {locale === 'zh-cn' ? '错误' : 'Error'}
+            {t(locale, {
+              zh: '错误',
+              en: 'Error',
+              fr: 'Erreur'
+            })}
           </h1>
           <p className="mb-6">{error}</p>
           <Link href={`/${locale}`}>
             <Button>
-              {locale === 'zh-cn' ? '返回首页' : 'Back to Home'}
+              {t(locale, {
+                zh: '返回首页',
+                en: 'Back to Home',
+                fr: 'Retour à l\'accueil'
+              })}
             </Button>
           </Link>
         </div>
@@ -848,231 +973,250 @@ ${content}
   }
   
   return (
-    <div className="relative min-h-screen flex flex-col">
-      {/* 主体内容 - 左右7:3布局 */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* 左侧主内容区 (70%) */}
-        <div className="w-[70%] flex flex-col relative overflow-hidden bg-background">
-          {/* 上下滑动按钮 - TikTok风格 */}
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
-            <button
-              className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
-              onClick={handlePreviousProject}
-              title={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="18 15 12 9 6 15"></polyline>
-              </svg>
-              <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                {locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-              </span>
-            </button>
-            
-            <button
-              className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
-              onClick={handleNextProject}
-              title={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-              <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                {locale === 'zh-cn' ? '下一个项目' : 'Next project'}
-              </span>
-            </button>
-          </div>
-
-          {/* 主要内容区域 */}
-          <div className="flex-1 relative">
-            {isLoading ? (
-              <div className="flex h-screen items-center justify-center">
-                <div className="text-center">
-                  <div className="mb-8">
-                    <Image 
-                      src="/favicon.png" 
-                      alt="CodeTok Logo" 
-                      width={96} 
-                      height={96}
-                    />
-                  </div>
-                  <h1 className="text-3xl font-bold mb-4">
-                    CodeTok
-                  </h1>
-                  <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
-                  <p className="mt-4 text-muted-foreground">
-                    {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}
-                  </p>
-                </div>
-              </div>
-            ) : error ? (
-              <div className="flex flex-col items-center justify-center h-full">
+    <div className="flex h-screen">
+      {/* 左侧项目展示区 (70%) */}
+      <div className="w-[70%] h-full bg-background">
+        <div className="h-full">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
                 <div className="mb-8">
                   <Image 
                     src="/favicon.png" 
                     alt="CodeTok Logo" 
                     width={96} 
                     height={96}
-                    className="mx-auto grayscale opacity-50"
+                    className="mx-auto"
                   />
                 </div>
-                <div className="text-red-500 mb-4">{error}</div>
-                <div className="flex justify-between">
-                  <Button onClick={handleRetry}>
-                    {locale === 'zh-cn' ? '重试' : 'Retry'}
-                  </Button>
-                  <Button variant="outline" onClick={handleRandomProject}>
-                    {locale === 'zh-cn' ? '浏览其他项目' : 'Browse Other Projects'}
-                  </Button>
-                </div>
+                <h1 className="text-3xl font-bold mb-4">
+                  CodeTok
+                </h1>
+                <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
+                <p className="mt-4 text-muted-foreground">
+                  {t(locale, {
+                    zh: "正在加载精彩内容...",
+                    en: "Loading amazing content...",
+                    fr: "Chargement du contenu incroyable..."
+                  })}
+                </p>
               </div>
-            ) : (
-              <div className="h-full">
-                {projectData?.externalEmbed && projectData?.externalUrl ? (
-                  <div className="relative h-full">
-                    {shouldLoadIframe && (
-                      <iframe
-                        id="external-project-iframe"
-                        src={projectData.externalUrl}
-                        className="w-full h-full border-none"
-                        onLoad={handleIframeLoad}
-                        onError={handleIframeError}
-                      />
-                    )}
-                    {!iframeLoaded && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background">
-                        <div className="text-center">
-                          <div className="mb-8">
-                            <Image 
-                              src="/favicon.png" 
-                              alt="CodeTok Logo" 
-                              width={96} 
-                              height={96}
-                              className="mx-auto"
-                            />
-                          </div>
-                          <h1 className="text-3xl font-bold mb-4">
-                            CodeTok
-                          </h1>
-                          <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
-                          <p className="mt-4 text-muted-foreground">
-                            {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    {iframeError && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background">
+            </div>
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="mb-8">
+                <Image 
+                  src="/favicon.png" 
+                  alt="CodeTok Logo" 
+                  width={96} 
+                  height={96}
+                  className="mx-auto grayscale opacity-50"
+                />
+              </div>
+              <div className="text-red-500 mb-4">{error}</div>
+              <div className="flex justify-between">
+                <Button onClick={handleRetry}>
+                  {t(locale, {
+                    zh: "重试",
+                    en: "Retry",
+                    fr: "Réessayer"
+                  })}
+                </Button>
+                <Button variant="outline" onClick={handleRandomProject}>
+                  {t(locale, {
+                    zh: "浏览其他项目",
+                    en: "Browse Other Projects",
+                    fr: "Parcourir les autres projets"
+                  })}
+                </Button>
+              </div>
+            </div>
+          ) : isExternalNonEmbedProject ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="mb-8">
+                <Image 
+                  src="/favicon.png" 
+                  alt="CodeTok Logo" 
+                  width={96} 
+                  height={96}
+                />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">
+                {projectData.title}
+              </h2>
+              <p className="text-muted-foreground mb-8 max-w-md text-center">
+                {projectData.description || t(locale, {
+                  zh: "这是一个外部项目，需要在原网站查看",
+                  en: "This is an external project that needs to be viewed on the original website",
+                  fr: "Ce projet externe doit être consulté sur le site d'origine"
+                })}
+              </p>
+              <Button onClick={openDirectLink} size="lg" className="px-8">
+                {t(locale, {
+                  zh: "访问原网站",
+                  en: "Visit Original Website",
+                  fr: "Visiter le site d'origine"
+                })}
+              </Button>
+            </div>
+          ) : (
+            <div className="h-full">
+              {projectData?.externalEmbed && projectData?.externalUrl ? (
+                <div className="relative h-full">
+                  {shouldLoadIframe && (
+                    <iframe
+                      id="external-project-iframe"
+                      src={projectData.externalUrl}
+                      className="w-full h-full border-none"
+                      onLoad={handleIframeLoad}
+                      onError={handleIframeError}
+                    />
+                  )}
+                  {!iframeLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-background">
+                      <div className="text-center">
                         <div className="mb-8">
                           <Image 
                             src="/favicon.png" 
                             alt="CodeTok Logo" 
                             width={96} 
                             height={96}
-                            className="mx-auto grayscale opacity-50"
+                            className="mx-auto"
                           />
                         </div>
                         <h1 className="text-3xl font-bold mb-4">
                           CodeTok
                         </h1>
-                        <div className="text-red-500 mb-4">{iframeError}</div>
-                        <div className="flex gap-4">
-                          <Button onClick={refreshIframe}>
-                            {locale === 'zh-cn' ? '重试' : 'Retry'}
-                          </Button>
-                          <Button onClick={openDirectLink}>
-                            {locale === 'zh-cn' ? '在新窗口打开' : 'Open in New Window'}
-                          </Button>
-                        </div>
+                        <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
+                        <p className="mt-4 text-muted-foreground">
+                          {t(locale, {
+                            zh: "项目加载中...",
+                            en: "Loading project...",
+                            fr: "Chargement du projet..."
+                          })}
+                        </p>
                       </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="h-full">
-                    {/* 其他项目类型的渲染逻辑保持不变 */}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* 右侧工具栏 (30%) */}
-        <div className="w-[30%] border-l border-border bg-black text-white">
-          {/* 项目信息区 */}
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
-            <p className="text-gray-300 mb-4">{projectData?.description}</p>
-            <div className="flex items-center gap-2 text-gray-400">
-              <span>全屏打开</span>
-              <a 
-                href={projectData?.externalUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:underline overflow-hidden text-ellipsis"
-              >
-                {projectData?.externalUrl && getHostname(projectData.externalUrl)}
-              </a>
+                    </div>
+                  )}
+                  {iframeError && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-background">
+                      <div className="mb-8">
+                        <Image 
+                          src="/favicon.png" 
+                          alt="CodeTok Logo" 
+                          width={96} 
+                          height={96}
+                          className="mx-auto grayscale opacity-50"
+                        />
+                      </div>
+                      <h1 className="text-3xl font-bold mb-4">
+                        CodeTok
+                      </h1>
+                      <div className="text-red-500 mb-4">{iframeError}</div>
+                      <div className="flex gap-4">
+                        <Button onClick={refreshIframe}>
+                          {t(locale, {
+                            zh: "重试",
+                            en: "Retry",
+                            fr: "Réessayer"
+                          })}
+                        </Button>
+                        <Button onClick={openDirectLink}>
+                          {t(locale, {
+                            zh: "在新窗口打开",
+                            en: "Open in New Window",
+                            fr: "Ouvrir dans une nouvelle fenêtre"
+                          })}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="h-full">
+                  {/* 其他项目类型的渲染逻辑保持不变 */}
+                </div>
+              )}
             </div>
-            {projectData?.createdAt && (
-              <p className="text-gray-400 mt-2">
-                {formatDate(projectData.createdAt)}
-              </p>
-            )}
-          </div>
-
-          {/* 交互按钮区 */}
-          <div className="p-6 flex flex-col gap-6">
-            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-              </svg>
-              <span>{locale === 'zh-cn' ? '点赞' : 'Like'}</span>
-            </button>
-            
-            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span>{locale === 'zh-cn' ? '评论' : 'Comment'}</span>
-            </button>
-            
-            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span>{locale === 'zh-cn' ? '收藏' : 'Bookmark'}</span>
-            </button>
-            
-            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="18" cy="5" r="3"></circle>
-                <circle cx="6" cy="12" r="3"></circle>
-                <circle cx="18" cy="19" r="3"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-              </svg>
-              <span>{locale === 'zh-cn' ? '分享' : 'Share'}</span>
-            </button>
-          </div>
+          )}
         </div>
       </div>
-      
-      {error && (
-        <div className="fixed inset-0 flex items-center justify-center bg-background/80 z-50">
-          <div className="bg-card border border-border p-6 rounded-lg shadow-lg max-w-md">
-            <h3 className="text-xl font-bold mb-2">{locale === 'zh-cn' ? '加载失败' : 'Loading Failed'}</h3>
-            <p className="text-muted-foreground mb-4">{error}</p>
-            <div className="flex justify-between">
-              <Button onClick={handleRetry}>
-                {locale === 'zh-cn' ? '重试' : 'Retry'}
-              </Button>
-              <Button variant="outline" onClick={handleRandomProject}>
-                {locale === 'zh-cn' ? '浏览其他项目' : 'Browse Other Projects'}
-              </Button>
-            </div>
+
+      {/* 右侧工具栏 (30%) */}
+      <div className="w-[30%] border-l border-border bg-black text-white">
+        {/* 项目信息区 */}
+        <div className="p-6">
+          <h1 className="text-2xl font-bold mb-2">{projectData?.title || "加载中..."}</h1>
+          <p className="text-gray-300 mb-4">{projectData?.description}</p>
+          <div className="flex items-center gap-2 text-gray-400">
+            <span>全屏打开</span>
+            <a 
+              href={projectData?.externalUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline overflow-hidden text-ellipsis"
+            >
+              {projectData?.externalUrl && getHostname(projectData.externalUrl)}
+            </a>
           </div>
+          {projectData?.createdAt && (
+            <p className="text-gray-400 mt-2">
+              {formatDate(projectData.createdAt)}
+            </p>
+          )}
         </div>
-      )}
+
+        {/* 交互按钮区 */}
+        <div className="p-6 flex flex-col gap-6">
+          <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span>{t(locale, {
+              zh: "点赞",
+              en: "Like",
+              fr: "J'aime"
+            })}</span>
+          </button>
+          
+          <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>{t(locale, {
+              zh: "评论",
+              en: "Comment",
+              fr: "Commenter"
+            })}</span>
+          </button>
+          
+          <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>{t(locale, {
+              zh: "收藏",
+              en: "Bookmark",
+              fr: "Marquer"
+            })}</span>
+          </button>
+          
+          <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            <span>{t(locale, {
+              zh: "分享",
+              en: "Share",
+              fr: "Partager"
+            })}</span>
+          </button>
+        </div>
+      </div>
     </div>
   )
-} 
+}

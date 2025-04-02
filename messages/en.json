@@ -1,5 +1,43 @@
 {
   "Index": {
-    "title": ""
+    "title": "CodeTok Platform for Sharing Code Projects"
+  },
+  "Common": {
+    "loading": "Loading...",
+    "retry": "Retry",
+    "error": "Error",
+    "back_home": "Back to Home",
+    "search": "Search"
+  },
+  "Navigation": {
+    "for_you": "For You",
+    "discover": "Discover",
+    "jobs": "Jobs",
+    "following": "Following",
+    "live": "LIVE",
+    "learn": "Learn",
+    "store": "Store",
+    "profile": "Profile",
+    "more": "More"
+  },
+  "Auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "username": "Username",
+    "confirm_password": "Confirm Password",
+    "forgot_password": "Forgot password?",
+    "create_account": "Create an account"
+  },
+  "Project": {
+    "previous_work": "Previous work",
+    "next_work": "Next work",
+    "like": "Like",
+    "comment": "Comment",
+    "bookmark": "Bookmark",
+    "share": "Share",
+    "loading_content": "Loading amazing content...",
+    "loading_project": "Loading project..."
   }
 }

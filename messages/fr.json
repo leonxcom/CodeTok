@@ -1,5 +1,43 @@
 {
   "Index": {
-    "title": ""
+    "title": "Plateforme CodeTok pour le Partage de Projets de Code"
+  },
+  "Common": {
+    "loading": "Chargement...",
+    "retry": "Réessayer",
+    "error": "Erreur",
+    "back_home": "Retour à l'Accueil",
+    "search": "Rechercher"
+  },
+  "Navigation": {
+    "for_you": "Pour Vous",
+    "discover": "Découvrir",
+    "jobs": "Emplois",
+    "following": "Abonnements",
+    "live": "EN DIRECT",
+    "learn": "Apprendre",
+    "store": "Boutique",
+    "profile": "Profil",
+    "more": "Plus"
+  },
+  "Auth": {
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "username": "Nom d'utilisateur",
+    "confirm_password": "Confirmer le mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "create_account": "Créer un compte"
+  },
+  "Project": {
+    "previous_work": "Projet précédent",
+    "next_work": "Projet suivant",
+    "like": "J'aime",
+    "comment": "Commenter",
+    "bookmark": "Sauvegarder",
+    "share": "Partager",
+    "loading_content": "Chargement du contenu...",
+    "loading_project": "Chargement du projet..."
   }
 }

@@ -196,74 +196,49 @@ async function restoreToPreview(projects) {
     
     // 计数器
     let importedCount = 0;
+    let errorCount = 0;
     
+    // 逐个导入项目
     for (const project of projects) {
       try {
-        console.log(`\n导入项目: [${project.id}] ${project.title}`);
-        
-        // 处理JSON字段，确保正确格式化
-        let filesJson = null;
-        if (project.files) {
-          if (typeof project.files === 'string') {
-            try {
-              filesJson = JSON.stringify(JSON.parse(project.files));
-              console.log('  - files字段JSON解析成功');
-            } catch (e) {
-              console.warn(`  - 无法解析项目文件JSON: ${e.message}`);
-              filesJson = '{}';
-            }
-          } else {
-            filesJson = JSON.stringify(project.files);
-            console.log('  - files字段已是对象格式，转换为JSON字符串');
-          }
-        } else {
-          filesJson = '{}';
-          console.log('  - files字段为空，使用空对象');
-        }
-        
-        // 使用原始的main_file值
-        const mainFileValue = project.main_file || '';
-        
-        // 获取当前时间
-        const currentDate = new Date().toISOString();
-        
-        // 导入项目到预发布环境
+        // 插入项目
         await sql`
           INSERT INTO projects (
-            id, title, description, files, main_file, is_public, 
+            id, title, description, files, main_file, is_public,
             views, likes, external_url, external_embed, external_author, type,
             created_at, updated_at
           ) VALUES (
-            ${project.id}, 
-            ${project.title}, 
-            ${project.description}, 
-            ${filesJson}::jsonb, 
-            ${mainFileValue}, 
-            ${project.is_public}, 
-            ${project.views || 0}, 
-            ${project.likes || 0}, 
-            ${project.external_url}, 
-            ${project.external_embed}, 
-            ${project.external_author}, 
+            ${project.id},
+            ${project.title},
+            ${project.description || ''},
+            ${project.files},
+            ${project.main_file || 'index.html'},
+            ${project.is_public === false ? false : true},
+            ${project.views || 0},
+            ${project.likes || 0},
+            ${project.external_url || ''},
+            ${project.external_embed === true ? true : false},
+            ${project.external_author || 'CodeTok'},
             ${project.type || 'external'},
-            ${project.created_at || currentDate}, 
-            ${project.updated_at || currentDate}
+            ${project.created_at || new Date().toISOString()},
+            ${project.updated_at || new Date().toISOString()}
           )
         `;
         
-        console.log(`  ✓ 成功导入项目: ${project.title}`);
+        console.log(`✓ 成功导入项目: "${project.title}" (${project.id})`);
         importedCount++;
       } catch (error) {
-        console.error(`  ✗ 导入项目 ${project.title} 失败:`, error);
+        console.error(`✗ 导入项目 "${project.title}" (${project.id}) 失败:`, error);
+        errorCount++;
       }
     }
     
-    // 重新统计预发布环境的项目数
+    // 输出导入结果
+    console.log(`\n导入完成! 成功: ${importedCount}, 失败: ${errorCount}`);
+    
+    // 验证导入结果
     const finalCount = await sql`SELECT COUNT(*) FROM projects`;
-    
-    console.log(`\n恢复完成! 成功导入 ${importedCount} 个项目到预发布环境`);
-    console.log(`预发布环境现在共有 ${finalCount.rows[0].count} 个项目`);
-    
+    console.log(`预发布环境现有 ${finalCount.rows[0].count} 个项目`);
   } catch (error) {
     console.error('恢复到预发布环境过程中出错:', error);
   } finally {
@@ -278,10 +253,11 @@ async function restorePreviewDatabase() {
     await setupEnvironment();
     const projects = await getProductionProjects();
     await restoreToPreview(projects);
-    console.log('\n恢复完成! 数据已经从生产环境恢复到预发布环境。');
+    console.log('\n恢复操作完成!');
   } catch (error) {
-    console.error('恢复过程发生错误:', error);
+    console.error('恢复过程中发生错误:', error);
   }
 }
 
+// 执行恢复操作
 restorePreviewDatabase(); 

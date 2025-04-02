@@ -22,7 +22,7 @@ import {
   MoreHorizontal
 } from "lucide-react"
 import { useTheme } from "next-themes"
-
+import { useRouter, usePathname } from '@/navigation'
 import { Locale } from "../../i18n/config"
 import { Button } from "@/components/ui/button"
 import {
@@ -33,10 +33,10 @@ import {
   SheetTitle,
   SheetClose
 } from "@/components/ui/sheet"
-import { ThemeToggle } from "./theme-toggle"
-import { LanguageToggle } from "./language-toggle"
+import { Input } from "@/components/ui/input"
+import { t } from '@/utils/language-utils'
 import { cn } from "@/lib/utils"
-import { Input } from "./ui/input"
+import { LanguageToggle } from "@/components/language-toggle"
 
 interface NavItemProps {
   href: string;
@@ -46,16 +46,22 @@ interface NavItemProps {
 }
 
 function NavItem({ href, icon, label, onNavigate }: NavItemProps) {
+  const pathname = usePathname()
+  const isActive = pathname === href
+  
   return (
-    <Link 
-      href={href}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors hover:bg-accent text-foreground text-sm"
+    <Button
+      variant="ghost"
+      asChild
       onClick={onNavigate}
+      className={cn("justify-start pl-3 py-5 h-9", isActive && "bg-accent text-accent-foreground")}
     >
-      {icon}
-      <span>{label}</span>
-    </Link>
-  );
+      <Link href={href} className="flex items-center gap-2">
+        {icon}
+        <span className="text-sm">{label}</span>
+      </Link>
+    </Button>
+  )
 }
 
 export function SideNav() {
@@ -72,47 +78,83 @@ export function SideNav() {
     {
       href: `/${locale}`,
       icon: <HomeIcon className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "为你推荐" : "For You"
+      label: t(locale, { 
+        zh: "为你推荐", 
+        en: "For You",
+        fr: "Pour Vous"
+      })
     },
     {
       href: `/${locale}/discover`,
       icon: <Compass className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "发现作品" : "Discover"
+      label: t(locale, { 
+        zh: "发现作品", 
+        en: "Discover",
+        fr: "Découvrir"
+      })
     },
     {
       href: `/${locale}/jobs`,
       icon: <Briefcase className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "工作机会" : "Jobs"
+      label: t(locale, { 
+        zh: "工作机会", 
+        en: "Jobs",
+        fr: "Emplois"
+      })
     },
     {
       href: `/${locale}/activity`,
       icon: <Activity className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "已关注" : "Following"
+      label: t(locale, { 
+        zh: "已关注", 
+        en: "Following",
+        fr: "Abonnements"
+      })
     },
     {
       href: `/${locale}/live`,
       icon: <Radio className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "直播" : "LIVE"
+      label: t(locale, { 
+        zh: "直播", 
+        en: "LIVE",
+        fr: "EN DIRECT"
+      })
     },
     {
       href: `/${locale}/learn`,
       icon: <GraduationCap className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "学习" : "Learn"
+      label: t(locale, { 
+        zh: "学习", 
+        en: "Learn",
+        fr: "Apprendre"
+      })
     },
     {
       href: `/${locale}/store`,
       icon: <ShoppingBag className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "商城" : "Store"
+      label: t(locale, { 
+        zh: "商城", 
+        en: "Store",
+        fr: "Boutique"
+      })
     },
     {
       href: `/${locale}/profile`,
       icon: <UserIcon className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "我的" : "Profile"
+      label: t(locale, { 
+        zh: "我的", 
+        en: "Profile",
+        fr: "Profil"
+      })
     },
     {
       href: `/${locale}/more`,
       icon: <MoreHorizontal className="h-4 w-4" />,
-      label: locale === "zh-cn" ? "更多" : "More"
+      label: t(locale, { 
+        zh: "更多", 
+        en: "More",
+        fr: "Plus"
+      })
     }
   ];
 
@@ -121,7 +163,7 @@ export function SideNav() {
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="text-foreground">
           <Menu className="h-5 w-5" />
-          <span className="sr-only">导航</span>
+          <span className="sr-only">{t(locale, { zh: "导航", en: "Navigation", fr: "Navigation" })}</span>
         </Button>
       </SheetTrigger>
       <SheetContent 
@@ -129,7 +171,11 @@ export function SideNav() {
         className="border-r bg-background text-foreground border-border w-64 flex flex-col"
       >
         <SheetTitle className="sr-only">
-          {locale === "zh-cn" ? "导航菜单" : "Navigation Menu"}
+          {t(locale, {
+            zh: "导航菜单",
+            en: "Navigation Menu",
+            fr: "Menu de Navigation"
+          })}
         </SheetTitle>
         <SheetHeader className="flex flex-col items-start">
           <div className="flex items-center gap-2 mb-3">
@@ -153,7 +199,11 @@ export function SideNav() {
             <div className="relative flex items-center">
               <Search className="absolute left-2 h-3 w-3 text-muted-foreground" />
               <Input 
-                placeholder={locale === "zh-cn" ? "搜索" : "Search"} 
+                placeholder={t(locale, { 
+                  zh: "搜索", 
+                  en: "Search",
+                  fr: "Rechercher"
+                })} 
                 className="pl-7 w-full bg-accent h-8 text-sm"
               />
             </div>
@@ -181,7 +231,11 @@ export function SideNav() {
         {/* 设置区域 */}
         <div className="px-3 mt-2">
           <h3 className="text-xs font-medium mb-1.5 text-foreground">
-            {locale === "zh-cn" ? "主题: 跟随系统" : "Theme: Follow System"}
+            {t(locale, {
+              zh: "主题: 跟随系统",
+              en: "Theme: Follow System",
+              fr: "Thème: Suivre le système"
+            })}
           </h3>
           
           <div className="grid grid-cols-3 gap-1.5">
@@ -192,7 +246,11 @@ export function SideNav() {
               className="h-7 w-full flex items-center justify-center px-1"
               data-state={theme === "system" ? "active" : "inactive"}
             >
-              <span className="text-[10px]">{locale === "zh-cn" ? "系统" : "System"}</span>
+              <span className="text-[10px]">{t(locale, {
+                zh: "系统",
+                en: "System",
+                fr: "Système"
+              })}</span>
             </Button>
             
             <Button
@@ -203,7 +261,11 @@ export function SideNav() {
               data-state={theme === "light" ? "active" : "inactive"}
             >
               <Sun className="h-3 w-3" />
-              <span className="text-[10px]">{locale === "zh-cn" ? "亮色" : "Light"}</span>
+              <span className="text-[10px]">{t(locale, {
+                zh: "亮色",
+                en: "Light",
+                fr: "Clair"
+              })}</span>
             </Button>
             
             <Button
@@ -214,7 +276,11 @@ export function SideNav() {
               data-state={theme === "dark" ? "active" : "inactive"}
             >
               <Moon className="h-3 w-3" />
-              <span className="text-[10px]">{locale === "zh-cn" ? "暗色" : "Dark"}</span>
+              <span className="text-[10px]">{t(locale, {
+                zh: "暗色",
+                en: "Dark",
+                fr: "Sombre"
+              })}</span>
             </Button>
           </div>
         </div>
@@ -223,11 +289,15 @@ export function SideNav() {
         <div className="flex items-center justify-between py-1.5 px-3 mb-2">
           <div className="flex items-center gap-1.5">
             <Languages className="h-4 w-4" />
-            <span className="text-sm">{locale === "zh-cn" ? "语言切换" : "Language"}</span>
+            <span className="text-sm">{t(locale, {
+              zh: "语言切换",
+              en: "Language",
+              fr: "Langue"
+            })}</span>
           </div>
           <LanguageToggle locale={locale} />
         </div>
       </SheetContent>
     </Sheet>
   )
-} 
+}

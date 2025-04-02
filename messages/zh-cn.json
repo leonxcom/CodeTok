@@ -1,5 +1,43 @@
 {
   "Index": {
-    "title": ""
+    "title": "CodeTok 代码项目分享平台"
+  },
+  "Common": {
+    "loading": "加载中...",
+    "retry": "重试",
+    "error": "错误",
+    "back_home": "返回首页",
+    "search": "搜索"
+  },
+  "Navigation": {
+    "for_you": "为你推荐",
+    "discover": "发现",
+    "jobs": "工作机会",
+    "following": "关注",
+    "live": "直播",
+    "learn": "学习",
+    "store": "商店",
+    "profile": "个人资料",
+    "more": "更多"
+  },
+  "Auth": {
+    "login": "登录",
+    "register": "注册",
+    "email": "邮箱",
+    "password": "密码",
+    "username": "用户名",
+    "confirm_password": "确认密码",
+    "forgot_password": "忘记密码？",
+    "create_account": "创建账号"
+  },
+  "Project": {
+    "previous_work": "上一个项目",
+    "next_work": "下一个项目",
+    "like": "点赞",
+    "comment": "评论",
+    "bookmark": "收藏",
+    "share": "分享",
+    "loading_content": "正在加载精彩内容...",
+    "loading_project": "正在加载项目..."
   }
-} 
+}

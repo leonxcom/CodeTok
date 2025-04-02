@@ -225,29 +225,3 @@ pnpm dev
 3. 提交您的更改 (`git commit -m 'feat: add some amazing feature'`)
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 创建Pull Request
-
-详细的贡献指南请参见[CONTRIBUTING-zh-CN.md](./CONTRIBUTING-zh-CN.md)。
-
-## ✅ 认证系统
-
-CodeTok 使用 Better Auth 进行身份认证。有关认证系统实现的详细信息，请参阅我们的[认证指南](./docs/authentication-guide.md)。
-
-主要功能：
-- 电子邮件/密码注册和登录
-- GitHub 和 Google 社交登录
-- 用户资料管理
-- 安全会话处理
-
-### 设置社交登录 OAuth
-
-要启用社交登录功能：
-
-1. 在 GitHub 和 Google 开发者控制台中创建 OAuth 应用
-2. 将凭据添加到您的 `.env.local` 文件中：
-   ```
-   GITHUB_CLIENT_ID=你的github客户端ID
-   GITHUB_CLIENT_SECRET=你的github客户端密钥
-   GOOGLE_CLIENT_ID=你的google客户端ID
-   GOOGLE_CLIENT_SECRET=你的google客户端密钥
-   ```
-3. 在提供商设置中配置回调 URL 以匹配您的部署环境

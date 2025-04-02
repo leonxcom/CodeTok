@@ -249,80 +249,157 @@ async function addExternalProjects() {
   }
 }
 
-// 执行同步到生产环境的命令
+// 同步到生产环境
 async function syncToProduction() {
-  console.log('\n准备将项目同步到生产环境...');
+  console.log('\n准备同步到生产环境...');
   
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
   try {
-    // 执行之前创建的同步脚本
-    const { exec } = require('child_process');
-    
-    return new Promise((resolve, reject) => {
-      console.log('执行同步脚本: node scripts/projects/sync-to-main-database.js');
-      
-      const syncProcess = exec('node scripts/projects/sync-to-main-database.js', (error, stdout, stderr) => {
-        if (error) {
-          console.error('同步过程中出错:', error);
-          reject(error);
-          return;
-        }
-        
-        console.log(stdout);
-        if (stderr) {
-          console.error(stderr);
-        }
-        
-        resolve(true);
-      });
-      
-      // 将同步脚本的输出实时显示出来
-      syncProcess.stdout.on('data', (data) => {
-        process.stdout.write(data);
-      });
-      
-      syncProcess.stderr.on('data', (data) => {
-        process.stderr.write(data);
+    // 询问是否要同步到生产环境
+    const shouldSync = await new Promise((resolve) => {
+      rl.question('是否要将新添加的项目同步到生产环境? (y/N) ', (answer) => {
+        resolve(answer.toLowerCase() === 'y');
       });
     });
+
+    if (!shouldSync) {
+      console.log('已取消同步到生产环境');
+      return false;
+    }
+
+    // 获取生产环境数据库URL
+    const prodUrl = await new Promise((resolve) => {
+      rl.question('请输入生产环境数据库连接URL: ', (answer) => {
+        resolve(answer.trim());
+      });
+    });
+
+    if (!prodUrl) {
+      console.log('未提供生产环境数据库URL，取消同步');
+      return false;
+    }
+
+    // 保存原始数据库URL
+    const originalDatabaseUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+    
+    try {
+      // 切换到生产环境数据库
+      process.env.POSTGRES_URL = prodUrl;
+      
+      // 测试连接
+      await sql`SELECT 1`;
+      console.log('成功连接到生产环境数据库');
+      
+      // 获取预发布环境的项目
+      process.env.POSTGRES_URL = process.env.POSTGRES_URL_PREVIEW;
+      const previewProjects = await sql`
+        SELECT * FROM projects 
+        WHERE type = 'external' 
+        ORDER BY created_at DESC
+      `;
+      
+      // 切换回生产环境
+      process.env.POSTGRES_URL = prodUrl;
+      
+      // 获取生产环境中的外部URL
+      const prodUrlsResult = await sql`
+        SELECT external_url FROM projects 
+        WHERE external_url IS NOT NULL AND external_url != ''
+      `;
+      
+      const prodUrls = new Set(prodUrlsResult.rows.map(row => row.external_url));
+      
+      // 同步项目
+      let syncedCount = 0;
+      let skippedCount = 0;
+      
+      for (const project of previewProjects.rows) {
+        // 标准化URL
+        const normalizedUrl = project.external_url?.replace(/\/$/, '');
+        
+        // 检查URL是否已存在
+        const urlExists = Array.from(prodUrls).some(url => {
+          return url.replace(/\/$/, '') === normalizedUrl;
+        });
+        
+        if (urlExists) {
+          console.log(`\n跳过已存在的项目: ${project.title} (${project.external_url})`);
+          skippedCount++;
+          continue;
+        }
+        
+        console.log(`\n同步项目: ${project.title} (${project.external_url})`);
+        
+        try {
+          // 插入项目数据
+          await sql`
+            INSERT INTO projects (
+              id, title, description, files, main_file, is_public, 
+              views, likes, external_url, external_embed, external_author, type,
+              created_at, updated_at
+            ) VALUES (
+              ${project.id}, 
+              ${project.title}, 
+              ${project.description}, 
+              ${JSON.stringify(project.files)}::jsonb, 
+              ${project.main_file}, 
+              ${project.is_public}, 
+              ${project.views}, 
+              ${project.likes}, 
+              ${project.external_url}, 
+              ${project.external_embed}, 
+              ${project.external_author}, 
+              ${project.type},
+              ${project.created_at}, 
+              ${project.updated_at}
+            )
+          `;
+          
+          console.log(`✓ 成功同步项目 "${project.title}" (ID: ${project.id})`);
+          syncedCount++;
+        } catch (error) {
+          console.error(`✗ 同步项目 "${project.title}" 失败:`, error);
+        }
+      }
+      
+      console.log(`\n同步完成! 成功同步 ${syncedCount} 个项目，跳过 ${skippedCount} 个已存在项目`);
+      return syncedCount > 0;
+    } finally {
+      // 恢复原始数据库URL
+      process.env.POSTGRES_URL = originalDatabaseUrl;
+    }
   } catch (error) {
-    console.error('执行同步脚本失败:', error);
+    console.error('同步到生产环境失败:', error);
     return false;
+  } finally {
+    rl.close();
   }
 }
 
 // 主函数
 async function main() {
   try {
+    // 设置环境变量
     await setupEnvironment();
-    const added = await addExternalProjects();
     
-    if (added) {
-      // 询问是否同步到生产环境
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-      });
-      
-      const shouldSync = await new Promise((resolve) => {
-        rl.question('\n是否将新添加的项目同步到生产环境? (y/n): ', (answer) => {
-          rl.close();
-          resolve(answer.trim().toLowerCase() === 'y');
-        });
-      });
-      
-      if (shouldSync) {
-        await syncToProduction();
-        console.log('\n所有操作完成! 外部项目已添加到预发布环境并同步到生产环境。');
-      } else {
-        console.log('\n操作部分完成! 外部项目已添加到预发布环境，但尚未同步到生产环境。');
-        console.log('稍后可以运行 "node scripts/projects/sync-to-main-database.js" 来完成同步。');
-      }
-    } else {
-      console.log('\n没有新项目添加，跳过同步步骤。');
+    // 添加外部项目到预发布环境
+    const hasNewProjects = await addExternalProjects();
+    
+    // 如果有新项目，询问是否同步到生产环境
+    if (hasNewProjects) {
+      await syncToProduction();
     }
+    
+    console.log('\n所有操作已完成');
   } catch (error) {
-    console.error('操作过程中发生错误:', error);
+    console.error('程序执行失败:', error);
+    process.exit(1);
   }
 }
 
+// 执行主函数
 main(); 

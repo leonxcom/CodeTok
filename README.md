@@ -225,29 +225,3 @@ We welcome contributions of all forms! If you want to participate in project dev
 3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Create a Pull Request
-
-For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## ✅ Authentication
-
-CodeTok uses Better Auth for authentication. For detailed information on the authentication system implementation, please see our [Authentication Guide](./docs/authentication-guide.md).
-
-Key features:
-- Email/password registration and login
-- Social login with GitHub and Google
-- User profile management
-- Secure session handling
-
-### Setting up OAuth for Social Login
-
-To enable social login features:
-
-1. Create OAuth applications in GitHub and Google developer consoles
-2. Add credentials to your `.env.local` file:
-   ```
-   GITHUB_CLIENT_ID=your_github_client_id
-   GITHUB_CLIENT_SECRET=your_github_client_secret
-   GOOGLE_CLIENT_ID=your_google_client_id
-   GOOGLE_CLIENT_SECRET=your_google_client_secret
-   ```
-3. Configure callback URLs in provider settings to match your deployment environment

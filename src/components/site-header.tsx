@@ -2,17 +2,12 @@
 
 import Link from 'next/link'
 import { useTheme } from "next-themes"
-
 import { getSiteConfig } from '@/config/site-i18n'
-import { buttonVariants } from '@/components/ui/button'
-import { Icons } from '@/components/icons'
-import { MainNav } from '@/components/main-nav'
+import { Button } from '@/components/ui/button'
+import { SideNav } from '@/components/side-nav'
 import { Locale } from '../../i18n/config'
-import { LanguageToggle } from './language-toggle'
-import { Button } from './ui/button'
-import { SideNav } from './side-nav'
 import { cn } from '@/lib/utils'
-import { useSession } from "@/lib/auth-client"
+import { t } from '@/utils/language-utils'
 
 interface SiteHeaderProps {
   locale: Locale
@@ -22,30 +17,28 @@ export function SiteHeader({ locale }: SiteHeaderProps) {
   const siteConfig = getSiteConfig(locale)
   
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background border-border">
-      <div className="container flex h-16 items-center justify-center">
-        <div className="absolute left-4">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center">
+        <div className="flex items-center gap-4">
           <SideNav />
+          <Link href={`/${locale}`} className="flex items-center gap-2">
+            <img src="/favicon.png" alt="Logo" className="h-6 w-6" />
+            <span className="font-bold hidden md:inline">CodeTok</span>
+          </Link>
         </div>
-        <MainNav items={siteConfig.mainNav} locale={locale} />
-        <div className="absolute right-4 flex items-center space-x-3">
-          {/* 暂时隐藏多语言切换图标 */}
-          {/* <LanguageToggle locale={locale} /> */}
-          <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            asChild
-          >
-            <Link href={`/${locale}/upload`}>
-              {locale === 'zh-cn' ? '上传' : 'Upload'}
-            </Link>
-          </Button>
-          <Button
-            variant="outline"
-            className="border-border text-foreground hover:bg-muted"
-            asChild
-          >
+
+        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+          <div className="w-full flex-1 md:w-auto md:flex-none">
+            {/* 搜索框 */}
+          </div>
+
+          <Button asChild>
             <Link href={`/${locale}/auth`}>
-              {locale === 'zh-cn' ? '登录/注册' : 'Login/Register'}
+              {t(locale, {
+                zh: '登录/注册',
+                en: 'Sign In/Up',
+                fr: 'Connexion/Inscription'
+              })}
             </Link>
           </Button>
         </div>

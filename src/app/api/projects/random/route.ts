@@ -213,22 +213,17 @@ async function updateViewCount(projectId: string, currentViews: number): Promise
  * Helper function to prepare project response with minimal processing
  */
 function prepareProjectResponse(project: any): ProjectResponse {
-  // 确保 project.files 是数组
   let files: string[] = [];
+  
   if (project.files) {
-    // 检查是否为数组
-    if (Array.isArray(project.files)) {
-      files = project.files.map((file: any) => file.pathname);
-    } else if (typeof project.files === 'string') {
-      // 如果是 JSON 字符串，尝试解析
-      try {
-        const parsedFiles = JSON.parse(project.files);
-        if (Array.isArray(parsedFiles)) {
-          files = parsedFiles.map((file: any) => file.pathname);
-        }
-      } catch (e) {
-        console.log(`[RandomAPI] Failed to parse project.files: ${e}`);
+    try {
+      if (typeof project.files === 'string') {
+        files = JSON.parse(project.files);
+      } else if (Array.isArray(project.files)) {
+        files = project.files;
       }
+    } catch (e) {
+      console.log(`[RandomAPI] Failed to parse project.files: ${e}`);
     }
   }
 
@@ -245,4 +240,4 @@ function prepareProjectResponse(project: any): ProjectResponse {
     views: project.views,
     createdAt: project.created_at
   };
-} 
+}

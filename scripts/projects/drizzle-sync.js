@@ -248,31 +248,7 @@ async function main() {
     
     // 确认同步
     if (projects.length === 0) {
-      console.log('没有可同步的项目，操作终止');
-      process.exit(0);
-    }
-    
-    const { stdin, stdout } = process;
-    stdout.write(`\n是否将 ${projects.length} 个项目同步到生产环境? (y/n): `);
-    
-    // 设置输入模式
-    stdin.setRawMode(true);
-    stdin.resume();
-    stdin.setEncoding('utf8');
-    
-    // 处理用户输入
-    const answer = await new Promise(resolve => {
-      stdin.once('data', (data) => {
-        const key = data.toString().toLowerCase();
-        stdout.write(key + '\n');
-        stdin.setRawMode(false);
-        stdin.pause();
-        resolve(key);
-      });
-    });
-    
-    if (answer !== 'y') {
-      console.log('操作已取消');
+      console.log('没有找到需要同步的项目，程序退出');
       process.exit(0);
     }
     
@@ -282,16 +258,15 @@ async function main() {
     // 保存结果
     await saveResultToFile(result);
     
-    // 结束
     if (result.success) {
-      console.log('====== 同步操作成功完成 ======');
+      console.log('\n同步成功完成！');
+      process.exit(0);
     } else {
-      console.error('====== 同步操作失败 ======');
-      console.error(`错误: ${result.error}`);
+      console.error('\n同步过程中发生错误:', result.error);
       process.exit(1);
     }
   } catch (error) {
-    console.error('操作过程中发生错误:', error);
+    console.error('程序执行失败:', error);
     process.exit(1);
   }
 }

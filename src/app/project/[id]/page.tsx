@@ -6,48 +6,53 @@ import Link from 'next/link'
 
 // This type will be replaced by the actual Project type from your DB schema
 type Project = {
-  id: string
+  projectId: string
   title?: string
   description?: string
-  codeFiles: {
-    id: string
-    filename: string
-    content: string
-    language: string
-    isEntryPoint: boolean
-  }[]
+  externalUrl?: string
+  externalEmbed?: boolean
+  externalAuthor?: string
+  type?: string
+  files: string[]
+  mainFile: string
+  fileContents: Record<string, string>
+  hasTsxFiles: boolean
+  views: number
+  createdAt: string
 }
 
 // Mock API call - will be replaced by actual DB query
 const fetchProject = async (id: string): Promise<Project | null> => {
-  // In production, this will fetch from your database
-  // For now, return mock data for demonstration
-  return {
-    id,
-    title: 'Example Project',
-    description: 'This is a placeholder for project data',
-    codeFiles: [
-      {
-        id: '1',
-        filename: 'index.html',
-        content: '<!DOCTYPE html>\n<html>\n<head>\n  <title>Example</title>\n</head>\n<body>\n  <h1>Hello World</h1>\n</body>\n</html>',
-        language: 'html',
-        isEntryPoint: true
+  try {
+    const response = await fetch(`/api/projects/${id}`)
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null
       }
-    ]
+      throw new Error('Failed to fetch project')
+    }
+    return response.json()
+  } catch (error) {
+    console.error('Error fetching project:', error)
+    return null
   }
 }
 
 // This will update project view count
 const incrementViewCount = async (id: string) => {
-  // In production, this will update the view count in your database
-  console.log(`Incrementing view count for project: ${id}`)
+  try {
+    await fetch(`/api/projects/${id}`, {
+      method: 'GET'
+    })
+  } catch (error) {
+    console.error('Error incrementing view count:', error)
+  }
 }
 
 export default function ProjectPage({ params }: { params: { id: string } }) {
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
-  const [activeFileId, setActiveFileId] = useState<string | null>(null)
+  const [activeFile, setActiveFile] = useState<string | null>(null)
   
   useEffect(() => {
     const loadProject = async () => {
@@ -61,9 +66,8 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
         }
         
         setProject(data)
-        // Set active file to entry point or first file
-        const entryPoint = data.codeFiles.find(file => file.isEntryPoint)
-        setActiveFileId(entryPoint?.id || data.codeFiles[0]?.id || null)
+        // Set active file to main file or first file
+        setActiveFile(data.mainFile || data.files[0] || null)
         // Increment view count
         incrementViewCount(params.id)
       } catch (error) {
@@ -89,7 +93,13 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
     return notFound()
   }
 
-  const activeFile = project.codeFiles.find(file => file.id === activeFileId) || project.codeFiles[0]
+  const currentFileContent = activeFile ? project.fileContents[activeFile] : ''
+  const currentFileLanguage = activeFile?.endsWith('.tsx') ? 'tsx' : 
+                            activeFile?.endsWith('.ts') ? 'ts' :
+                            activeFile?.endsWith('.jsx') ? 'jsx' :
+                            activeFile?.endsWith('.js') ? 'js' :
+                            activeFile?.endsWith('.html') ? 'html' :
+                            activeFile?.endsWith('.css') ? 'css' : 'text'
   
   return (
     <div className="container mx-auto px-4 py-8">
@@ -102,15 +112,15 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
       )}
       
       <div className="border rounded-lg overflow-hidden">
-        {project.codeFiles.length > 1 && (
+        {project.files.length > 1 && (
           <div className="bg-muted p-2 border-b flex gap-2">
-            {project.codeFiles.map(file => (
+            {project.files.map(file => (
               <button
-                key={file.id}
-                className={`px-3 py-1 rounded text-sm ${file.id === activeFileId ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
-                onClick={() => setActiveFileId(file.id)}
+                key={file}
+                className={`px-3 py-1 rounded text-sm ${file === activeFile ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}
+                onClick={() => setActiveFile(file)}
               >
-                {file.filename}
+                {file}
               </button>
             ))}
           </div>
@@ -119,23 +129,17 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
         <div className="relative">
           <div className="flex items-center justify-between p-2 bg-muted border-b">
             <div className="text-xs text-muted-foreground">
-              {activeFile.language.toUpperCase()}
+              {currentFileLanguage.toUpperCase()}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Views: {project.views}
             </div>
           </div>
           
           <pre className="p-4 overflow-x-auto text-sm">
-            <code>{activeFile.content}</code>
+            <code>{currentFileContent}</code>
           </pre>
         </div>
-      </div>
-      
-      <div className="mt-8 flex space-x-4">
-        <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors">
-          Random Next
-        </button>
-        <Link href="/" className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">
-          Home
-        </Link>
       </div>
     </div>
   )

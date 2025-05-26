@@ -1,66 +1,63 @@
-import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
+import { sql } from '@/db';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    // 1. 检查数据库连接
-    const testConnection = await sql`SELECT version();`;
-    const dbVersion = testConnection.rows[0].version;
+    // 检查环境变量
+    const envStatus = {
+      NODE_ENV: process.env.NODE_ENV,
+      POSTGRES_URL: process.env.POSTGRES_URL ? '已设置' : '未设置',
+      DATABASE_URL: process.env.DATABASE_URL ? '已设置' : '未设置',
+      VERCEL: process.env.VERCEL ? '是' : '否',
+      VERCEL_ENV: process.env.VERCEL_ENV || '未设置',
+    };
+
+    // 测试数据库连接
+    let dbConnection = '未知';
+    let projectCount = 0;
+    let sampleProjects: any[] = [];
     
-    // 2. 列出所有表
-    const tables = await sql`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public';
-    `;
-    
-    // 3. 检查 projects 表结构
-    const columns = await sql`
-      SELECT column_name, data_type 
-      FROM information_schema.columns 
-      WHERE table_name = 'projects';
-    `;
-    
-    // 4. 统计项目数量
-    const projectCount = await sql`
-      SELECT COUNT(*) as count FROM projects;
-    `;
-    
-    // 5. 列出所有项目
-    const projects = await sql`
-      SELECT id, title, created_at, is_public 
-      FROM projects 
-      ORDER BY created_at DESC;
-    `;
-    
-    // 检查 projects 表中的数据
-    const projectsData = await sql`
-      SELECT id, title, created_at, is_public
-      FROM projects
-      LIMIT 5;
-    `;
-    
+    try {
+      // 测试简单查询
+      const testResult = await sql`SELECT NOW() as current_time`;
+      dbConnection = '连接成功';
+      
+      // 获取项目数量
+      const countResult = await sql`SELECT COUNT(*) as count FROM projects WHERE is_public = true`;
+      projectCount = parseInt(countResult.rows[0].count);
+      
+      // 获取前3个项目作为示例
+      const projectsResult = await sql`
+        SELECT id, title, external_url, views, created_at 
+        FROM projects 
+        WHERE is_public = true 
+        ORDER BY created_at DESC 
+        LIMIT 3
+      `;
+      sampleProjects = projectsResult.rows;
+      
+    } catch (dbError: any) {
+      dbConnection = `连接失败: ${dbError.message}`;
+    }
+
     return NextResponse.json({
-      status: 'connected',
-      version: dbVersion,
-      tables: tables.rows,
-      projectsTable: {
-        columns: columns.rows,
-        totalProjects: projectCount.rows[0].count,
-        projects: projects.rows
-      }
+      status: 'ok',
+      environment: envStatus,
+      database: {
+        connection: dbConnection,
+        projectCount,
+        sampleProjects,
+      },
+      timestamp: new Date().toISOString(),
     });
     
-  } catch (error) {
-    console.error('Database check error:', error);
-    return NextResponse.json(
-      { 
-        status: 'error',
-        error: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    return NextResponse.json({
+      status: 'error',
+      error: error.message,
+      timestamp: new Date().toISOString(),
+    }, { status: 500 });
   }
 } 

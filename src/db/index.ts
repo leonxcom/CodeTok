@@ -10,15 +10,17 @@ console.log(`当前环境: ${environment}`);
 // 使用硬编码的连接字符串避免环境变量换行问题
 const connectionString = "postgresql://neondb_owner:npg_K3Ayuov7JeFn@ep-sparkling-darkness-a1t0bvr2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
 
-// 检查数据库连接并在本地开发时设置环境变量
-if (environment === 'development' && !process.env.POSTGRES_URL) {
-  // 设置环境变量，确保vercel/postgres包可以找到
+// 确保在所有环境中都设置 POSTGRES_URL
+if (!process.env.POSTGRES_URL) {
+  // 无论是开发环境还是生产环境，如果没有设置环境变量，都使用硬编码的连接字符串
   process.env.POSTGRES_URL = connectionString;
-  console.log('已为开发环境设置POSTGRES_URL环境变量');
+  console.log(`已为${environment}环境设置POSTGRES_URL环境变量`);
 }
 
-// 创建本地环境的数据库池（使用硬编码连接字符串）
-const localPool = createPool({ connectionString });
+// 创建数据库池
+const localPool = createPool({ 
+  connectionString: process.env.POSTGRES_URL || connectionString 
+});
 
 // 使用带有数据库连接配置的sql函数
 export const sql = vercelSql;

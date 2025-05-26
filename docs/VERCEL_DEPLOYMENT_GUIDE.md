@@ -19,16 +19,16 @@
 
 ```bash
 # 数据库连接（使用你的 Neon 数据库连接字符串）
-DATABASE_URL="postgresql://neondb_owner:npg_K3Ayuov7JeFn@ep-sparkling-darkness-a1t0bvr2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
-POSTGRES_URL="postgresql://neondb_owner:npg_K3Ayuov7JeFn@ep-sparkling-darkness-a1t0bvr2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+DATABASE_URL="postgresql://your_database_connection_string"
+POSTGRES_URL="postgresql://your_database_connection_string"
 
 # 应用配置
 NEXT_PUBLIC_BASE_URL="https://你的项目名.vercel.app"
 BETTER_AUTH_SECRET="使用命令生成: openssl rand -base64 32"
 
 # AI API Keys
-DEEPSEEK_API_KEY="sk-824c424f4cd24091af497394e2ff248a"
-OPENROUTER_API_KEY="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"
+DEEPSEEK_API_KEY="your_deepseek_api_key_here"
+OPENROUTER_API_KEY="your_openrouter_api_key_here"
 
 # AI 配置
 NEXT_PUBLIC_DEFAULT_AI_MODEL="deepseek/deepseek-chat"

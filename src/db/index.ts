@@ -8,7 +8,7 @@ const environment = process.env.NODE_ENV || 'development';
 console.log(`当前环境: ${environment}`);
 
 // 使用硬编码的连接字符串避免环境变量换行问题
-const connectionString = "postgresql://neondb_owner:npg_K3Ayuov7JeFn@ep-sparkling-darkness-a1t0bvr2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
 // 确保在所有环境中都设置 POSTGRES_URL
 if (!process.env.POSTGRES_URL) {

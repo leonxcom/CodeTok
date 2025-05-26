@@ -6,7 +6,7 @@ console.log('🔧 初始化 Better Auth...');
 
 // 创建PostgreSQL连接池
 const pool = new Pool({
-  connectionString: "postgresql://neondb_owner:npg_K3Ayuov7JeFn@ep-sparkling-darkness-a1t0bvr2-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require",
+  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL || "",
   ssl: { rejectUnauthorized: false }
 });
 

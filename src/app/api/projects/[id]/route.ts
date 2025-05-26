@@ -1,106 +1,138 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
 import { ProjectFile, ProjectData } from '@/types'
+import { db, sql } from '@/db'
+import { getProjectById } from '@/services/project-service'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 300; // 5分钟缓存
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = context.params
-    console.log('获取项目详情，ID:', id)
+    const params = await context.params;
+    const id = params.id;
+    console.log('[ProjectAPI] 获取项目详情，ID:', id)
     
-    const projectResult = await sql<ProjectData>`
-      SELECT * FROM projects WHERE id = ${id}
-    `
+    let project = null;
     
-    if (projectResult.rows.length === 0) {
-      console.log('未找到项目:', id)
+    try {
+      // 先尝试从数据库查询项目
+      const result = await sql`
+        SELECT * FROM projects 
+        WHERE id = ${id}
+      `;
+      
+      if (result.rowCount && result.rowCount > 0 && result.rows[0]) {
+        project = result.rows[0];
+        console.log('[ProjectAPI] 从数据库获取项目:', project.title);
+      }
+    } catch (dbError) {
+      console.warn(`[ProjectAPI] 数据库查询失败，使用模拟数据:`, dbError);
+    }
+    
+    // 如果数据库查询失败，使用项目服务的模拟数据
+    if (!project) {
+      console.log(`[ProjectAPI] 使用模拟数据作为后备方案`);
+      const mockProject = await getProjectById(id);
+      
+      if (mockProject) {
+        // 转换为数据库格式
+        project = {
+          id: mockProject.id,
+          title: mockProject.title,
+          description: mockProject.description,
+          external_url: mockProject.externalUrl,
+          external_embed: true,
+          external_author: mockProject.authorName,
+          type: 'external',
+          files: JSON.stringify([{
+            filename: 'index.html',
+            pathname: 'index.html',
+            type: 'text/html',
+            url: mockProject.externalUrl
+          }]),
+          main_file: 'index.html',
+          is_public: true,
+          views: mockProject.views || 0,
+          created_at: mockProject.createdAt
+        };
+        console.log('[ProjectAPI] 使用模拟项目:', project.title);
+      }
+    }
+    
+    if (!project) {
+      console.log('[ProjectAPI] 未找到项目:', id)
       return NextResponse.json({ 
         error: 'Project not found' 
       }, { status: 404 })
     }
 
-    const project = projectResult.rows[0]
-    console.log('成功获取项目:', project.title)
+    console.log('[ProjectAPI] 成功获取项目:', project.title)
     
+    // 解析文件
+    let fileArray = [];
     try {
-      await sql`
-        UPDATE projects 
-        SET views = COALESCE(views, 0) + 1 
-        WHERE id = ${id}
-      `
-      console.log('[API] View count updated for project', id)
-    } catch (error) {
-      console.error('更新浏览量失败:', error)
-    }
-    
-    let files: string[] = []
-    let mainFileContent: string | null = null
-    let hasTsxFiles = false
-    
-    if (project.files) {
-      let projectFiles: ProjectFile[] = []
-      
-      if (Array.isArray(project.files)) {
-        projectFiles = project.files
-      } else if (typeof project.files === 'string') {
-        try {
-          const parsedFiles = JSON.parse(project.files)
-          if (Array.isArray(parsedFiles)) {
-            projectFiles = parsedFiles
-          } else if (typeof parsedFiles === 'object') {
-            // 处理对象格式的文件结构
-            projectFiles = Object.entries(parsedFiles).map(([path, fileData]: [string, any]) => {
-              const normalizedPath = path.startsWith('/') ? path.substring(1) : path
-              return {
-                url: '',
-                filename: normalizedPath.split('/').pop() || 'index.html',
-                pathname: normalizedPath,
-                size: fileData.content?.length || 0,
-                type: fileData.type || 'text/plain',
-                content: fileData.content,
-                isEntryPoint: fileData.isEntryPoint || false
-              }
-            })
+      if (project.files) {
+        const filesData = typeof project.files === 'string' ? JSON.parse(project.files) : project.files;
+        fileArray = Array.isArray(filesData) ? filesData : [];
+        
+        // 如果不是数组，尝试从对象中提取数组
+        if (fileArray.length === 0 && filesData && typeof filesData === 'object') {
+          console.log('[ProjectAPI] 尝试从对象中提取文件数组');
+          // 处理可能的对象格式
+          if (filesData.files && Array.isArray(filesData.files)) {
+            fileArray = filesData.files;
           } else {
-            console.warn('项目文件格式无效:', parsedFiles)
-            projectFiles = []
-          }
-        } catch (error) {
-          console.error('解析项目文件失败:', error)
-          projectFiles = []
-        }
-      }
-      
-      if (projectFiles.length > 0) {
-        files = projectFiles.map(file => file.pathname)
-        hasTsxFiles = files.some(file => file.toLowerCase().endsWith('.tsx'))
-        
-        // 查找入口文件或使用指定的主文件
-        const mainFile = projectFiles.find(file => 
-          file.pathname === project.main_file || file.isEntryPoint
-        )
-        
-        if (mainFile) {
-          mainFileContent = mainFile.content || null
-          if (!mainFileContent && mainFile.url) {
-            try {
-              const response = await fetch(mainFile.url)
-              if (response.ok) {
-                mainFileContent = await response.text()
-              }
-            } catch (error) {
-              console.error(`获取主文件内容失败 ${mainFile.pathname}:`, error)
-              mainFileContent = `// Error loading content: ${error instanceof Error ? error.message : 'Unknown error'}`
-            }
+            // 如果没有数组，创建一个只有index.html的默认文件数组
+            fileArray = [{
+              filename: 'index.html',
+              pathname: 'index.html',
+              type: 'text/html'
+            }];
           }
         }
+      } else {
+        // 如果没有文件数据，创建默认文件
+        fileArray = [{
+          filename: 'index.html',
+          pathname: 'index.html',
+          type: 'text/html'
+        }];
       }
+    } catch (e) {
+      console.error('[ProjectAPI] 解析文件时出错:', e);
+      // 出错时使用默认文件
+      fileArray = [{
+        filename: 'index.html',
+        pathname: 'index.html',
+        type: 'text/html'
+      }];
     }
     
+    // 准备文件内容
+    const fileContents: Record<string, string> = {};
+    if (fileArray.length > 0) {
+      fileArray.forEach((file: any) => {
+        const filename = file.filename || file.pathname;
+        if (filename) {
+          // 对于外部链接，直接使用URL
+          if (file.url) {
+            fileContents[filename] = file.url;
+          } else if (file.content) {
+            fileContents[filename] = file.content;
+          } else {
+            fileContents[filename] = '// 文件内容将在项目详情页面加载';
+          }
+        }
+      });
+    }
+    
+    // 确定主文件
+    const mainFile = project.main_file || 
+                     (fileArray.length > 0 ? (fileArray[0].filename || fileArray[0].pathname || 'index.html') : 'index.html');
+    
+    // 构建响应数据
     const responseData = {
       projectId: project.id,
       title: project.title,
@@ -109,19 +141,22 @@ export async function GET(
       externalEmbed: project.external_embed,
       externalAuthor: project.external_author,
       type: project.type,
-      files,
-      mainFile: project.main_file || '',
-      fileContents: mainFileContent 
-        ? { [project.main_file || '']: mainFileContent } 
-        : {},
-      hasTsxFiles,
-      views: project.views,
+      files: fileArray.map((f: any) => f.filename || f.pathname || 'index.html'),
+      mainFile: mainFile,
+      fileContents: fileContents,
+      hasTsxFiles: fileArray.some((f: any) => (f.filename || '').endsWith('.tsx') || (f.pathname || '').endsWith('.tsx')),
+      views: project.views || 0,
       createdAt: project.created_at
     }
     
+    // 异步更新浏览量，不等待结果
+    updateViewCount(project.id, project.views || 0).catch(e => 
+      console.error(`[ProjectAPI] Error updating view count: ${e}`)
+    );
+    
     return NextResponse.json(responseData)
   } catch (error) {
-    console.error('获取项目失败:', error)
+    console.error('[ProjectAPI] 获取项目失败:', error)
     return NextResponse.json(
       { error: 'Failed to fetch project', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
@@ -131,22 +166,24 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = context.params
+    const params = await context.params;
+    const id = params.id;
     console.log('删除项目，ID:', id)
     
+    // 从数据库删除项目 - 使用sql标签函数替代db模板字符串
     const result = await sql`
-      DELETE FROM projects WHERE id = ${id}
+      DELETE FROM projects 
+      WHERE id = ${id}
       RETURNING id
-    `
+    `;
     
     if (result.rowCount === 0) {
-      console.log('未找到项目:', id)
       return NextResponse.json({ 
-        error: 'Project not found' 
-      }, { status: 404 })
+        error: 'Project not found or could not be deleted'
+      }, { status: 404 });
     }
     
     console.log('成功删除项目:', id)
@@ -160,5 +197,22 @@ export async function DELETE(
       { error: 'Failed to delete project', details: error instanceof Error ? error.message : 'Unknown error' }, 
       { status: 500 }
     )
+  }
+}
+
+/**
+ * Helper function to update view count asynchronously
+ * This runs in the background and doesn't block the response
+ */
+async function updateViewCount(projectId: string, currentViews: number): Promise<void> {
+  try {
+    await sql`
+      UPDATE projects
+      SET views = ${currentViews + 1}
+      WHERE id = ${projectId}
+    `;
+    console.log(`[ProjectAPI] View count updated for project ${projectId}`);
+  } catch (error) {
+    console.error(`[ProjectAPI] Error updating view count for project ${projectId}:`, error);
   }
 }

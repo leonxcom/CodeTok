@@ -1,19 +1,20 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { Locale } from '../../../../i18n/config'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import * as React from 'react'
 
 // 添加动态加载标记，防止静态预渲染
 export const dynamic = 'force-dynamic'
 
 export default function ProjectImportPage() {
-  // 在组件顶层调用useParams，但不立即使用它
+  // 在Next.js 15中直接访问params属性
   const params = useParams()
+  const locale = (params.locale as string) || 'zh-cn'
   
-  // 默认值作为后备方案
-  const [locale, setLocale] = useState<Locale>('zh-cn')
   const [url, setUrl] = useState('https://character-sample-project.netlify.app/')
   const [projectName, setProjectName] = useState('Character Controller Sample')
   const [description, setDescription] = useState('Simple character controller sample projects with customizable GUIs controls')
@@ -23,13 +24,6 @@ export default function ProjectImportPage() {
   const [importSuccess, setImportSuccess] = useState(false)
   const [importedProjectId, setImportedProjectId] = useState('')
   const [error, setError] = useState<string | null>(null)
-  
-  // 使用useEffect以确保在客户端运行时安全地访问params
-  useEffect(() => {
-    if (params && typeof params.locale === 'string') {
-      setLocale(params.locale as Locale)
-    }
-  }, [params])
   
   const handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value)
@@ -181,7 +175,7 @@ export default function ProjectImportPage() {
                   />
                 </div>
                 
-                <button
+                <Button 
                   onClick={handleImport}
                   disabled={isImporting || !iframeLoaded}
                   className={`w-full py-2 px-4 rounded-md text-white font-medium ${
@@ -201,7 +195,7 @@ export default function ProjectImportPage() {
                   ) : (
                     locale === 'zh-cn' ? '导入到CodeTok' : 'Import to CodeTok'
                   )}
-                </button>
+                </Button>
               </div>
             </div>
             

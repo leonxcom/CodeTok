@@ -1,0 +1,23 @@
+{
+  "id": "AO1L4oha",
+  "title": "React 测试按钮",
+  "description": "一个带计数功能的测试按钮",
+  "language": "react",
+  "prompt": "创建一个简单的测试按钮",
+  "createdAt": "2025-05-24T04:12:52.623Z",
+  "files": [
+    {
+      "name": "package.json",
+      "isEntry": false
+    },
+    {
+      "name": "index.html",
+      "isEntry": true
+    },
+    {
+      "name": "App.jsx",
+      "isEntry": false
+    }
+  ],
+  "entryFile": "index.html"
+}

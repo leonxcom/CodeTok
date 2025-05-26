@@ -7,7 +7,9 @@
     "retry": "重试",
     "error": "错误",
     "back_home": "返回首页",
-    "search": "搜索"
+    "search": "搜索",
+    "view": "查看",
+    "view_details": "查看详情"
   },
   "Navigation": {
     "for_you": "为你推荐",
@@ -18,7 +20,20 @@
     "learn": "学习",
     "store": "商店",
     "profile": "个人资料",
-    "more": "更多"
+    "more": "更多",
+    "home": "首页",
+    "explore": "探索",
+    "trending": "热门",
+    "upload": "上传",
+    "signIn": "登录",
+    "signUp": "注册",
+    "settings": "设置",
+    "logout": "退出",
+    "search": "搜索",
+    "login": "登录",
+    "feed": "代码流",
+    "code_feed": "首页",
+    "projects": "项目库"
   },
   "Auth": {
     "login": "登录",
@@ -39,5 +54,47 @@
     "share": "分享",
     "loading_content": "正在加载精彩内容...",
     "loading_project": "正在加载项目..."
+  },
+  "Metadata": {
+    "title": "CodeTok - 代码分享平台",
+    "description": "发现、分享和讨论代码片段和项目"
+  },
+  "HomePage": {
+    "mainTitle": "CodeTok",
+    "searchPlaceholder": "告诉我你想要的任何项目或者AI开发者..."
+  },
+  "ExplorePage": {
+    "untitledProject": "无标题项目",
+    "like": "赞",
+    "comment": "评论",
+    "share": "分享",
+    "randomProject": "换一个",
+    "footerText": "© 2024 CodeTok. 保留所有权利。",
+    "noFilename": "(无文件名)",
+    "noContent": "(无代码内容)",
+    "anonymousUser": "匿名用户",
+    "loadProjectsError": "加载项目失败，请刷新页面重试",
+    "reloadButton": "重新加载",
+    "loadingFeed": "正在加载精彩内容...",
+    "noRecommendedProjects": "暂无推荐项目",
+    "noTrendingProjects": "暂无热门项目"
+  },
+  "Jobs": {
+    "jobOpportunities": "工作机会",
+    "viewAll": "查看全部",
+    "showMore": "显示更多",
+    "postJob": "发布职位",
+    "reachDevelopers": "接触成千上万的开发者",
+    "filterBy": "筛选条件",
+    "location": "地点",
+    "remote": "远程",
+    "salary": "薪资",
+    "experience": "经验",
+    "jobType": "工作类型",
+    "apply": "申请",
+    "skills": "技能",
+    "company": "公司",
+    "posted": "发布于",
+    "applyNow": "立即申请"
   }
 }

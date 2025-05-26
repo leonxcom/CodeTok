@@ -1,0 +1,23 @@
+{
+  "id": "CqIJi-Pb",
+  "title": "REACT - 测试项目",
+  "description": "基本React组件模板",
+  "language": "react",
+  "prompt": "测试项目",
+  "createdAt": "2025-05-24T05:04:10.162Z",
+  "files": [
+    {
+      "name": "package.json",
+      "isEntry": false
+    },
+    {
+      "name": "index.html",
+      "isEntry": true
+    },
+    {
+      "name": "App.jsx",
+      "isEntry": false
+    }
+  ],
+  "entryFile": "index.html"
+}

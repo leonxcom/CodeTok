@@ -1,0 +1,27 @@
+{
+  "id": "fUou3ty5",
+  "title": "TypeScript - 创建一个MCP服务",
+  "description": "一个完整的MCP (Model Context Protocol) 服务器",
+  "language": "typescript",
+  "prompt": "创建一个MCP服务",
+  "createdAt": "2025-05-24T05:04:10.139Z",
+  "files": [
+    {
+      "name": "package.json",
+      "isEntry": false
+    },
+    {
+      "name": "tsconfig.json",
+      "isEntry": false
+    },
+    {
+      "name": "index.ts",
+      "isEntry": true
+    },
+    {
+      "name": "README.md",
+      "isEntry": false
+    }
+  ],
+  "entryFile": "index.ts"
+}

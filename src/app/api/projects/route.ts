@@ -3,7 +3,7 @@ import { generateProjectId, uploadFile, uploadCode, MAX_FILE_SIZE } from '@/lib/
 import { sql } from '@vercel/postgres'
 import { ProjectFile } from '@/db/schema'
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 300; // 5分钟缓存
 
 export async function GET(request: NextRequest) {
   try {

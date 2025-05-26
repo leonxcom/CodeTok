@@ -1,0 +1,23 @@
+{
+  "id": "HNO6_cdX",
+  "title": "REACT - 如何用React构建一个聊天应用？",
+  "description": "**",
+  "language": "react",
+  "prompt": "如何用React构建一个聊天应用？",
+  "createdAt": "2025-05-24T05:14:38.260Z",
+  "files": [
+    {
+      "name": "package.json",
+      "isEntry": false
+    },
+    {
+      "name": "index.html",
+      "isEntry": true
+    },
+    {
+      "name": "App.jsx",
+      "isEntry": false
+    }
+  ],
+  "entryFile": "index.html"
+}

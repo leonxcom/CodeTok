@@ -1,89 +1,118 @@
 import '@/styles/globals.css'
 import { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { Locale, locales } from '../../../i18n/config'
-import { setRequestLocale, getLocale } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
+import { getTranslations, getMessages } from 'next-intl/server'
+import { notFound } from 'next/navigation'
 
-import { getSiteConfig } from '@/config/site-i18n'
-import { fontSans } from '@/lib/fonts'
-import { cn } from '@/lib/utils'
-import { SiteHeader } from '@/components/site-header'
-import { TailwindIndicator } from '@/components/tailwind-indicator'
+import { routing } from '@/i18n/routing'
 import { ThemeProvider } from '@/components/theme-provider'
+import { cn } from '@/lib/utils'
+import { MainLayout } from '@/components/layouts'
+import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }))
+  return routing.locales.map((locale) => ({ locale }))
 }
 
 export async function generateMetadata({
-  params: nonAwaitedParams,
+  params,
 }: {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }): Promise<Metadata> {
-  const params = await nonAwaitedParams;
-  const locale = params.locale as Locale;
-  await setRequestLocale(locale);
+  const { locale } = await params
   
-  const siteConfig = getSiteConfig(locale)
-  
-  // Set different title formats based on locale
-  const pageTitle = locale === 'zh-cn' 
-    ? 'CodeTok - 分享AI作品，连接美好世界' 
-    : 'CodeTok - Sharing AI Projects To Connect A Better World';
-  
-  return {
-    title: {
-      default: pageTitle,
-      template: `%s - ${siteConfig.name}`,
-    },
-    description: siteConfig.description,
-    icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon-16x16.png',
-      apple: '/apple-touch-icon.png',
-    },
+  try {
+    const t = await getTranslations({ locale, namespace: 'Metadata' })
+    
+    return {
+      title: {
+        default: t('title'),
+        template: `%s | ${t('title')}`,
+      },
+      description: t('description'),
+      icons: {
+        icon: '/favicon.ico',
+        shortcut: '/favicon-16x16.png',
+        apple: '/apple-touch-icon.png',
+      },
+    }
+  } catch (error) {
+    console.error('Failed to get metadata translations:', error)
+    return {
+      title: 'CodeTok - 代码分享平台',
+      description: '发现、分享和讨论代码片段和项目',
+      icons: {
+        icon: '/favicon.ico',
+        shortcut: '/favicon-16x16.png',
+        apple: '/apple-touch-icon.png',
+      },
+    }
   }
 }
 
-export default async function RootLayout({
+export default async function LocaleLayout({
   children,
-  params: nonAwaitedParams,
+  params,
 }: {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }) {
-  const params = await nonAwaitedParams;
-  const locale = params.locale as Locale;
-  await setRequestLocale(locale);
+  const { locale } = await params
   
-  let messages;
+  const isValidLocale = routing.locales.includes(locale as any)
+  
+  if (!isValidLocale) {
+    notFound()
+  }
+  
+  let messages = {}
   try {
-    messages = (await import(`../../../messages/${locale}.json`)).default;
+    messages = await getMessages({ locale })
   } catch (error) {
-    console.error(`Could not load messages for locale ${locale}`, error);
-    messages = {};
+    console.error(`Failed to load messages for ${locale}:`, error)
+    messages = {
+      Navigation: {
+        home: '首页',
+        explore: '探索',
+        upload: '上传',
+        signIn: '登录',
+        signUp: '注册',
+        profile: '个人资料',
+        settings: '设置',
+        logout: '退出',
+        for_you: '为你推荐',
+        discover: '发现',
+        jobs: '工作机会',
+        following: '关注',
+        live: '直播',
+        learn: '学习',
+        store: '商店',
+        more: '更多'
+      },
+      Metadata: {
+        title: 'CodeTok - 代码分享平台',
+        description: '发现、分享和讨论代码片段和项目'
+      }
+    }
   }
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <head />
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
-          fontSans.variable,
-          inter.className,
+          inter.className
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <div className="relative flex min-h-screen flex-col">
-              <SiteHeader locale={locale} />
-              <div className="flex-1">{children}</div>
-            </div>
+            <MainLayout locale={locale}>
+              {children}
+            </MainLayout>
             <TailwindIndicator />
             <Toaster />
           </NextIntlClientProvider>

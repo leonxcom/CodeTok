@@ -1,0 +1,23 @@
+{
+  "id": "cEl3QRU9",
+  "title": "REACT - Vue 3和React有什么区别？",
+  "description": "**",
+  "language": "react",
+  "prompt": "Vue 3和React有什么区别？",
+  "createdAt": "2025-05-24T05:13:54.048Z",
+  "files": [
+    {
+      "name": "package.json",
+      "isEntry": false
+    },
+    {
+      "name": "index.html",
+      "isEntry": true
+    },
+    {
+      "name": "App.jsx",
+      "isEntry": false
+    }
+  ],
+  "entryFile": "index.html"
+}

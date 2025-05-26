@@ -1,12 +1,15 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { motion } from 'framer-motion'
+
 import { Button } from '@/components/ui/button'
-import { useParams } from 'next/navigation'
-import { Locale } from '../../../../i18n/config'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { t } from '@/utils/language-utils'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 
 // 添加动态加载标记，防止静态预渲染
 export const dynamic = 'force-dynamic'
@@ -32,253 +35,162 @@ interface UploadPageProps {
 }
 
 export default function UploadPage() {
-  const router = useRouter()
-  const params = useParams()
-  const locale = params.locale as Locale
-  const [isUploading, setIsUploading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [codeInput, setCodeInput] = useState('')
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const folderInputRef = useRef<HTMLInputElement>(null)
-  
-  const handleFilesUpload = useCallback(async (files: File[]) => {
-    const formData = new FormData()
-    files.forEach(file => {
-      formData.append('files', file)
-    })
+  const t = useTranslations('Navigation')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [codeContent, setCodeContent] = useState('')
+  const [codeLanguage, setCodeLanguage] = useState('javascript')
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
 
-    const response = await fetch('/api/projects', {
-      method: 'POST',
-      body: formData
-    })
-
-    if (!response.ok) {
-      throw new Error('Upload failed')
-    }
-
-    const result = await response.json()
-    return result
-  }, [])
-  
-  const submitCode = useCallback(async (code: string) => {
-    const response = await fetch('/api/projects', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        code,
-        filename: 'index.html'
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    
+    // 模拟API请求
+    setTimeout(() => {
+      console.log({
+        title,
+        description,
+        codeContent,
+        codeLanguage
       })
-    })
-
-    if (!response.ok) {
-      throw new Error('Upload failed')
-    }
-
-    const result = await response.json()
-    return result
-  }, [])
-  
-  const handleFileInputChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      return
-    }
-    
-    setIsUploading(true)
-    setErrorMessage(null)
-    
-    try {
-      const files = Array.from(e.target.files)
-      await handleFilesUpload(files)
-    } catch (error) {
-      console.error('Upload error:', error)
-      setErrorMessage(error instanceof Error ? error.message : String(error))
-    } finally {
-      setIsUploading(false)
-    }
-  }, [handleFilesUpload])
-  
-  const handleSubmitCode = useCallback(async () => {
-    if (!codeInput.trim()) {
-      setErrorMessage(t(locale, {
-        zh: '请输入代码',
-        en: 'Please enter code',
-        fr: 'Veuillez entrer du code'
-      }))
-      return
-    }
-    
-    setIsUploading(true)
-    setErrorMessage(null)
-    
-    try {
-      await submitCode(codeInput)
-    } catch (error) {
-      console.error('Upload error:', error)
-      setErrorMessage(error instanceof Error ? error.message : String(error))
-    } finally {
-      setIsUploading(false)
-    }
-  }, [codeInput, locale, submitCode])
-  
-  return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <h1 className="text-3xl font-bold text-center mb-8">
-        {t(locale, {
-          zh: '分享你的代码',
-          en: 'Share Your Code',
-          fr: 'Partagez votre code'
-        })}
-      </h1>
       
-      <div className="bg-white shadow-md rounded-lg">
-        <Tabs defaultValue="upload" className="w-full">
-          <TabsList className="w-full grid grid-cols-2 h-12 rounded-t-lg rounded-b-none bg-gray-100">
-            <TabsTrigger value="upload" className="text-base">
-              {t(locale, {
-                zh: '上传文件',
-                en: 'Upload',
-                fr: 'Télécharger'
-              })}
-            </TabsTrigger>
-            <TabsTrigger value="paste" className="text-base">
-              {t(locale, {
-                zh: '粘贴代码',
-                en: 'Paste Code',
-                fr: 'Coller le code'
-              })}
-            </TabsTrigger>
-          </TabsList>
+      setIsSubmitting(false)
+      // 重置表单
+      setTitle('')
+      setDescription('')
+      setCodeContent('')
+      setCodeLanguage('javascript')
+      
+      // 显示成功消息或重定向
+      alert('代码片段上传成功！')
+    }, 1500)
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-bold mb-6">{t('upload')}</h1>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>上传代码片段</CardTitle>
+            <CardDescription>
+              分享你的代码以帮助其他开发者学习
+            </CardDescription>
+          </CardHeader>
           
-          <TabsContent value="upload" className="p-6">
-            <div 
-              className={`border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center h-72 ${
-                isUploading ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-              }`}
-            >
-              <div className="text-center">
-                <div className="mb-6">
-                  <svg className="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                  </svg>
-                </div>
-                <h2 className="text-xl font-semibold mb-4">
-                  {t(locale, {
-                    zh: '拖放你的创作',
-                    en: 'Drag & Drop Your Creation',
-                    fr: 'Glissez-déposez votre création'
-                  })}
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  {t(locale, {
-                    zh: 'HTML或TSX文件 | 包含HTML、CSS和JS文件的文件夹（＜10 MB）',
-                    en: 'HTML or TSX file | Folder with HTML, CSS, and JS files (＜10 MB)',
-                    fr: 'Fichier HTML ou TSX | Dossier avec HTML, CSS et JS (＜10 MB)'
-                  })}
-                </p>
-                
-                <div className="flex flex-row gap-4 justify-center">
-                  <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                    {t(locale, {
-                      zh: '选择文件',
-                      en: 'Select File',
-                      fr: 'Sélectionner un fichier'
-                    })}
-                  </Button>
-                  <Button variant="outline" onClick={() => folderInputRef.current?.click()} disabled={isUploading}>
-                    {t(locale, {
-                      zh: '选择文件夹',
-                      en: 'Select Folder',
-                      fr: 'Sélectionner un dossier'
-                    })}
-                  </Button>
-                </div>
-                
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  className="hidden" 
-                  accept=".html,.tsx,.css,.js"
-                  onChange={handleFileInputChange}
-                />
-                <input 
-                  type="file" 
-                  ref={folderInputRef} 
-                  className="hidden" 
-                  // @ts-ignore - 这些是标准但TypeScript不识别的属性
-                  webkitdirectory=""
-                  directory=""
-                  multiple
-                  onChange={handleFileInputChange}
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="title">标题</Label>
+                <Input
+                  id="title"
+                  placeholder="代码片段的标题"
+                  value={title}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+                  required
                 />
               </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="paste" className="p-6">
-            <textarea
-              className="w-full h-72 p-4 border rounded-md font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder={t(locale, {
-                zh: '在此粘贴你的代码...',
-                en: 'Paste your code here...',
-                fr: 'Collez votre code ici...'
-              })}
-              value={codeInput}
-              onChange={(e) => setCodeInput(e.target.value)}
-            />
-            <Button 
-              className="w-full mt-4" 
-              onClick={handleSubmitCode}
-              disabled={isUploading}
-            >
-              {isUploading ? 
-                t(locale, {
-                  zh: '处理中...',
-                  en: 'Processing...',
-                  fr: 'Traitement en cours...'
-                }) : 
-                t(locale, {
-                  zh: '提交',
-                  en: 'Submit',
-                  fr: 'Soumettre'
-                })}
-            </Button>
-          </TabsContent>
-        </Tabs>
-      </div>
-      
-      {/* 错误信息 */}
-      {errorMessage && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mt-6">
-          {errorMessage}
-        </div>
-      )}
-      
-      {/* 上传状态 */}
-      {isUploading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-sm w-full">
-            <div className="text-center">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-              <h3 className="text-lg font-medium mb-2">
-                {t(locale, {
-                  zh: '处理中...',
-                  en: 'Processing...',
-                  fr: 'Traitement en cours...'
-                })}
-              </h3>
-              <p className="text-gray-600">
-                {t(locale, {
-                  zh: '请稍候，我们正在处理您的文件',
-                  en: 'Please wait while we process your files',
-                  fr: 'Veuillez patienter pendant que nous traitons vos fichiers'
-                })}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="description">描述</Label>
+                <Textarea
+                  id="description"
+                  placeholder="简要描述你的代码片段的功能和用途"
+                  value={description}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+                  rows={3}
+                />
+              </div>
+              
+              <Tabs defaultValue="code" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="code">编写代码</TabsTrigger>
+                  <TabsTrigger value="upload">上传文件</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="code" className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="code-language">编程语言</Label>
+                      <select
+                        id="code-language"
+                        className="bg-background text-sm border rounded p-1"
+                        value={codeLanguage}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCodeLanguage(e.target.value)}
+                      >
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="csharp">C#</option>
+                        <option value="cpp">C++</option>
+                        <option value="go">Go</option>
+                        <option value="rust">Rust</option>
+                        <option value="php">PHP</option>
+                      </select>
+                    </div>
+                    
+                    <div className="border rounded-md">
+                      <Textarea
+                        className="font-mono text-sm p-4 min-h-[300px] border-0 focus-visible:ring-0 resize-none"
+                        placeholder="// 在此处粘贴或编写代码"
+                        value={codeContent}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCodeContent(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="upload" className="space-y-4">
+                  <div className="border-2 border-dashed rounded-md p-6 text-center">
+                    <div className="mt-2">
+                      <Input
+                        id="file-upload"
+                        type="file"
+                        className="hidden"
+                        accept=".js,.ts,.py,.java,.cs,.cpp,.go,.rs,.php"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          // 实际应用中这里会处理文件上传
+                          console.log(e.target.files?.[0])
+                        }}
+                      />
+                      <label
+                        htmlFor="file-upload"
+                        className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4"
+                      >
+                        选择文件
+                      </label>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        支持 .js, .ts, .py, .java, .cs, .cpp, .go, .rs, .php 文件
+                      </p>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+            
+            <CardFooter>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <span className="mr-2">上传中</span>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  </>
+                ) : (
+                  '上传代码'
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </motion.div>
     </div>
   )
 }

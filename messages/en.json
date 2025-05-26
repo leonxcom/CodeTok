@@ -2,12 +2,18 @@
   "Index": {
     "title": "CodeTok Platform for Sharing Code Projects"
   },
+  "Metadata": {
+    "title": "CodeTok - Share Your Code Projects",
+    "description": "A TikTok-style platform for sharing and discovering amazing code projects"
+  },
   "Common": {
     "loading": "Loading...",
     "retry": "Retry",
     "error": "Error",
     "back_home": "Back to Home",
-    "search": "Search"
+    "search": "Search",
+    "view": "View",
+    "view_details": "View details"
   },
   "Navigation": {
     "for_you": "For You",
@@ -18,7 +24,19 @@
     "learn": "Learn",
     "store": "Store",
     "profile": "Profile",
-    "more": "More"
+    "more": "More",
+    "search": "Search",
+    "home": "Home",
+    "explore": "Explore",
+    "upload": "Upload",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "settings": "Settings",
+    "logout": "Logout",
+    "feed": "Code Feed",
+    "code_feed": "Home",
+    "projects": "Projects",
+    "login": "Login"
   },
   "Auth": {
     "login": "Login",
@@ -39,5 +57,23 @@
     "share": "Share",
     "loading_content": "Loading amazing content...",
     "loading_project": "Loading project..."
+  },
+  "Jobs": {
+    "jobOpportunities": "Job Opportunities",
+    "viewAll": "View all",
+    "showMore": "Show more",
+    "postJob": "Post a job",
+    "reachDevelopers": "Reach thousands of developers",
+    "filterBy": "Filter by",
+    "location": "Location",
+    "remote": "Remote",
+    "salary": "Salary",
+    "experience": "Experience",
+    "jobType": "Job type",
+    "apply": "Apply",
+    "skills": "Skills",
+    "company": "Company",
+    "posted": "Posted",
+    "applyNow": "Apply now"
   }
 }

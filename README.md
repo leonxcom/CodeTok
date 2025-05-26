@@ -13,6 +13,7 @@ CodeTok is an innovative platform for sharing AI projects and code applications.
 - [Deployment Architecture](#deployment-architecture)
 - [Quick Start](#quick-start)
 - [Authentication](#authentication)
+- [Documentation](#documentation)
 - [License](#license)
 
 ## 🏗 Technology Architecture
@@ -226,4 +227,16 @@ We welcome contributions of all forms! If you want to participate in project dev
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Create a Pull Request
 
-For detailed contribution guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
+For detailed contribution guidelines, see [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
+
+## 📚 Documentation
+
+All project documentation is located in the `docs` directory:
+
+- [Development Guide](./docs/DEVELOPMENT.md) - Detailed development setup and guidelines
+- [Contributing Guide](./docs/CONTRIBUTING.md) - How to contribute to the project
+- [UI Design Memo](./docs/UI-DESIGN-MEMO.md) - UI design principles and guidelines
+- [Authentication Guide](./docs/authentication-guide.md) - Authentication system documentation
+- [Database Connection Fix](./docs/DATABASE-CONNECTION-FIX.md) - Documentation about database connection fixes
+- [CodeTok Optimization Report](./docs/CODETOK-OPTIMIZATION-REPORT.md) - Project optimization reports
+- [Auth Notes](./docs/auth-notes.md) - Additional authentication notes

@@ -1,0 +1,27 @@
+{
+  "HomePage": {
+    "title": "CodeTok - 代码分享平台",
+    "description": "发现、分享和探索代码项目",
+    "uploadCode": "上传代码",
+    "untitledProject": "未命名项目",
+    "randomProject": "随机浏览",
+    "like": "喜欢",
+    "comment": "评论",
+    "share": "分享",
+    "footerText": "不要把你的代码留给自己 - 与世界分享它"
+  },
+  "Metadata": {
+    "title": "CodeTok - 代码分享平台",
+    "description": "发现、分享和讨论代码片段和项目"
+  },
+  "Navigation": {
+    "home": "首页",
+    "explore": "探索",
+    "upload": "上传",
+    "signIn": "登录",
+    "signUp": "注册",
+    "profile": "个人资料",
+    "settings": "设置",
+    "logout": "退出"
+  }
+} 

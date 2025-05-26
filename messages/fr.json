@@ -2,6 +2,10 @@
   "Index": {
     "title": "Plateforme CodeTok pour le Partage de Projets de Code"
   },
+  "Metadata": {
+    "title": "CodeTok - Partagez vos Projets de Code",
+    "description": "Une plateforme de style TikTok pour partager et découvrir des projets de code incroyables"
+  },
   "Common": {
     "loading": "Chargement...",
     "retry": "Réessayer",
@@ -18,7 +22,19 @@
     "learn": "Apprendre",
     "store": "Boutique",
     "profile": "Profil",
-    "more": "Plus"
+    "more": "Plus",
+    "search": "Rechercher",
+    "home": "Accueil",
+    "explore": "Explorer",
+    "upload": "Télécharger",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "feed": "Flux de Code",
+    "code_feed": "Accueil",
+    "projects": "Projets",
+    "login": "Connexion"
   },
   "Auth": {
     "login": "Connexion",
@@ -39,5 +55,23 @@
     "share": "Partager",
     "loading_content": "Chargement du contenu...",
     "loading_project": "Chargement du projet..."
+  },
+  "Jobs": {
+    "jobOpportunities": "Offres d'emploi",
+    "viewAll": "Voir tout",
+    "showMore": "Afficher plus",
+    "postJob": "Publier une offre",
+    "reachDevelopers": "Atteindre des milliers de développeurs",
+    "filterBy": "Filtrer par",
+    "location": "Lieu",
+    "remote": "Télétravail",
+    "salary": "Salaire",
+    "experience": "Expérience",
+    "jobType": "Type d'emploi",
+    "apply": "Postuler",
+    "skills": "Compétences",
+    "company": "Entreprise",
+    "posted": "Publié",
+    "applyNow": "Postuler maintenant"
   }
 }

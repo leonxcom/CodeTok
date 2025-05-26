@@ -1,3 +1,7 @@
+/**
+ * Tailwind CSS 断点指示器
+ * 仅在开发环境显示，帮助开发者了解当前视口尺寸的断点
+ */
 export function TailwindIndicator() {
   if (process.env.NODE_ENV === "production") return null
 

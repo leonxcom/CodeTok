@@ -1,0 +1,23 @@
+{
+  "id": "p6GNCntc",
+  "title": "REACT - 创建一个简单的按钮",
+  "description": "一个可重用的React按钮组件",
+  "language": "react",
+  "prompt": "创建一个简单的按钮",
+  "createdAt": "2025-05-24T05:01:02.116Z",
+  "files": [
+    {
+      "name": "package.json",
+      "isEntry": false
+    },
+    {
+      "name": "index.html",
+      "isEntry": true
+    },
+    {
+      "name": "App.jsx",
+      "isEntry": false
+    }
+  ],
+  "entryFile": "index.html"
+}

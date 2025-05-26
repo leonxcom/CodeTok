@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
-import { sql } from '@vercel/postgres'
+import { db, sql } from '@/db'
+import { getRandomProject } from '@/services/project-service'
+
+// 添加缓存配置
+export const revalidate = 300; // 5分钟缓存
+export const runtime = 'nodejs'; // 指定运行时
+export const dynamic = 'force-dynamic'; // 强制动态渲染
 
 /**
  * 项目响应类型
@@ -41,89 +47,147 @@ export async function GET() {
   console.log(`[RandomAPI] Request received`);
   
   try {
-    // Get a random project ID, preferably from cache
-    const projectId = await getRandomProjectId();
+    let project = null;
     
-    if (!projectId) {
-      console.log(`[RandomAPI] No projects found in database, returning 404`);
-      return NextResponse.json({ 
-        error: 'No projects found',
-        message: 'No projects are currently available in the database'
-      }, { 
-        status: 404,
-        headers: {
-          'Cache-Control': 'no-store, max-age=0'
-        }
-      });
-    }
-    
-    // Fetch only the specific project by ID (much faster than random ordering)
-    const projectResult = await sql`
-      SELECT * FROM projects WHERE id = ${projectId} LIMIT 1
-    `;
-    
-    if (projectResult.rowCount === 0) {
-      // ID from cache is no longer valid, refresh cache and try again next time
-      projectIdsCache.lastFetched = 0;
-      console.log(`[RandomAPI] Project ID ${projectId} not found, cache invalidated`);
-      
-      // Fallback to any project
-      const fallbackProject = await sql`
-        SELECT * FROM projects LIMIT 1
+    try {
+      // 尝试从数据库获取随机项目
+      const result = await sql`
+        SELECT * FROM projects 
+        WHERE is_public = true 
+        ORDER BY RANDOM() 
+        LIMIT 1
       `;
       
-      if (fallbackProject.rowCount === 0) {
-        console.log(`[RandomAPI] No projects found in fallback, returning 404`);
-        return NextResponse.json({ 
-          error: 'No projects found',
-          message: 'No projects are currently available in the database'
-        }, { 
-          status: 404,
-          headers: {
-            'Cache-Control': 'no-store, max-age=0'
-          }
-        });
+      if (result.rowCount && result.rowCount > 0 && result.rows[0]) {
+        project = result.rows[0];
+        console.log(`[RandomAPI] Found random project from database: ${project.id} - ${project.title}`);
       }
+    } catch (dbError) {
+      console.warn(`[RandomAPI] Database query failed, falling back to mock data:`, dbError);
+    }
+    
+    // 如果数据库查询失败，使用项目服务的模拟数据
+    if (!project) {
+      console.log(`[RandomAPI] Using mock data as fallback`);
+      const mockProject = await getRandomProject();
       
-      const project = fallbackProject.rows[0];
-      const response = prepareProjectResponse(project);
-      
-      // Log performance metrics
-      const duration = Date.now() - startTime;
-      console.log(`[RandomAPI] Fallback response prepared in ${duration}ms`);
-      
-      // Update views in background (don't await this)
-      updateViewCount(project.id, project.views || 0)
-        .catch(err => console.error(`[RandomAPI] View update error (silent):`, err));
-      
-      return NextResponse.json(response, {
-        headers: {
-          'Cache-Control': 'private, max-age=10'
+      if (mockProject) {
+        // 转换为数据库格式
+        project = {
+          id: mockProject.id,
+          title: mockProject.title,
+          description: mockProject.description,
+          external_url: mockProject.externalUrl,
+          external_embed: true,
+          external_author: mockProject.authorName,
+          type: 'external',
+          files: JSON.stringify([{
+            filename: 'index.html',
+            pathname: 'index.html',
+            type: 'text/html',
+            url: mockProject.externalUrl
+          }]),
+          main_file: 'index.html',
+          is_public: true,
+          views: mockProject.views || 0,
+          created_at: mockProject.createdAt
+        };
+        console.log(`[RandomAPI] Using mock project: ${project.title}`);
+      }
+    }
+    
+    if (!project) {
+      throw new Error('No public projects found');
+    }
+    
+    // 解析文件
+    let fileArray = [];
+    try {
+      if (project.files) {
+        const filesData = typeof project.files === 'string' ? JSON.parse(project.files) : project.files;
+        fileArray = Array.isArray(filesData) ? filesData : [];
+        
+        // 如果不是数组，尝试从对象中提取数组
+        if (fileArray.length === 0 && filesData && typeof filesData === 'object') {
+          console.log('[RandomAPI] Trying to extract files from object');
+          // 处理可能的对象格式
+          if (filesData.files && Array.isArray(filesData.files)) {
+            fileArray = filesData.files;
+          } else {
+            // 如果没有数组，创建一个只有index.html的默认文件数组
+            fileArray = [{
+              filename: 'index.html',
+              pathname: 'index.html',
+              type: 'text/html'
+            }];
+          }
+        }
+      } else {
+        // 如果没有文件数据，创建默认文件
+        fileArray = [{
+          filename: 'index.html',
+          pathname: 'index.html',
+          type: 'text/html'
+        }];
+      }
+    } catch (e) {
+      console.error('[RandomAPI] Error parsing files:', e);
+      // 出错时使用默认文件
+      fileArray = [{
+        filename: 'index.html',
+        pathname: 'index.html',
+        type: 'text/html'
+      }];
+    }
+    
+    // 准备文件内容
+    const fileContents: Record<string, string> = {};
+    if (fileArray.length > 0) {
+      fileArray.forEach((file: any) => {
+        const filename = file.filename || file.pathname;
+        if (filename) {
+          // 简单示例：对于外部链接，直接使用URL
+          if (file.url) {
+            fileContents[filename] = file.url;
+          } else if (file.content) {
+            fileContents[filename] = file.content;
+          } else {
+            fileContents[filename] = '// 文件内容将在项目详情页面加载';
+          }
         }
       });
     }
     
-    // Process the found project
-    const project = projectResult.rows[0];
+    // 确定主文件
+    const mainFile = project.main_file || 
+                     (fileArray.length > 0 ? (fileArray[0].filename || fileArray[0].pathname || 'index.html') : 'index.html');
     
-    // Update views in background (don't await this - fire and forget)
-    updateViewCount(project.id, project.views || 0)
-      .catch(err => console.error(`[RandomAPI] View update error (silent):`, err));
+    // 转换为符合ProjectResponse类型的响应
+    const responseData: ProjectResponse = {
+      projectId: project.id,
+      title: project.title,
+      description: project.description,
+      externalUrl: project.external_url,
+      externalEmbed: project.external_embed,
+      externalAuthor: project.external_author,
+      type: project.type,
+      files: fileArray.map((f: any) => f.filename || f.pathname || 'index.html'),
+      mainFile: mainFile,
+      fileContents: fileContents,
+      hasTsxFiles: fileArray.some((f: any) => (f.filename || '').endsWith('.tsx') || (f.pathname || '').endsWith('.tsx')),
+      views: project.views || 0,
+      createdAt: project.created_at
+    };
     
-    // Prepare response with project data (minimal processing)
-    const response = prepareProjectResponse(project);
+    // 异步更新浏览量，不等待结果
+    updateViewCount(project.id, project.views || 0).catch(e => 
+      console.error(`[RandomAPI] Error updating view count: ${e}`)
+    );
     
-    // Log performance metrics
     const duration = Date.now() - startTime;
-    console.log(`[RandomAPI] Response prepared in ${duration}ms (cache ${projectIdsCache.hits}/${projectIdsCache.hits + projectIdsCache.misses})`);
+    console.log(`[RandomAPI] Response prepared in ${duration}ms for: ${responseData.title}`);
     
-    // Return the response with short cache time to improve performance
-    return NextResponse.json(response, {
-      headers: {
-        // Allow browser caching for 10 seconds
-        'Cache-Control': 'private, max-age=10'
-      }
-    });
+    return NextResponse.json(responseData);
   } catch (error: any) {
     // Enhanced error logging with details
     console.error(`[RandomAPI] Error fetching random project:`, error);
@@ -149,50 +213,6 @@ export async function GET() {
 }
 
 /**
- * Get a random project ID, using cache when possible
- */
-async function getRandomProjectId(): Promise<string | null> {
-  const now = Date.now();
-  
-  // Check if cache is valid
-  if (projectIdsCache.ids.length > 0 && now - projectIdsCache.lastFetched < projectIdsCache.ttl) {
-    projectIdsCache.hits++;
-    // Return a random ID from cache
-    const randomIndex = Math.floor(Math.random() * projectIdsCache.ids.length);
-    return projectIdsCache.ids[randomIndex];
-  }
-  
-  // Cache miss - need to refresh
-  projectIdsCache.misses++;
-  console.log(`[RandomAPI] Cache miss, fetching project IDs`);
-  
-  try {
-    // Get only public project IDs for better performance
-    const result = await sql`
-      SELECT id FROM projects 
-      WHERE is_public = true 
-      LIMIT ${projectIdsCache.maxSize}
-    `;
-    
-    if (result.rowCount === 0) {
-      // No projects found
-      return null;
-    }
-    
-    // Update cache
-    projectIdsCache.ids = result.rows.map(project => project.id);
-    projectIdsCache.lastFetched = now;
-    
-    // Return a random ID
-    const randomIndex = Math.floor(Math.random() * projectIdsCache.ids.length);
-    return projectIdsCache.ids[randomIndex];
-  } catch (error) {
-    console.error(`[RandomAPI] Error fetching project IDs:`, error);
-    return null;
-  }
-}
-
-/**
  * Helper function to update view count asynchronously
  * This runs in the background and doesn't block the response
  */
@@ -207,37 +227,4 @@ async function updateViewCount(projectId: string, currentViews: number): Promise
   } catch (error) {
     console.error(`[RandomAPI] Error updating view count for project ${projectId}:`, error);
   }
-}
-
-/**
- * Helper function to prepare project response with minimal processing
- */
-function prepareProjectResponse(project: any): ProjectResponse {
-  let files: string[] = [];
-  
-  if (project.files) {
-    try {
-      if (typeof project.files === 'string') {
-        files = JSON.parse(project.files);
-      } else if (Array.isArray(project.files)) {
-        files = project.files;
-      }
-    } catch (e) {
-      console.log(`[RandomAPI] Failed to parse project.files: ${e}`);
-    }
-  }
-
-  return {
-    projectId: project.id,
-    title: project.title,
-    description: project.description,
-    externalUrl: project.external_url,
-    externalEmbed: project.external_embed,
-    externalAuthor: project.external_author,
-    type: project.type,
-    files,
-    mainFile: project.main_file || '',
-    views: project.views,
-    createdAt: project.created_at
-  };
 }

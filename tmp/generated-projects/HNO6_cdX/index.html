@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REACT - 如何用React构建一个聊天应用？</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    import React, { useState, useEffect, useRef } from 'react';
+
+const ChatApp = () => {
+  const [messages, setMessages] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const messagesEndRef = useRef(null);
+
+  const handleSendMessage = () => {
+    if (inputValue.trim() !== '') {
+      const newMessage = {
+        id: messages.length + 1,
+        text: inputValue,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+      setMessages([...messages, newMessage]);
+      setInputValue('');
+    }
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  return (
+    <div style={styles.chatContainer}>
+      <div style={styles.messagesContainer}>
+        {messages.map((message) => (
+          <div key={message.id} style={styles.message}>
+            <span style={styles.messageText}>{message.text}</span>
+            <span style={styles.messageTime}>{message.timestamp}</span>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+      <div style={styles.inputContainer}>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          style={styles.input}
+          placeholder="Type a message..."
+        />
+        <button onClick={handleSendMessage} style={styles.sendButton}>
+          Send
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const styles = {
+  chatContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    padding: '20px',
+    backgroundColor: '#f5f5f5',
+  },
+  messagesContainer: {
+    flex: 1,
+    overflowY: 'auto',
+    marginBottom: '10px',
+  },
+  message: {
+    backgroundColor: '#fff',
+    padding: '10px',
+    borderRadius: '5px',
+    marginBottom: '10px',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  messageText: {
+    fontSize: '16px',
+  },
+  messageTime: {
+    fontSize: '12px',
+    color: '#888',
+  },
+  inputContainer: {
+    display: 'flex',
+  },
+  input: {
+    flex: 1,
+    padding: '10px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    marginRight: '10px',
+  },
+  sendButton: {
+    padding: '10px 20px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
+};
+
+export default ChatApp;
+    
+    // 自动渲染组件
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    
+    // 尝试找到并渲染默认导出的组件
+    try {
+      const ComponentName = Object.keys(window).find(key => 
+        window[key] && 
+        typeof window[key] === 'function' && 
+        key !== 'React' && 
+        key !== 'ReactDOM'
+      );
+      
+      if (ComponentName) {
+        root.render(React.createElement(window[ComponentName]));
+      } else {
+        // 如果没有找到组件，尝试直接渲染代码中的JSX
+        root.render(React.createElement('div', {}, '组件加载中...'));
+      }
+    } catch (error) {
+      root.render(React.createElement('div', { style: { padding: '20px', color: 'red' } }, 
+        '组件渲染错误: ' + error.message
+      ));
+    }
+  </script>
+</body>
+</html>

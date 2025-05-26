@@ -9,6 +9,12 @@ import { renderTSX } from '@/lib/tsx-compiler'
 import ExternalEmbed from './external-embed'
 import { toast } from '@/components/ui/use-toast'
 import Image from 'next/image'
+import * as React from 'react'
+import { Progress } from '@/components/ui/progress'
+import { ProjectInteraction } from '@/components/project-interaction'
+import { ProjectComments } from '@/components/project-comments'
+import { ShareDialog } from '@/components/share-dialog'
+import { ProjectStats } from '@/components/project-stats'
 
 interface ProjectData {
   projectId: string
@@ -23,12 +29,14 @@ interface ProjectData {
   externalEmbed?: boolean
   externalUrl?: string
   externalAuthor?: string
+  likes?: number
+  comments_count?: number
 }
 
 export default function ProjectPage() {
-  const params = useParams()
-  const locale = params.locale as Locale
-  const projectId = params.id as string
+  const params = useParams<{ locale: string; id: string }>();
+  const locale = params?.locale as string || 'zh-cn';
+  const id = params?.id as string || '';
   const router = useRouter()
   
   const [projectData, setProjectData] = useState<ProjectData | null>(null)
@@ -50,7 +58,7 @@ export default function ProjectPage() {
   const [uiFrameworkLoaded, setUiFrameworkLoaded] = useState(false)
   
   // 处理外部项目显示逻辑
-  const isExternalProject = projectData?.externalEmbed && projectData?.externalUrl;
+  const isExternalProject = projectData?.externalUrl;
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState<string | null>(null);
   const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
@@ -58,6 +66,50 @@ export default function ProjectPage() {
   // 添加浏览历史管理
   const [viewHistory, setViewHistory] = useState<string[]>([]);
   const [historyPosition, setHistoryPosition] = useState(-1);
+  
+  // 添加加载进度状态
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingStage, setLoadingStage] = useState<'initial' | 'metadata' | 'files' | 'iframe' | 'complete'>('initial');
+  // 使用useRef替代state来存储API请求计数，避免重新渲染
+  const apiRequestCount = useRef(0);
+  const didInitialLoad = useRef(false);
+  const isInitialMount = useRef(true);
+  const cachedProjectData = useRef<ProjectData | null>(null); // 缓存项目数据
+  
+  // 在ProjectPage组件内添加状态
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  
+  // 初始进度条动画
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+    
+    if (isLoading && loadingProgress < 90) {
+      interval = setInterval(() => {
+        setLoadingProgress(prev => {
+          // 基于加载阶段设置最大进度值
+          const maxProgress = 
+            loadingStage === 'initial' ? 30 : 
+            loadingStage === 'metadata' ? 60 : 
+            loadingStage === 'files' ? 85 : 90;
+            
+          // 缓慢接近阶段最大值
+          if (prev < maxProgress) {
+            return prev + (maxProgress - prev) * 0.1;
+          }
+          return prev;
+        });
+      }, 200);
+    }
+    
+    if (!isLoading) {
+      setLoadingProgress(100);
+      if (interval) clearInterval(interval);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isLoading, loadingStage, loadingProgress]);
   
   // 初始化历史记录
   useEffect(() => {
@@ -71,39 +123,42 @@ export default function ProjectPage() {
         setViewHistory(parsedHistory);
         
         // 找到当前项目在历史中的位置
-        const positionInHistory = parsedHistory.indexOf(projectId);
+        const positionInHistory = parsedHistory.indexOf(id);
         
         if (positionInHistory >= 0) {
           // 如果当前项目在历史中，设置位置
           setHistoryPosition(positionInHistory);
         } else {
           // 如果当前项目不在历史中，添加到历史末尾
-          const newHistory = [...parsedHistory, projectId];
+          const newHistory = [...parsedHistory, id];
           setViewHistory(newHistory);
           setHistoryPosition(newHistory.length - 1);
           sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
         }
       } else {
         // 没有历史记录，初始化为只包含当前项目的数组
-        setViewHistory([projectId]);
+        setViewHistory([id]);
         setHistoryPosition(0);
-        sessionStorage.setItem('projectHistory', JSON.stringify([projectId]));
+        sessionStorage.setItem('projectHistory', JSON.stringify([id]));
       }
       
       // 历史位置可能存在但不适用于新的历史数组，这里忽略
     } catch (e) {
       console.error('Error initializing project history:', e);
       // 出错时使用默认值
-      setViewHistory([projectId]);
+      setViewHistory([id]);
       setHistoryPosition(0);
     }
-  }, [projectId]);
+  }, [id]);
   
-  // 处理iframe加载事件 - 与iframe-test完全一致
+  // 处理iframe加载事件
   const handleIframeLoad = () => {
     console.log('iframe加载成功:', projectData?.externalUrl);
     setIframeLoaded(true);
     setIframeError(null);
+    // 确保加载完成后进度条到达100%
+    setLoadingProgress(100);
+    setLoadingStage('complete');
   };
   
   // 处理iframe错误事件 - 与iframe-test完全一致
@@ -155,13 +210,31 @@ export default function ProjectPage() {
 
   // 获取项目数据
   const fetchProjectData = useCallback(async () => {
-    if (!projectId) return null
+    if (!id) return null
     
     try {
-      setIsLoading(true)
+      if (!didInitialLoad.current) {
+        setIsLoading(true)
+        setLoadingStage('initial')
+        setLoadingProgress(10)
+      }
+      
       setError(null)
       
-      const response = await fetch(`/api/projects/${projectId}`)
+      // 限制API请求频率
+      apiRequestCount.current++;
+      if (apiRequestCount.current > 5 && didInitialLoad.current) {
+        console.log('API请求频率过高，跳过此次请求');
+        return cachedProjectData.current;
+      }
+      
+      setLoadingStage('metadata')
+      setLoadingProgress(30)
+      
+      const response = await fetch(`/api/projects/${id}`, {
+        // 添加缓存控制
+        cache: didInitialLoad.current ? 'force-cache' : 'no-store'
+      })
       
       if (response.status === 404) {
         notFound()
@@ -188,22 +261,37 @@ export default function ProjectPage() {
         )
       }
       
+      // 缓存项目数据到ref中
+      cachedProjectData.current = data;
+      
       // 设置项目数据
       setProjectData(data)
       setSelectedFile(data.mainFile || '')
       setBasicInfoLoaded(true)
       setUiFrameworkLoaded(true)
       
-      // 如果是外部项目，延迟加载iframe
-      if (data.externalEmbed && data.externalUrl) {
+      setLoadingStage('files')
+      setLoadingProgress(60)
+      
+      // 如果有外部URL，延迟加载iframe (延长到1.5秒)
+      if (data.externalUrl) {
         setTimeout(() => {
           setShouldLoadIframe(true)
-        }, 500)
+          setLoadingStage('iframe')
+          setLoadingProgress(85)
+        }, 1500)
       }
       
       // 标记加载完成
       setFilesLoaded(true)
-      setIsLoading(false)
+      setLoadingStage('complete')
+      setLoadingProgress(100)
+      
+      setTimeout(() => {
+        setIsLoading(false)
+        didInitialLoad.current = true
+      }, 500)
+      
       setError(null)
       
       return data
@@ -217,7 +305,7 @@ export default function ProjectPage() {
       setIsLoading(false)
       return null
     }
-  }, [projectId, locale])
+  }, [id, locale])
   
   // 处理项目切换
   useEffect(() => {
@@ -226,7 +314,11 @@ export default function ProjectPage() {
     const maxRetries = 3
     
     const loadProject = async () => {
-      resetProjectState()
+      if (isInitialMount.current || didInitialLoad.current === false) {
+        resetProjectState()
+        isInitialMount.current = false
+      }
+      
       if (isMounted) {
         const result = await fetchProjectData()
         if (!result && retryCount < maxRetries) {
@@ -242,12 +334,12 @@ export default function ProjectPage() {
     return () => {
       isMounted = false
     }
-  }, [projectId, fetchProjectData, resetProjectState])
+  }, [id, fetchProjectData, resetProjectState])
   
   // 处理下一个项目
   const handleNextProject = async () => {
     try {
-      const response = await fetch(`/api/projects/recommend?currentId=${projectId}`)
+      const response = await fetch(`/api/projects/recommend?currentId=${id}`)
       if (!response.ok) throw new Error('Failed to fetch next project')
       
       const data = await response.json()
@@ -290,8 +382,13 @@ export default function ProjectPage() {
   
   // 预加载下一个推荐项目
   const prefetchNextProject = useCallback(async () => {
+    // 如果已经预取过，则跳过
+    if (didInitialLoad.current) return;
+    
     try {
-      const response = await fetch(`/api/projects/recommend?currentId=${projectId}`)
+      const response = await fetch(`/api/projects/recommend?currentId=${id}`, {
+        cache: 'force-cache'
+      })
       if (!response.ok) return
       
       const data = await response.json()
@@ -302,11 +399,16 @@ export default function ProjectPage() {
     } catch (error) {
       console.error('Error prefetching next project:', error)
     }
-  }, [projectId, locale, router])
+  }, [id, locale, router])
+  
+  // 在ID变化时重置请求计数
+  useEffect(() => {
+    apiRequestCount.current = 0;
+  }, [id]);
   
   // 在项目数据加载完成后预加载下一个项目
   useEffect(() => {
-    if (projectData?.projectId) {
+    if (projectData?.projectId && !didInitialLoad.current) {
       prefetchNextProject()
     }
   }, [projectData?.projectId, prefetchNextProject])
@@ -403,42 +505,12 @@ export default function ProjectPage() {
       
       const data = await response.json();
       
-      // 使用history.pushState替代整页刷新，保持已加载的资源
-      const nextUrl = `/${locale}/project/${data.projectId}`;
-      window.history.pushState({}, '', nextUrl);
+      // 直接导航到新项目，让Next.js路由系统处理加载
+      router.push(`/${locale}/project/${data.projectId}`);
       
-      // 更新浏览历史
-      if (historyPosition === viewHistory.length - 1) {
-        // 在历史末尾，添加新记录
-        const newHistory = [...viewHistory, data.projectId];
-        setViewHistory(newHistory);
-        setHistoryPosition(newHistory.length - 1);
-        // 保存到sessionStorage
-        sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
-        sessionStorage.setItem('historyPosition', (newHistory.length - 1).toString());
-      } else {
-        // 不在历史末尾，截断历史并添加新记录
-        const newHistory = viewHistory.slice(0, historyPosition + 1);
-        newHistory.push(data.projectId);
-        setViewHistory(newHistory);
-        setHistoryPosition(newHistory.length - 1);
-        // 保存到sessionStorage
-        sessionStorage.setItem('projectHistory', JSON.stringify(newHistory));
-        sessionStorage.setItem('historyPosition', (newHistory.length - 1).toString());
-      }
+      // 重置加载请求次数
+      apiRequestCount.current = 0;
       
-      // 重新加载项目数据
-      setProjectData(data);
-      setSelectedFile(data.mainFile);
-      setBasicInfoLoaded(true);
-      
-      // 如果文件列表加载完成，标记加载状态为完成
-      if (data.fileContents && Object.keys(data.fileContents).length > 0) {
-        setFilesLoaded(true);
-        setIsLoading(false);
-      } else {
-        setFilesLoaded(false);
-      }
     } catch (error) {
       console.error('Error loading random project:', error);
       setIsLoading(false);
@@ -512,7 +584,7 @@ ${content}
     if (!showingFrame || !projectData?.mainFile) return '';
     
     // 处理外部嵌入项目
-    if (projectData?.externalEmbed && projectData?.externalUrl) {
+    if (projectData?.externalUrl) {
       return projectData?.externalUrl;
     }
     
@@ -529,7 +601,7 @@ ${content}
   })();
     
   // 是否显示代码编辑器视图（在带框架模式中非HTML文件也显示为代码）
-  const showCodeView = !showingFrame || (showingFrame && !projectData?.mainFile.endsWith('.html') && !projectData?.externalEmbed)
+  const showCodeView = !showingFrame || (showingFrame && !projectData?.mainFile.endsWith('.html') && !projectData?.externalUrl)
   
   // 添加工具栏按钮
   const renderToolbarButtons = () => {
@@ -606,208 +678,47 @@ ${content}
     }
   }
 
+  // 修改项目详情页面中的分享按钮实现
+  const handleShare = () => {
+    setShareDialogOpen(true);
+  };
+
   if (isLoading && !basicInfoLoaded) {
     return (
-      <div className="flex flex-col h-screen">
-        {/* 主体内容 - 左右7:3布局 */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* 左侧主内容区 (70%) */}
-          <div className="w-[70%] flex flex-col relative overflow-hidden bg-background">
-            {/* 上下滑动按钮 - TikTok风格 */}
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
-              <button
-                className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
-                onClick={handlePreviousProject}
-                title={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
-                <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  {locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-                </span>
-              </button>
-              
-              <button
-                className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
-                onClick={handleNextProject}
-                title={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-                <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  {locale === 'zh-cn' ? '下一个项目' : 'Next project'}
-                </span>
-              </button>
+      <div className="container mx-auto py-8 flex flex-col">
+        {/* 加载状态 */}
+        <div className="flex h-[80vh] items-center justify-center flex-col">
+          <div className="text-center">
+            <div className="mb-8">
+              <Image 
+                src="/favicon.png" 
+                alt="CodeTok Logo" 
+                width={96} 
+                height={96}
+              />
             </div>
-
-            {/* 主要内容区域 */}
-            <div className="flex-1 relative">
-              {isLoading ? (
-                <div className="flex h-screen items-center justify-center">
-                  <div className="text-center">
-                    <div className="mb-8">
-                      <Image 
-                        src="/favicon.png" 
-                        alt="CodeTok Logo" 
-                        width={96} 
-                        height={96}
-                      />
-                    </div>
-                    <h1 className="text-3xl font-bold mb-4">
-                      CodeTok
-                    </h1>
-                    <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
-                    <p className="mt-4 text-muted-foreground">
-                      {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}
-                    </p>
-                  </div>
-                </div>
-              ) : error ? (
-                <div className="flex flex-col items-center justify-center h-full">
-                  <div className="mb-8">
-                    <Image 
-                      src="/favicon.png" 
-                      alt="CodeTok Logo" 
-                      width={96} 
-                      height={96}
-                      className="mx-auto grayscale opacity-50"
-                    />
-                  </div>
-                  <div className="text-red-500 mb-4">{error}</div>
-                  <Button onClick={() => fetchProjectData()}>
-                    {locale === 'zh-cn' ? '重试' : 'Retry'}
-                  </Button>
-                </div>
-              ) : (
-                <div className="h-full">
-                  {projectData?.externalEmbed && projectData?.externalUrl ? (
-                    <div className="relative h-full">
-                      {shouldLoadIframe && (
-                        <iframe
-                          id="external-project-iframe"
-                          src={projectData.externalUrl}
-                          className="w-full h-full border-none"
-                          onLoad={handleIframeLoad}
-                          onError={handleIframeError}
-                        />
-                      )}
-                      {!iframeLoaded && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-background">
-                          <div className="text-center">
-                            <div className="mb-8">
-                              <Image 
-                                src="/favicon.png" 
-                                alt="CodeTok Logo" 
-                                width={96} 
-                                height={96}
-                                className="mx-auto"
-                              />
-                            </div>
-                            <h1 className="text-3xl font-bold mb-4">
-                              CodeTok
-                            </h1>
-                            <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
-                            <p className="mt-4 text-muted-foreground">
-                              {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                      {iframeError && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-background">
-                          <div className="mb-8">
-                            <Image 
-                              src="/favicon.png" 
-                              alt="CodeTok Logo" 
-                              width={96} 
-                              height={96}
-                              className="mx-auto grayscale opacity-50"
-                            />
-                          </div>
-                          <h1 className="text-3xl font-bold mb-4">
-                            CodeTok
-                          </h1>
-                          <div className="text-red-500 mb-4">{iframeError}</div>
-                          <div className="flex gap-4">
-                            <Button onClick={refreshIframe}>
-                              {locale === 'zh-cn' ? '重试' : 'Retry'}
-                            </Button>
-                            <Button onClick={openDirectLink}>
-                              {locale === 'zh-cn' ? '在新窗口打开' : 'Open in New Window'}
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="h-full">
-                      {/* 其他项目类型的渲染逻辑保持不变 */}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 右侧工具栏 (30%) */}
-          <div className="w-[30%] border-l border-border bg-black text-white">
-            {/* 项目信息区 */}
-            <div className="p-6">
-              <h1 className="text-2xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
-              <p className="text-gray-300 mb-4">{projectData?.description}</p>
-              <div className="flex items-center gap-2 text-gray-400">
-                <span>全屏打开</span>
-                <a 
-                  href={projectData?.externalUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:underline overflow-hidden text-ellipsis"
-                >
-                  {projectData?.externalUrl && getHostname(projectData.externalUrl)}
-                </a>
+            <h1 className="text-3xl font-bold mb-4">
+              CodeTok
+            </h1>
+            <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">
+              {(locale as string) === 'zh-cn' ? 
+                loadingStage === 'initial' ? '正在初始化...' : 
+                loadingStage === 'metadata' ? '正在加载项目信息...' : 
+                loadingStage === 'files' ? '正在加载文件...' : 
+                loadingStage === 'iframe' ? '正在加载外部内容...' : '正在加载精彩内容...'
+                : 
+                loadingStage === 'initial' ? 'Initializing...' : 
+                loadingStage === 'metadata' ? 'Loading project information...' : 
+                loadingStage === 'files' ? 'Loading files...' : 
+                loadingStage === 'iframe' ? 'Loading external content...' : 'Loading amazing content...'
+              }
+            </p>
+            <div className="mt-4 w-64 mx-auto">
+              <Progress value={loadingProgress} className="h-1" />
+              <div className="text-xs text-center mt-1 text-muted-foreground">
+                {Math.round(loadingProgress)}%
               </div>
-              {projectData?.createdAt && (
-                <p className="text-gray-400 mt-2">
-                  {formatDate(projectData.createdAt)}
-                </p>
-              )}
-            </div>
-
-            {/* 交互按钮区 */}
-            <div className="p-6 flex flex-col gap-6">
-              <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
-                <span>{locale === 'zh-cn' ? '点赞' : 'Like'}</span>
-              </button>
-              
-              <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span>{locale === 'zh-cn' ? '评论' : 'Comment'}</span>
-              </button>
-              
-              <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span>{locale === 'zh-cn' ? '收藏' : 'Bookmark'}</span>
-              </button>
-              
-              <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="18" cy="5" r="3"></circle>
-                  <circle cx="6" cy="12" r="3"></circle>
-                  <circle cx="18" cy="19" r="3"></circle>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                </svg>
-                <span>{locale === 'zh-cn' ? '分享' : 'Share'}</span>
-              </button>
             </div>
           </div>
         </div>
@@ -817,8 +728,8 @@ ${content}
   
   if (error || !projectData) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center max-w-md p-6 bg-white">
+      <div className="container mx-auto py-8 flex h-[80vh] items-center justify-center">
+        <div className="text-center max-w-md p-6 bg-card rounded-lg border">
           <div className="mb-8">
             <Image 
               src="/favicon.png" 
@@ -843,209 +754,133 @@ ${content}
   }
   
   return (
-    <div className="flex flex-col h-screen">
-      {/* 主体内容 - 左右7:3布局 */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* 左侧主内容区 (70%) */}
-        <div className="w-[70%] flex flex-col relative overflow-hidden bg-background">
-          {/* 上下滑动按钮 - TikTok风格 */}
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 flex flex-col gap-3">
-            <button
-              className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
-              onClick={handlePreviousProject}
-              title={locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="18 15 12 9 6 15"></polyline>
-              </svg>
-              <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                {locale === 'zh-cn' ? '上一个项目' : 'Previous project'}
-              </span>
-            </button>
-            
-            <button
-              className="group relative w-12 h-12 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center text-white transition-colors backdrop-blur-sm"
-              onClick={handleNextProject}
-              title={locale === 'zh-cn' ? '下一个项目' : 'Next project'}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-              <span className="absolute right-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black/70 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                {locale === 'zh-cn' ? '下一个项目' : 'Next project'}
-              </span>
-            </button>
+    <div className="container mx-auto py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">{projectData?.title || '项目'}</h1>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handlePreviousProject}
+            disabled={historyPosition <= 0}
+          >
+            上一个
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleNextProject}
+          >
+            下一个
+          </Button>
+        </div>
+      </div>
+      
+      <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
+        {isLoading ? (
+          <div className="flex h-96 items-center justify-center">
+            <div className="text-center">
+              <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
+              <p className="mt-4 text-muted-foreground">
+                {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
+              </p>
+            </div>
           </div>
-
-          {/* 主要内容区域 */}
-          <div className="flex-1 relative">
-            {isLoading ? (
-              <div className="flex h-screen items-center justify-center">
-                <div className="text-center">
-                  <div className="mb-8">
-                    <Image 
-                      src="/favicon.png" 
-                      alt="CodeTok Logo" 
-                      width={96} 
-                      height={96}
-                    />
-                  </div>
-                  <h1 className="text-3xl font-bold mb-4">
-                    CodeTok
-                  </h1>
-                  <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
-                  <p className="mt-4 text-muted-foreground">
-                    {locale === 'zh-cn' ? '正在加载精彩内容...' : 'Loading amazing content...'}
-                  </p>
-                </div>
-              </div>
-            ) : error ? (
-              <div className="flex flex-col items-center justify-center h-full">
-                <div className="mb-8">
-                  <Image 
-                    src="/favicon.png" 
-                    alt="CodeTok Logo" 
-                    width={96} 
-                    height={96}
-                    className="mx-auto grayscale opacity-50"
-                  />
-                </div>
-                <div className="text-red-500 mb-4">{error}</div>
-                <Button onClick={() => fetchProjectData()}>
-                  {locale === 'zh-cn' ? '重试' : 'Retry'}
-                </Button>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center h-96">
+            <div className="text-red-500 mb-4">{error}</div>
+            <Button onClick={() => fetchProjectData()}>
+              {locale === 'zh-cn' ? '重试' : 'Retry'}
+            </Button>
+          </div>
+        ) : (
+          <div className="relative h-[80vh]">
+            {projectData?.externalUrl ? (
+              <div className="h-full w-full">
+                <ExternalEmbed 
+                  url={projectData.externalUrl} 
+                  locale={locale}
+                  title={projectData.title}
+                  description={projectData.description}
+                  author={projectData.externalAuthor}
+                />
               </div>
             ) : (
               <div className="h-full">
-                {projectData?.externalEmbed && projectData?.externalUrl ? (
-                  <div className="relative h-full">
-                    {shouldLoadIframe && (
-                      <iframe
-                        id="external-project-iframe"
-                        src={projectData.externalUrl}
-                        className="w-full h-full border-none"
-                        onLoad={handleIframeLoad}
-                        onError={handleIframeError}
-                      />
-                    )}
-                    {!iframeLoaded && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background">
-                        <div className="text-center">
-                          <div className="mb-8">
-                            <Image 
-                              src="/favicon.png" 
-                              alt="CodeTok Logo" 
-                              width={96} 
-                              height={96}
-                              className="mx-auto"
-                            />
-                          </div>
-                          <h1 className="text-3xl font-bold mb-4">
-                            CodeTok
-                          </h1>
-                          <div className="w-12 h-12 border-b-2 border-primary rounded-full animate-spin mx-auto"></div>
-                          <p className="mt-4 text-muted-foreground">
-                            {locale === 'zh-cn' ? '项目加载中...' : 'Loading project...'}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    {iframeError && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background">
-                        <div className="mb-8">
-                          <Image 
-                            src="/favicon.png" 
-                            alt="CodeTok Logo" 
-                            width={96} 
-                            height={96}
-                            className="mx-auto grayscale opacity-50"
-                          />
-                        </div>
-                        <h1 className="text-3xl font-bold mb-4">
-                          CodeTok
-                        </h1>
-                        <div className="text-red-500 mb-4">{iframeError}</div>
-                        <div className="flex gap-4">
-                          <Button onClick={refreshIframe}>
-                            {locale === 'zh-cn' ? '重试' : 'Retry'}
-                          </Button>
-                          <Button onClick={openDirectLink}>
-                            {locale === 'zh-cn' ? '在新窗口打开' : 'Open in New Window'}
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="h-full">
-                    {/* 其他项目类型的渲染逻辑保持不变 */}
-                  </div>
-                )}
+                <div className="text-center py-20">
+                  <p className="text-muted-foreground">
+                    {locale === 'zh-cn' ? '项目内容加载中...' : 'Loading project content...'}
+                  </p>
+                </div>
               </div>
             )}
+            
+            {/* 互动按钮 */}
+            <div className="absolute right-4 top-4">
+              <ProjectInteraction 
+                projectId={id}
+                initialLikes={projectData?.likes || 0}
+                initialComments={projectData?.comments_count || 0}
+                locale={locale}
+              />
+            </div>
           </div>
-        </div>
-
-        {/* 右侧工具栏 (30%) */}
-        <div className="w-[30%] border-l border-border bg-black text-white">
-          {/* 项目信息区 */}
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-2">{projectData?.title || '加载中...'}</h1>
-            <p className="text-gray-300 mb-4">{projectData?.description}</p>
-            <div className="flex items-center gap-2 text-gray-400">
-              <span>全屏打开</span>
+        )}
+      </div>
+      
+      <div className="mt-6 flex flex-col md:flex-row gap-6">
+        {/* 项目详情 */}
+        <div className="flex-1">
+          <h2 className="text-xl font-semibold mb-4">{locale === 'zh-cn' ? '项目详情' : 'Project Details'}</h2>
+          <p className="text-muted-foreground">{projectData?.description}</p>
+          {projectData?.externalUrl && (
+            <div className="mt-4">
+              <h3 className="font-medium mb-2">{locale === 'zh-cn' ? '外部链接' : 'External Link'}</h3>
               <a 
-                href={projectData?.externalUrl} 
-                target="_blank" 
+                href={projectData.externalUrl}
+                target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:underline overflow-hidden text-ellipsis"
+                className="text-primary hover:underline"
               >
-                {projectData?.externalUrl && getHostname(projectData.externalUrl)}
+                {getHostname(projectData.externalUrl)}
               </a>
             </div>
-            {projectData?.createdAt && (
-              <p className="text-gray-400 mt-2">
+          )}
+          {projectData?.createdAt && (
+            <div className="mt-4">
+              <h3 className="font-medium mb-2">{locale === 'zh-cn' ? '创建时间' : 'Created'}</h3>
+              <p className="text-muted-foreground">
                 {formatDate(projectData.createdAt)}
               </p>
-            )}
-          </div>
-
-          {/* 交互按钮区 */}
-          <div className="p-6 flex flex-col gap-6">
-            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-              </svg>
-              <span>{locale === 'zh-cn' ? '点赞' : 'Like'}</span>
-            </button>
-            
-            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span>{locale === 'zh-cn' ? '评论' : 'Comment'}</span>
-            </button>
-            
-            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-              </svg>
-              <span>{locale === 'zh-cn' ? '收藏' : 'Bookmark'}</span>
-            </button>
-            
-            <button className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="18" cy="5" r="3"></circle>
-                <circle cx="6" cy="12" r="3"></circle>
-                <circle cx="18" cy="19" r="3"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-              </svg>
-              <span>{locale === 'zh-cn' ? '分享' : 'Share'}</span>
-            </button>
-          </div>
+            </div>
+          )}
+        </div>
+        
+        {/* 项目统计 */}
+        <div className="md:w-1/3">
+          <ProjectStats 
+            projectId={id}
+            locale={locale}
+          />
         </div>
       </div>
+      
+      {/* 评论部分 */}
+      <div className="mt-12" id="comments">
+        <ProjectComments 
+          projectId={id}
+          locale={locale}
+        />
+      </div>
+
+      {/* 在返回JSX中，添加ShareDialog组件 */}
+      <ShareDialog
+        projectId={id}
+        projectTitle={projectData?.title || ''}
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        locale={locale}
+      />
     </div>
   )
 } 

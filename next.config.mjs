@@ -25,6 +25,37 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // 修复依赖问题
+  serverExternalPackages: ['archiver'],
+  // Webpack配置优化
+  webpack: (config, { isServer }) => {
+    // 解决模块解析问题
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        stream: false,
+        crypto: false,
+      };
+    }
+
+    return config;
+  },
+  // 环境变量配置
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
+  // 重定向配置
+  async redirects() {
+    return [
+      {
+        source: '/dev',
+        destination: '/api/dev-tools',
+        permanent: false,
+      },
+    ];
+  },
 }
 
 export default withNextIntl(nextConfig)

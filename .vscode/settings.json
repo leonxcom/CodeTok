@@ -1,3 +1,13 @@
 {
-  "css.customData": [".vscode/tailwind.json"]
+  "css.customData": [".vscode/tailwind.json"],
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.autoImports": true,
+  "typescript.workspaceSymbols.scope": "allOpenProjects",
+  "i18n-ally.localesPaths": [
+    "i18n",
+    "messages",
+    "src/i18n",
+    "src/app/[locale]/language"
+  ]
 }

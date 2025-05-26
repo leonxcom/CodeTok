@@ -1,0 +1,23 @@
+{
+  "id": "XeWv43rY",
+  "title": "REACT - 创建一个简单的按钮就很好",
+  "description": "This code creates a simple React button component. When the button is clicked, it triggers an alert with the message \"Button clicked!\". The button has basic styling applied inline.",
+  "language": "react",
+  "prompt": "创建一个简单的按钮就很好",
+  "createdAt": "2025-05-24T05:54:15.398Z",
+  "files": [
+    {
+      "name": "package.json",
+      "isEntry": false
+    },
+    {
+      "name": "index.html",
+      "isEntry": true
+    },
+    {
+      "name": "App.jsx",
+      "isEntry": false
+    }
+  ],
+  "entryFile": "index.html"
+}

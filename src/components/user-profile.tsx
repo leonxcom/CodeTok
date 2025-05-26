@@ -9,14 +9,14 @@ interface UserProfileProps {
 }
 
 export function UserProfile({ locale }: UserProfileProps) {
-  const session = useSession();
+  const { data: session, isPending, error } = useSession();
   
   const handleSignOut = async () => {
     await signOut();
     window.location.href = "/";
   };
 
-  if (session.isPending) {
+  if (isPending) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
         <p className="text-muted-foreground">
@@ -26,7 +26,7 @@ export function UserProfile({ locale }: UserProfileProps) {
     );
   }
 
-  if (!session.data) {
+  if (!session?.user) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
         <h2 className="text-2xl font-bold">
@@ -48,14 +48,14 @@ export function UserProfile({ locale }: UserProfileProps) {
   }
 
   // 获取用户显示名
-  const userDisplayName = session.data.user?.name || session.data.user?.email?.split("@")[0] || "User";
+  const userDisplayName = session.user?.name || session.user?.email?.split("@")[0] || "User";
 
   return (
     <div className="max-w-md mx-auto p-6 bg-card border border-border rounded-lg shadow-sm">
       <div className="flex flex-col items-center space-y-4">
         <div className="h-24 w-24 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
           <span className="text-2xl font-bold text-white">
-            {session.data.user?.email?.[0].toUpperCase() || "U"}
+            {session.user?.email?.[0].toUpperCase() || "U"}
           </span>
         </div>
         
@@ -68,14 +68,14 @@ export function UserProfile({ locale }: UserProfileProps) {
             <span className="text-muted-foreground">
               {locale === "zh-cn" ? "电子邮箱" : "Email"}
             </span>
-            <span className="font-medium">{session.data.user?.email}</span>
+            <span className="font-medium">{session.user?.email}</span>
           </div>
           
           <div className="flex justify-between py-2 border-b border-border">
             <span className="text-muted-foreground">
               {locale === "zh-cn" ? "用户ID" : "User ID"}
             </span>
-            <span className="font-medium">{session.data.user?.id.substring(0, 8)}...</span>
+            <span className="font-medium">{session.user?.id.substring(0, 8)}...</span>
           </div>
           
           <div className="flex justify-between py-2 border-b border-border">

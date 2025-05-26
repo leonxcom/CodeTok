@@ -1,0 +1,27 @@
+{
+  "HomePage": {
+    "title": "CodeTok - Code Sharing Platform",
+    "description": "Discover, share, and explore code projects",
+    "uploadCode": "Upload Code",
+    "untitledProject": "Untitled Project",
+    "randomProject": "Random Browse",
+    "like": "Like",
+    "comment": "Comment",
+    "share": "Share",
+    "footerText": "Don't Keep Your Code to Yourself - Share It With the World"
+  },
+  "Metadata": {
+    "title": "CodeTok - Code Sharing Platform",
+    "description": "Discover, share and discuss code snippets and projects"
+  },
+  "Navigation": {
+    "home": "Home",
+    "explore": "Explore",
+    "upload": "Upload",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  }
+} 

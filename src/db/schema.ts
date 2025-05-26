@@ -39,4 +39,51 @@ export interface Favorite {
   user_id: string;
   project_id: string;
   created_at: Date;
+}
+
+// 点赞模型类型
+export interface Like {
+  id: string;
+  user_id: string;
+  project_id: string;
+  created_at: Date;
+}
+
+// 评论模型类型
+export interface Comment {
+  id: string;
+  content: string;
+  user_id: string;
+  project_id: string;
+  parent_id: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+// 分享记录模型类型
+export interface Share {
+  id: string;
+  user_id: string;
+  project_id: string;
+  platform: string; // 'twitter', 'facebook', 'wechat', 'copy_link', etc.
+  created_at: Date;
+}
+
+// 用户关注模型类型
+export interface Follow {
+  follower_id: string;
+  following_id: string;
+  created_at: Date;
+}
+
+// 通知模型类型
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: string; // 'like', 'comment', 'follow', etc.
+  actor_id: string;
+  entity_id: string; // project_id, comment_id, etc.
+  entity_type: string; // 'project', 'comment', etc.
+  is_read: boolean;
+  created_at: Date;
 } 

@@ -24,16 +24,17 @@ export function AuthForm() {
     setError(null);
 
     try {
-      const result = await signIn("email-password", {
+      const result = await signIn.email({
         email,
         password,
       });
 
-      if (result.success) {
+      if (result.error) {
+        setError(result.error.message || "登录失败，请检查邮箱和密码");
+      } else {
+        // 登录成功，重定向到首页
         router.push("/");
         router.refresh();
-      } else {
-        setError("登录失败，请检查邮箱和密码");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "登录时发生错误");
@@ -48,27 +49,18 @@ export function AuthForm() {
     setError(null);
 
     try {
-      const result = await signUp("email-password", {
+      const result = await signUp.email({
         email,
         password,
-        username,
+        name: username,
       });
 
-      if (result.success) {
-        // 注册成功后自动登录
-        const loginResult = await signIn("email-password", {
-          email,
-          password,
-        });
-
-        if (loginResult.success) {
-          router.push("/");
-          router.refresh();
-        } else {
-          setError("注册成功，但自动登录失败");
-        }
+      if (result.error) {
+        setError(result.error.message || "注册失败，请检查输入信息");
       } else {
-        setError("注册失败，请检查输入信息");
+        // 注册成功，重定向到首页
+        router.push("/");
+        router.refresh();
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "注册时发生错误");
@@ -83,10 +75,12 @@ export function AuthForm() {
       setSocialLoading(provider);
       setError(null);
       
-      // 使用 signIn 函数处理社交登录
-      await signIn(provider);
+      // 使用 Better Auth 的社交登录
+      await signIn.social({
+        provider,
+        callbackURL: window.location.origin,
+      });
       
-      // signIn 已处理重定向，这里不需要额外操作
     } catch (err) {
       setError(err instanceof Error ? err.message : `通过${provider}登录失败`);
       setSocialLoading(null);

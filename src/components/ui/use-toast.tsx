@@ -7,6 +7,7 @@ interface ToastProps {
   description?: string
   type?: 'default' | 'success' | 'error' | 'warning' | 'info'
   duration?: number
+  variant?: 'default' | 'destructive'
 }
 
 export type ToasterToast = ToastProps & {

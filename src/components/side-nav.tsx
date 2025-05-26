@@ -1,301 +1,257 @@
 "use client"
 
-import * as React from "react"
-import Link from "next/link"
-import { useParams } from "next/navigation"
-import Image from "next/image"
-import { 
-  HomeIcon, 
-  Menu, 
-  Compass, 
-  Activity, 
-  Briefcase, 
-  Users, 
-  GraduationCap, 
-  ShoppingBag,
-  Moon,
-  Sun,
-  Languages,
-  Search,
-  Radio,
-  UserIcon,
-  MoreHorizontal
-} from "lucide-react"
-import { useTheme } from "next-themes"
-import { useRouter, usePathname } from '@/navigation'
-import { Locale } from "../../i18n/config"
-import { Button } from "@/components/ui/button"
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Menu, Home, Compass, Briefcase, Users, Radio, BookOpen, ShoppingBag, User, MoreHorizontal, Languages, Laptop, Sun, Moon, ChevronDown, LogIn, Settings } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import * as React from 'react'
+import { useState } from 'react'
+import { useTheme } from 'next-themes'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+
+import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
   SheetHeader,
-  SheetTrigger,
   SheetTitle,
-  SheetClose
-} from "@/components/ui/sheet"
-import { Input } from "@/components/ui/input"
-import { t } from '@/utils/language-utils'
-import { cn } from "@/lib/utils"
-import { LanguageToggle } from "@/components/language-toggle"
+  SheetTrigger,
+  SheetClose,
+} from '@/components/ui/sheet'
+import { cn } from '@/lib/utils'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Separator } from '@/components/ui/separator'
 
-interface NavItemProps {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
-  onNavigate?: () => void;
-}
-
-function NavItem({ href, icon, label, onNavigate }: NavItemProps) {
-  const pathname = usePathname()
-  const isActive = pathname === href
-  
-  return (
-    <Button
-      variant="ghost"
-      asChild
-      onClick={onNavigate}
-      className={cn("justify-start pl-3 py-5 h-9", isActive && "bg-accent text-accent-foreground")}
-    >
-      <Link href={href} className="flex items-center gap-2">
-        {icon}
-        <span className="text-sm">{label}</span>
-      </Link>
-    </Button>
-  )
+// 语言选项
+const LANGUAGES = {
+  'zh-cn': '简体中文',
+  'en': 'English',
+  'fr': 'français'
 }
 
 export function SideNav() {
-  const params = useParams()
-  const locale = params.locale as Locale || "zh-cn"
-  const { setTheme, theme } = useTheme()
-  const [open, setOpen] = React.useState(false)
+  const pathname = usePathname()
+  const t = useTranslations('Navigation')
+  const router = useRouter()
+  const { theme, setTheme } = useTheme()
+  
+  // 从路径中提取语言前缀
+  const locale = pathname.split('/')[1]
+  
+  const [mounted, setMounted] = React.useState(false)
 
-  const handleNavigation = React.useCallback(() => {
-    setOpen(false)
+  // 组件挂载后再访问theme，避免水合错误
+  React.useEffect(() => {
+    setMounted(true)
   }, [])
-
-  const navItems = [
+  
+  // 处理语言切换
+  const handleLanguageChange = (newLocale: string) => {
+    if (newLocale === locale) return
+    const newPath = pathname.replace(`/${locale}`, `/${newLocale}`)
+    router.push(newPath)
+  }
+  
+  const navigationItems = [
     {
       href: `/${locale}`,
-      icon: <HomeIcon className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "为你推荐", 
-        en: "For You",
-        fr: "Pour Vous"
-      })
+      label: t('for_you'),
+      icon: <Home className="h-6 w-6" />,
     },
     {
-      href: `/${locale}/discover`,
-      icon: <Compass className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "发现作品", 
-        en: "Discover",
-        fr: "Découvrir"
-      })
+      href: `/${locale}/explore`,
+      label: t('discover'),
+      icon: <Compass className="h-6 w-6" />,
     },
     {
       href: `/${locale}/jobs`,
-      icon: <Briefcase className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "工作机会", 
-        en: "Jobs",
-        fr: "Emplois"
-      })
+      label: t('jobs'),
+      icon: <Briefcase className="h-6 w-6" />,
     },
     {
-      href: `/${locale}/activity`,
-      icon: <Activity className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "已关注", 
-        en: "Following",
-        fr: "Abonnements"
-      })
+      href: `/${locale}/following`,
+      label: t('following'),
+      icon: <Users className="h-6 w-6" />,
     },
     {
       href: `/${locale}/live`,
-      icon: <Radio className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "直播", 
-        en: "LIVE",
-        fr: "EN DIRECT"
-      })
+      label: t('live'),
+      icon: <Radio className="h-6 w-6" />,
     },
     {
       href: `/${locale}/learn`,
-      icon: <GraduationCap className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "学习", 
-        en: "Learn",
-        fr: "Apprendre"
-      })
+      label: t('learn'),
+      icon: <BookOpen className="h-6 w-6" />,
     },
     {
       href: `/${locale}/store`,
-      icon: <ShoppingBag className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "商城", 
-        en: "Store",
-        fr: "Boutique"
-      })
+      label: t('store'),
+      icon: <ShoppingBag className="h-6 w-6" />,
+    },
+  ]
+  
+  const accountItems = [
+    {
+      href: `/${locale}/auth/login`,
+      label: t('login'),
+      icon: <LogIn className="h-6 w-6" />,
     },
     {
-      href: `/${locale}/profile`,
-      icon: <UserIcon className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "我的", 
-        en: "Profile",
-        fr: "Profil"
-      })
+      href: `/${locale}/settings`,
+      label: t('settings'),
+      icon: <Settings className="h-6 w-6" />,
     },
-    {
-      href: `/${locale}/more`,
-      icon: <MoreHorizontal className="h-4 w-4" />,
-      label: t(locale, { 
-        zh: "更多", 
-        en: "More",
-        fr: "Plus"
-      })
-    }
-  ];
+  ]
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="text-foreground">
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">{t(locale, { zh: "导航", en: "Navigation", fr: "Navigation" })}</span>
+        <Button variant="ghost" size="icon" className="md:hidden">
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">菜单</span>
         </Button>
       </SheetTrigger>
-      <SheetContent 
-        side="left" 
-        className="border-r bg-background text-foreground border-border w-64 flex flex-col"
-      >
-        <SheetTitle className="sr-only">
-          {t(locale, {
-            zh: "导航菜单",
-            en: "Navigation Menu",
-            fr: "Menu de Navigation"
-          })}
-        </SheetTitle>
-        <SheetHeader className="flex flex-col items-start">
-          <div className="flex items-center gap-2 mb-3">
-            <Image 
-              src="/favicon.png" 
-              alt="CodeTok Logo" 
-              width={28} 
-              height={28} 
-              className="rounded-sm"
-            />
-            <h1 className="text-lg font-bold text-foreground">
-              CodeTok
-              <span className="ml-1.5 text-[10px] px-1 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-md font-medium">
-                Beta
-              </span>
-            </h1>
-          </div>
-          
-          {/* 搜索框 */}
-          <div className="w-full mb-3 relative">
-            <div className="relative flex items-center">
-              <Search className="absolute left-2 h-3 w-3 text-muted-foreground" />
-              <Input 
-                placeholder={t(locale, { 
-                  zh: "搜索", 
-                  en: "Search",
-                  fr: "Rechercher"
-                })} 
-                className="pl-7 w-full bg-accent h-8 text-sm"
-              />
+      <SheetContent side="left" className="p-0 w-full max-w-[280px] flex flex-col md:hidden">
+        <div className="flex items-center justify-center border-b p-4">
+          <Link href={`/${locale}`} className="flex items-center gap-2">
+            <Image src="/favicon.png" alt="CodeTok Logo" width={32} height={32} />
+          </Link>
+        </div>
+        
+        <div className="p-4 border-b">
+          <div className="flex items-center gap-4 mb-4">
+            <Avatar className="h-14 w-14">
+              <AvatarFallback className="bg-primary/10 text-primary">游客</AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <Link href={`/${locale}/auth/login`} className="font-medium text-base hover:underline">
+                登录/注册
+              </Link>
+              <p className="text-sm text-muted-foreground mt-1">
+                登录后即可使用更多功能
+              </p>
             </div>
           </div>
-        </SheetHeader>
-        
-        <div className="flex flex-col gap-1 py-2">
-          {navItems.map((item, index) => (
-            <NavItem
-              key={index}
-              href={item.href}
-              icon={item.icon}
-              label={item.label}
-              onNavigate={handleNavigation}
-            />
-          ))}
         </div>
         
-        {/* 填充空间 */}
-        <div className="flex-grow"></div>
-        
-        {/* 分割线 */}
-        <div className="border-t border-border mt-2"></div>
-        
-        {/* 设置区域 */}
-        <div className="px-3 mt-2">
-          <h3 className="text-xs font-medium mb-1.5 text-foreground">
-            {t(locale, {
-              zh: "主题: 跟随系统",
-              en: "Theme: Follow System",
-              fr: "Thème: Suivre le système"
-            })}
-          </h3>
-          
-          <div className="grid grid-cols-3 gap-1.5">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setTheme("system")}
-              className="h-7 w-full flex items-center justify-center px-1"
-              data-state={theme === "system" ? "active" : "inactive"}
-            >
-              <span className="text-[10px]">{t(locale, {
-                zh: "系统",
-                en: "System",
-                fr: "Système"
-              })}</span>
-            </Button>
+        <nav className="p-4 flex-1 overflow-y-auto">
+          <div className="space-y-6">
+            <div className="grid gap-1">
+              {navigationItems.map((item) => (
+                <SheetClose asChild key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-4 rounded-md px-3 py-2.5 hover:bg-muted transition-colors",
+                      pathname === item.href 
+                        ? "bg-primary/10 text-primary font-medium" 
+                        : "text-foreground"
+                    )}
+                  >
+                    {item.icon}
+                    <span className="text-base">{item.label}</span>
+                  </Link>
+                </SheetClose>
+              ))}
+            </div>
             
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setTheme("light")}
-              className="h-7 w-full flex items-center justify-center gap-1 px-1"
-              data-state={theme === "light" ? "active" : "inactive"}
-            >
-              <Sun className="h-3 w-3" />
-              <span className="text-[10px]">{t(locale, {
-                zh: "亮色",
-                en: "Light",
-                fr: "Clair"
-              })}</span>
-            </Button>
+            <Separator className="my-2" />
             
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setTheme("dark")}
-              className="h-7 w-full flex items-center justify-center gap-1 px-1"
-              data-state={theme === "dark" ? "active" : "inactive"}
-            >
-              <Moon className="h-3 w-3" />
-              <span className="text-[10px]">{t(locale, {
-                zh: "暗色",
-                en: "Dark",
-                fr: "Sombre"
-              })}</span>
-            </Button>
+            <div className="grid gap-1">
+              {accountItems.map((item) => (
+                <SheetClose asChild key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-4 rounded-md px-3 py-2.5 hover:bg-muted transition-colors",
+                      pathname === item.href 
+                        ? "bg-primary/10 text-primary font-medium" 
+                        : "text-foreground"
+                    )}
+                  >
+                    {item.icon}
+                    <span className="text-base">{item.label}</span>
+                  </Link>
+                </SheetClose>
+              ))}
+            </div>
+            
+            <Separator className="my-2" />
+            
+            <div>
+              <div className="px-3 mb-3 text-muted-foreground font-medium">主题和语言</div>
+              
+              <div className="mb-4">
+                <p className="text-sm px-3 mb-2">主题设置</p>
+                <div className="flex gap-2">
+                  <Button 
+                    variant={mounted && theme === "system" ? "default" : "outline"} 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => setTheme("system")}
+                  >
+                    系统
+                  </Button>
+                  <Button 
+                    variant={mounted && theme === "light" ? "default" : "outline"} 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => setTheme("light")}
+                  >
+                    亮色
+                  </Button>
+                  <Button 
+                    variant={mounted && theme === "dark" ? "default" : "outline"} 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => setTheme("dark")}
+                  >
+                    暗色
+                  </Button>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm px-3 mb-2">语言选择</p>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full justify-between">
+                      <div className="flex items-center gap-2">
+                        <Languages className="h-4 w-4" />
+                        <span>{LANGUAGES[locale as keyof typeof LANGUAGES] || '选择语言'}</span>
+                      </div>
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-full">
+                    {Object.entries(LANGUAGES).map(([code, name]) => (
+                      <DropdownMenuItem 
+                        key={code}
+                        className={cn(
+                          "cursor-pointer",
+                          code === locale && "bg-accent text-accent-foreground"
+                        )}
+                        onClick={() => handleLanguageChange(code)}
+                      >
+                        <span>{name}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
           </div>
-        </div>
+        </nav>
         
-        {/* 语言切换 */}
-        <div className="flex items-center justify-between py-1.5 px-3 mb-2">
-          <div className="flex items-center gap-1.5">
-            <Languages className="h-4 w-4" />
-            <span className="text-sm">{t(locale, {
-              zh: "语言切换",
-              en: "Language",
-              fr: "Langue"
-            })}</span>
-          </div>
-          <LanguageToggle locale={locale} />
+        <div className="p-3 border-t text-center text-xs text-muted-foreground">
+          <p>CodeTok © 2023-2024</p>
         </div>
       </SheetContent>
     </Sheet>

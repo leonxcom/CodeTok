@@ -13,6 +13,7 @@ CodeTok 是一个创新的 AI项目 和代码应用的分享平台。它基于 N
 - [部署架构](#部署架构)
 - [快速开始](#快速开始)
 - [认证系统](#认证系统)
+- [文档](#文档)
 - [许可证](#许可证)
 
 ## 🏗 技术架构
@@ -226,4 +227,16 @@ pnpm dev
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 创建Pull Request
 
-详细的贡献指南请参见[CONTRIBUTING-zh-CN.md](./CONTRIBUTING-zh-CN.md)。
+详细的贡献指南请参见[CONTRIBUTING-zh-CN.md](./docs/CONTRIBUTING-zh-CN.md)。
+
+## 📚 文档
+
+所有项目文档都位于`docs`目录中：
+
+- [开发指南](./docs/DEVELOPMENT-zh-CN.md) - 详细的开发设置和指南
+- [贡献指南](./docs/CONTRIBUTING-zh-CN.md) - 如何为项目做贡献
+- [UI设计备忘录](./docs/UI-DESIGN-MEMO.md) - UI设计原则和指南
+- [认证指南](./docs/authentication-guide.md) - 认证系统文档
+- [数据库连接修复](./docs/DATABASE-CONNECTION-FIX.md) - 关于数据库连接修复的文档
+- [CodeTok优化报告](./docs/CODETOK-OPTIMIZATION-REPORT-zh-CN.md) - 项目优化报告
+- [认证说明](./docs/auth-notes.md) - 额外的认证说明
